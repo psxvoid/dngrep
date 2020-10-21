@@ -3,13 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30011.22
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dngrep.tool", "dngrep.tool\dngrep.tool.csproj", "{FB4F06A4-CF95-40A6-AE1E-8BEDEA816ECC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dngrep.tool", "dngrep.tool\dngrep.tool.csproj", "{FB4F06A4-CF95-40A6-AE1E-8BEDEA816ECC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dngrep.core", "dngrep.core\dngrep.core.csproj", "{8E973E72-B167-48EC-9CC1-1FAE3BD8BC76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dngrep.core", "dngrep.core\dngrep.core.csproj", "{8E973E72-B167-48EC-9CC1-1FAE3BD8BC76}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dngrep.core.xunit", "dngrep.core.xunit\dngrep.core.xunit.csproj", "{A63125EF-1542-4EFB-8EE0-B7AF3FD40326}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dngrep.core.xunit", "dngrep.core.xunit\dngrep.core.xunit.csproj", "{A63125EF-1542-4EFB-8EE0-B7AF3FD40326}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "dngrep.tool.xunit", "dngrep.tool.xunit\dngrep.tool.xunit.csproj", "{8539640E-E82C-4FFA-BD22-95B2D7DD993B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "dngrep.tool.xunit", "dngrep.tool.xunit\dngrep.tool.xunit.csproj", "{8539640E-E82C-4FFA-BD22-95B2D7DD993B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{5E61C1D4-7174-4260-9A18-1212280A1459}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -19,9 +24,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
-	EndGlobalSection
-	GlobalSection(SolutionProperties) = preSolution
-		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{FB4F06A4-CF95-40A6-AE1E-8BEDEA816ECC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
@@ -72,5 +74,11 @@ Global
 		{8539640E-E82C-4FFA-BD22-95B2D7DD993B}.Release|x64.Build.0 = Release|Any CPU
 		{8539640E-E82C-4FFA-BD22-95B2D7DD993B}.Release|x86.ActiveCfg = Release|Any CPU
 		{8539640E-E82C-4FFA-BD22-95B2D7DD993B}.Release|x86.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {01FB2C73-EA33-4766-8757-AD5E57AE5B4C}
 	EndGlobalSection
 EndGlobal
