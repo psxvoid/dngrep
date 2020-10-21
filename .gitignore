@@ -203,7 +203,8 @@ samples/framework/docker/MVCRandomAnswerGenerator/containerImage
 _dependentPackages/
 
 # Visual Studio Code
-.vscode/
+.vscode/*
+!.vscode/settings.json
 
 # Ionide
 .ionide/
