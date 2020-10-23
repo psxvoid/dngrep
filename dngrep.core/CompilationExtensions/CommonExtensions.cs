@@ -1,4 +1,5 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using dngrep.core.SyntaxTreeExtensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
@@ -9,7 +10,7 @@ namespace dngrep.core.CompilationExtensions
 {
     public static class CommonExtensions
     {
-        private static HashSet<Type> CommonSymbols = new HashSet<Type>()
+        private static readonly HashSet<Type> CommonSymbols = new HashSet<Type>()
         {
             typeof(InterfaceDeclarationSyntax),
             typeof(EnumDeclarationSyntax),
@@ -48,7 +49,7 @@ namespace dngrep.core.CompilationExtensions
             foreach (SyntaxTree syntaxTree in compilation.SyntaxTrees)
             {
                 IEnumerable<SyntaxNode>? childNodes = syntaxTree.GetRoot().ChildNodes();
-                IEnumerable<SyntaxNode> syntaxNodes = GetChildNodesRecursively(childNodes)
+                IEnumerable<SyntaxNode> syntaxNodes = childNodes.GetChildNodesRecursively()
                     .Where(x => CommonSymbols.Contains(x.GetType()));
 
                 // field declarations may contain multiple variable declarations
@@ -61,57 +62,10 @@ namespace dngrep.core.CompilationExtensions
                     .Where(x => x.GetType() != fieldDeclarationType)
                     .Concat(fields);
 
-                names.AddRange(namedNodes.Select(x => GetIdentifierName(x)));
+                names.AddRange(namedNodes.Select(x => x.GetIdentifierName()));
             }
 
             return names;
-        }
-
-        private static IEnumerable<SyntaxNode> GetChildNodesRecursively(IEnumerable<SyntaxNode> nodes)
-        {
-            if (nodes == null || !nodes.Any())
-            {
-                return Enumerable.Empty<SyntaxNode>();
-            }
-
-            var flatNodes = new List<SyntaxNode>(nodes);
-
-            foreach (var node in nodes)
-            {
-                flatNodes.AddRange(GetChildNodesRecursively(node.ChildNodes()));
-            }
-
-            return flatNodes;
-        }
-
-        private static string GetIdentifierName(SyntaxNode syntaxNode)
-        {
-            if (syntaxNode is BaseTypeDeclarationSyntax baseType)
-            {
-                return baseType.Identifier.ValueText;
-            }
-            else if (syntaxNode is MethodDeclarationSyntax method)
-            {
-                return method.Identifier.ValueText;
-            }
-            else if (syntaxNode is PropertyDeclarationSyntax property)
-            {
-                return property.Identifier.ValueText;
-            }
-            else if (syntaxNode is VariableDeclaratorSyntax variable)
-            {
-                return variable.Identifier.ValueText;
-            }
-            else if (syntaxNode is EventDeclarationSyntax @event)
-            {
-                return @event.Identifier.ValueText;
-            }
-            else if (syntaxNode is EnumMemberDeclarationSyntax enumMember)
-            {
-                return enumMember.Identifier.ValueText;
-            }
-
-            throw new InvalidOperationException($"Unable to get identifier node for {syntaxNode.GetType()}");
         }
     }
 }
