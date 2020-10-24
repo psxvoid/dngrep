@@ -14,7 +14,7 @@ namespace dngrep.core.xunit.Queries
     /// </summary>
     public static class SyntaxTreeQueriesTests
     {
-        public class AmbigiusMethodsInDifferentClasses_GetMethodWithNameContainingStringInClassWithName
+        public static class AmbigiusMethodsInDifferentClasses
         {
             private const string SourceCode = @"
                 public struct HarryPotterBook
@@ -40,36 +40,76 @@ namespace dngrep.core.xunit.Queries
                 }
             ";
 
-            private readonly IReadOnlyCollection<SyntaxNode> results;
-
-            public AmbigiusMethodsInDifferentClasses_GetMethodWithNameContainingStringInClassWithName()
+            public class GetMethodWithNameContainingStringInClassWithName
             {
-                SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                    QueryTarget.Method,
-                    QueryAccessModifier.Any,
-                    QueryTargetScope.Class,
-                    "Read",
-                    "LordOfTheRingsBook"
-                    );
+                private readonly IReadOnlyCollection<SyntaxNode> results;
 
-                SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+                public GetMethodWithNameContainingStringInClassWithName()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.Class,
+                        "Read",
+                        "LordOfTheRingsBook"
+                        );
 
-                var walker = new SyntaxTreeQueryWalker(query);
-                walker.Visit(syntaxTree.GetCompilationUnitRoot());
-                this.results = walker.Results;
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Equal(1, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodFromMatchingClass()
+                {
+                    Assert.Equal("Read2", this.results.First().GetIdentifierName());
+                }
             }
             
-            [Fact]
-            public void Results_ShouldGetSingleMatch()
+            public class GetMethodsInClassWithName
             {
-                Assert.Equal(1, this.results.Count);
-            }
+                private readonly IReadOnlyCollection<SyntaxNode> results;
 
-            [Fact]
-            public void Results_ShouldMatchSecondClassMethodName()
-            {
-                Assert.Equal("Read2", this.results.First().GetIdentifierName());
+                public GetMethodsInClassWithName()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.Class,
+                        null,
+                        "LordOfTheRingsBook"
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetTwoMethods()
+                {
+                    Assert.Equal(2, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodNamesFromMatchingClass()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Annotate2", names);
+                    Assert.Contains("Read2", names);
+                }
             }
         }
     }

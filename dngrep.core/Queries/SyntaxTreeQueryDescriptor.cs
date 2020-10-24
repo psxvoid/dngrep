@@ -11,15 +11,15 @@ namespace dngrep.core.Queries
         public QueryTarget Target { get; }
         public QueryAccessModifier AccessModifier { get; }
         public QueryTargetScope Scope { get; }
-        public string QueryTargetName { get; }
-        public string QueryTargetScopeName { get; }
+        public string? QueryTargetName { get; }
+        public string? QueryTargetScopeName { get; }
 
         public SyntaxTreeQueryDescriptor(
             QueryTarget queryTarget,
             QueryAccessModifier accessModifier,
             QueryTargetScope targetScope,
-            string queryTargetName,
-            string queryTargetScopeName)
+            string? queryTargetName,
+            string? queryTargetScopeName)
         {
             this.Target = queryTarget;
             this.AccessModifier = accessModifier;
