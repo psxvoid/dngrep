@@ -13,7 +13,7 @@ namespace dngrep.core.CompilationExtensions
         {
             _ = compilation ?? throw new ArgumentNullException(nameof(compilation));
 
-            List<string> names = new List<string>();
+            var names = new List<string>();
             foreach (SyntaxTree syntaxTree in compilation.SyntaxTrees)
             {
                 IEnumerable<ClassDeclarationSyntax> classDeclarations = syntaxTree

@@ -9,7 +9,7 @@ public static class TestCompiler
 
     public static CSharpCompilation Compile(string sourceCode)
     {
-        SourceText sourceText = SourceText.From(sourceCode);
+        var sourceText = SourceText.From(sourceCode);
         SyntaxTree syntaxTree = SyntaxFactory.ParseSyntaxTree(sourceText);
 
         int assemblyPostfixVersion = RandomGenerator.Next();

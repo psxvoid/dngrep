@@ -24,7 +24,7 @@ namespace dngrep.tool
 
             MSBuildLocator.RegisterDefaults();
 
-            using MSBuildWorkspace workspace = MSBuildWorkspace.Create();
+            using var workspace = MSBuildWorkspace.Create();
             workspace.LoadMetadataForReferencedProjects = true;
             // workspace.WorkspaceFailed += Workspace_WorkspaceFailed;
 
@@ -51,7 +51,7 @@ namespace dngrep.tool
                     throw new InvalidOperationException("Unsupported path target.");
             }
 
-            List<string> methodNames = new List<string>();
+            var methodNames = new List<string>();
 
             foreach (var proj in projects)
             {
