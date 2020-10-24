@@ -43,7 +43,7 @@ namespace dngrep.core.Queries
                 if (this.query.ScopeType != null
                     && this.scope != null
                     && (string.IsNullOrWhiteSpace(this.query.TargetName) || node.GetIdentifierName().Contains(this.query.TargetName))
-                    && HasParent(node, this.scope))
+                    && node.HasParent(this.scope))
                 {
                     this.results.Add(node);
                 }
@@ -54,21 +54,6 @@ namespace dngrep.core.Queries
             }
 
             base.DefaultVisit(node);
-        }
-
-        private static bool HasParent(SyntaxNode node, SyntaxNode parent)
-        {
-            while (node.Parent != null)
-            {
-                if (ReferenceEquals(node.Parent, parent))
-                {
-                    return true;
-                }
-
-                node = node.Parent;
-            }
-
-            return false;
         }
     }
 }

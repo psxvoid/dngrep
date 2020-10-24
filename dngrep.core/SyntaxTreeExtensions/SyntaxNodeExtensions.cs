@@ -9,6 +9,37 @@ namespace dngrep.core.SyntaxTreeExtensions
     public static class SyntaxNodeExtensions
     {
         /// <summary>
+        /// Verifies whether the node contains another node in a parent hierarchy.
+        /// </summary>
+        /// <param name="target">
+        /// The node for which the parent hierarchy should be scanned for a matching parent.
+        /// </param>
+        /// <param name="parent">
+        /// The node that potentially can be in the parent hierarchy of the target node.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> when the target node contains
+        /// another node in it's parent hierarchy, else <see langword="false"/>.
+        /// </returns>
+        public static bool HasParent(this SyntaxNode target, SyntaxNode parent)
+        {
+            _ = target ?? throw new ArgumentNullException(nameof(target));
+            _ = parent ?? throw new ArgumentNullException(nameof(parent));
+
+            while (target.Parent != null)
+            {
+                if (ReferenceEquals(target.Parent, parent))
+                {
+                    return true;
+                }
+
+                target = target.Parent;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Flatterns and entire child node hierarchy into a single enumerable.
         /// </summary>
         /// <param name="nodes"></param>
