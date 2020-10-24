@@ -74,7 +74,7 @@ namespace dngrep.core.xunit.Queries
                     Assert.Equal("Read2", this.results.First().GetIdentifierName());
                 }
             }
-            
+
             public class GetMethodsInClassWithName
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -107,6 +107,45 @@ namespace dngrep.core.xunit.Queries
                 public void ShouldGetMethodNamesFromMatchingClass()
                 {
                     IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Annotate2", names);
+                    Assert.Contains("Read2", names);
+                }
+            }
+
+            public class GetAnyMethodsInAnyClasses
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetAnyMethodsInAnyClasses()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.Class,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetFourMethods()
+                {
+                    Assert.Equal(4, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodNames()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Annotate1", names);
+                    Assert.Contains("Read1", names);
                     Assert.Contains("Annotate2", names);
                     Assert.Contains("Read2", names);
                 }

@@ -42,12 +42,14 @@ namespace dngrep.core.Queries
             {
                 if (this.query.ScopeType != null
                     && this.scope != null
-                    && (this.query.TargetName == null || node.GetIdentifierName().Contains(this.query.TargetName))
+                    && (string.IsNullOrWhiteSpace(this.query.TargetName) || node.GetIdentifierName().Contains(this.query.TargetName))
                     && HasParent(node, this.scope))
                 {
                     this.results.Add(node);
-                    base.DefaultVisit(node);
-                    return;
+                }
+                else if (this.query.ScopeType != null && string.IsNullOrWhiteSpace(this.query.TargetScopeName))
+                {
+                    this.results.Add(node);
                 }
             }
 
