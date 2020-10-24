@@ -28,11 +28,11 @@ namespace dngrep.core.Queries
 
             if (this.query.ScopeType != null && nodeType == this.query.ScopeType)
             {
-                if (this.query.TargetScopeName != null && node.GetIdentifierName().Contains(this.query.TargetScopeName))
+                if (string.IsNullOrWhiteSpace(this.query.TargetScopeName))
                 {
                     this.scope = node;
                 }
-                else if (this.query.TargetScopeName == null)
+                else if (node.GetIdentifierName().Contains(this.query.TargetScopeName))
                 {
                     this.scope = node;
                 }
@@ -47,7 +47,7 @@ namespace dngrep.core.Queries
                 {
                     this.results.Add(node);
                 }
-                else if (this.query.ScopeType != null && string.IsNullOrWhiteSpace(this.query.TargetScopeName))
+                else if (this.query.ScopeType == null)
                 {
                     this.results.Add(node);
                 }

@@ -25,6 +25,7 @@ namespace dngrep.core.Queries
             return target switch
             {
                 QueryTarget.Class => typeof(ClassDeclarationSyntax),
+                QueryTarget.Struct => typeof(StructDeclarationSyntax),
                 QueryTarget.Method => typeof(MethodDeclarationSyntax),
                 _ => throw new NotImplementedException("The requested target isn't registered."),
             };
@@ -35,6 +36,7 @@ namespace dngrep.core.Queries
             return scope switch
             {
                 QueryTargetScope.Class => typeof(ClassDeclarationSyntax),
+                QueryTargetScope.Struct => typeof(StructDeclarationSyntax),
                 _ => throw new NotImplementedException("The requested scope isn't registered."),
             };
         }
