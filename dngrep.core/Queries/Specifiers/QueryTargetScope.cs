@@ -2,7 +2,7 @@
 {
     public enum QueryTargetScope
     {
-        Everything,
+        None,
         Namespace,
         Interface,
         Class,

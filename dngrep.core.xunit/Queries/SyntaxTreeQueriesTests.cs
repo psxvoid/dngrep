@@ -177,7 +177,7 @@ namespace dngrep.core.xunit.Queries
                     }
                 }
             ";
-            
+
             public class GetMethodsInAnyClass
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -214,7 +214,7 @@ namespace dngrep.core.xunit.Queries
                     Assert.Contains("Read2", names);
                 }
             }
-            
+
             public class GetMethodsInAnyStruct
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -251,7 +251,7 @@ namespace dngrep.core.xunit.Queries
                     Assert.Contains("Read1", names);
                 }
             }
-            
+
             public class GetMethodsInSpecifiedClass
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -288,7 +288,7 @@ namespace dngrep.core.xunit.Queries
                     Assert.Contains("Read2", names);
                 }
             }
-            
+
             public class GetMethodsInSpecifiedStruct
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -426,7 +426,7 @@ namespace dngrep.core.xunit.Queries
                     }
                 }
             ";
-            
+
             public class GetPrivateMethodsInAnyClass
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -500,7 +500,7 @@ namespace dngrep.core.xunit.Queries
                     Assert.Contains("UseCloak", names);
                 }
             }
-            
+
             public class GetPublicMethodsInSpecificClass
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -535,6 +535,174 @@ namespace dngrep.core.xunit.Queries
                     IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
                     Assert.Contains("Walk1", names);
                     Assert.Contains("Jump1", names);
+                }
+            }
+        }
+
+        public static class PublicClassAndInternalClassAndInternalProtectedClass
+        {
+            private const string SourceCode = @"
+                public class Warrior
+                {
+                }
+                
+                internal class PoliceMan
+                {
+                }
+
+                protected internal class Spy
+                {
+                }
+            ";
+
+            public class GetPublicClasses
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetPublicClasses()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Class,
+                        QueryAccessModifier.Public,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Single(this.results);
+                }
+
+                [Fact]
+                public void ShouldGetPublicClassName()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Warrior", names);
+                }
+            }
+
+            public class GetProtectedInternalClasses
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetProtectedInternalClasses()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Class,
+                        QueryAccessModifier.ProtectedInternal,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Single(this.results);
+                }
+
+                [Fact]
+                public void ShouldGetProtectedInternalClassName()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Spy", names);
+                }
+            }
+
+            public class GetProtectedClasses
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetProtectedClasses()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Class,
+                        QueryAccessModifier.Protected,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Single(this.results);
+                }
+
+                [Fact]
+                public void ShouldGetProtectedInternalClassName()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Spy", names);
+                }
+            }
+
+            public class GetInternalClasses
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetInternalClasses()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Class,
+                        QueryAccessModifier.Internal,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Equal(2, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetInternalClassName()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("PoliceMan", names);
+                }
+
+                [Fact]
+                public void ShouldGetProtectedInternalClassName()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Spy", names);
                 }
             }
         }

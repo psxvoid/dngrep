@@ -13,7 +13,7 @@ namespace dngrep.core.Queries
             _ = queryDescriptor ?? throw new ArgumentNullException(nameof(queryDescriptor));
 
             Type target = GetTargetSyntaxNodeType(queryDescriptor.Target);
-            Type scope = GetTargetScopeSyntaxNodeType(queryDescriptor.Scope);
+            Type? scope = GetTargetScopeSyntaxNodeType(queryDescriptor.Scope);
             IReadOnlyCollection<SyntaxKind> modifiers = GetTargetAccessModifiers(queryDescriptor.AccessModifier);
 
             return new SyntaxTreeQuery(
@@ -52,10 +52,11 @@ namespace dngrep.core.Queries
             };
         }
 
-        private static Type GetTargetScopeSyntaxNodeType(QueryTargetScope scope)
+        private static Type? GetTargetScopeSyntaxNodeType(QueryTargetScope scope)
         {
             return scope switch
             {
+                QueryTargetScope.None => (Type?)null,
                 QueryTargetScope.Class => typeof(ClassDeclarationSyntax),
                 QueryTargetScope.Struct => typeof(StructDeclarationSyntax),
                 _ => throw new NotImplementedException("The requested scope isn't registered."),

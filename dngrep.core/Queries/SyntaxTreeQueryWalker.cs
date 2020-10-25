@@ -45,7 +45,8 @@ namespace dngrep.core.Queries
                     && (this.query.ScopeType == null || this.scope != null && node.HasParent(this.scope))
                     // match access modifiers
                     && (this.query.TargetAccessModifiers == null || this.query.TargetAccessModifiers.Count == 0
-                        || node.ChildTokens().Any(x => this.query.TargetAccessModifiers.Contains(x.Kind()))))
+                        || node.ChildTokens().Select(x => x.Kind()).Intersect(this.query.TargetAccessModifiers).Count()
+                            == this.query.TargetAccessModifiers.Count))
                 {
                     this.results.Add(node);
                 }
