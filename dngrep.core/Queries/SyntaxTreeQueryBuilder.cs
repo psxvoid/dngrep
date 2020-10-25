@@ -37,19 +37,19 @@ namespace dngrep.core.Queries
 
         public static IReadOnlyCollection<SyntaxKind> GetTargetAccessModifiers(QueryAccessModifier accessModifier)
         {
-            var modifiers = new List<SyntaxKind>();
-
-            SyntaxKind modifier = accessModifier switch
+            return accessModifier switch
             {
-                QueryAccessModifier.Any => SyntaxKind.None,
-                QueryAccessModifier.Public => SyntaxKind.PublicKeyword,
-                QueryAccessModifier.Private => SyntaxKind.PrivateKeyword,
+                QueryAccessModifier.Any => Array.Empty<SyntaxKind>(),
+                QueryAccessModifier.Public => new[] { SyntaxKind.PublicKeyword },
+                QueryAccessModifier.Private => new[] { SyntaxKind.PrivateKeyword },
+                QueryAccessModifier.Internal => new[] { SyntaxKind.InternalKeyword },
+                QueryAccessModifier.Protected => new[] { SyntaxKind.ProtectedKeyword },
+                QueryAccessModifier.ProtectedInternal =>
+                    new[] { SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword },
+                QueryAccessModifier.PrivateProtected =>
+                    new[] { SyntaxKind.PrivateKeyword, SyntaxKind.ProtectedKeyword },
                 _ => throw new NotImplementedException("The requested access modifier isn't registered."),
             };
-
-            if (modifier != SyntaxKind.None) modifiers.Add(modifier);
-
-            return modifiers;
         }
 
         private static Type GetTargetScopeSyntaxNodeType(QueryTargetScope scope)
