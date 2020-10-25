@@ -29,9 +29,15 @@ namespace dngrep.core.Queries
             return target switch
             {
                 QueryTarget.Class => typeof(ClassDeclarationSyntax),
+                QueryTarget.Enum => typeof(EnumDeclarationSyntax),
+                QueryTarget.Field => typeof(FieldDeclarationSyntax),
+                QueryTarget.Interface => typeof(InterfaceDeclarationSyntax),
                 QueryTarget.Struct => typeof(StructDeclarationSyntax),
                 QueryTarget.Method => typeof(MethodDeclarationSyntax),
-                _ => throw new NotImplementedException("The requested target isn't registered."),
+                QueryTarget.Namespace => typeof(NamespaceDeclarationSyntax),
+                QueryTarget.Property => typeof(PropertyDeclarationSyntax),
+                QueryTarget.Variable => typeof(VariableDeclaratorSyntax),
+                _ => throw new NotImplementedException($"The requested target isn't registered. Kind: {target}"),
             };
         }
 
@@ -48,7 +54,7 @@ namespace dngrep.core.Queries
                     new[] { SyntaxKind.ProtectedKeyword, SyntaxKind.InternalKeyword },
                 QueryAccessModifier.PrivateProtected =>
                     new[] { SyntaxKind.PrivateKeyword, SyntaxKind.ProtectedKeyword },
-                _ => throw new NotImplementedException("The requested access modifier isn't registered."),
+                _ => throw new NotImplementedException($"The requested access modifier isn't registered. Kind: {accessModifier}"),
             };
         }
 
@@ -59,7 +65,7 @@ namespace dngrep.core.Queries
                 QueryTargetScope.None => (Type?)null,
                 QueryTargetScope.Class => typeof(ClassDeclarationSyntax),
                 QueryTargetScope.Struct => typeof(StructDeclarationSyntax),
-                _ => throw new NotImplementedException("The requested scope isn't registered."),
+                _ => throw new NotImplementedException($"The requested scope isn't registered. Kind: {scope}"),
             };
         }
     }
