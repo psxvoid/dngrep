@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace dngrep.core.Queries
 {
@@ -28,11 +29,8 @@ namespace dngrep.core.Queries
 
             if (this.query.ScopeType != null && nodeType == this.query.ScopeType)
             {
-                if (string.IsNullOrWhiteSpace(this.query.TargetScopeName))
-                {
-                    this.scope = node;
-                }
-                else if (node.GetIdentifierName().Contains(this.query.TargetScopeName))
+                if (string.IsNullOrWhiteSpace(this.query.TargetScopeName)
+                 || node.GetIdentifierName().Contains(this.query.TargetScopeName))
                 {
                     this.scope = node;
                 }
@@ -40,14 +38,14 @@ namespace dngrep.core.Queries
 
             if (this.query.TargetType == nodeType)
             {
-                if (this.query.ScopeType != null
-                    && this.scope != null
-                    && (string.IsNullOrWhiteSpace(this.query.TargetName) || node.GetIdentifierName().Contains(this.query.TargetName))
-                    && node.HasParent(this.scope))
-                {
-                    this.results.Add(node);
-                }
-                else if (this.query.ScopeType == null)
+                if (
+                    // match target name
+                    (string.IsNullOrWhiteSpace(this.query.TargetName) || node.GetIdentifierName().Contains(this.query.TargetName))
+                    // match scope type
+                    && (this.query.ScopeType == null || this.scope != null && node.HasParent(this.scope))
+                    // match access modifiers
+                    && (this.query.TargetAccessModifiers == null || this.query.TargetAccessModifiers.Count == 0
+                        || node.ChildTokens().Any(x => this.query.TargetAccessModifiers.Contains(x.Kind()))))
                 {
                     this.results.Add(node);
                 }

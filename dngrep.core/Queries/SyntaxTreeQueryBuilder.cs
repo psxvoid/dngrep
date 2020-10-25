@@ -1,6 +1,8 @@
 ﻿using dngrep.core.Queries.Specifiers;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
+using System.Collections.Generic;
 
 namespace dngrep.core.Queries
 {
@@ -12,9 +14,11 @@ namespace dngrep.core.Queries
 
             Type target = GetTargetSyntaxNodeType(queryDescriptor.Target);
             Type scope = GetTargetScopeSyntaxNodeType(queryDescriptor.Scope);
+            IReadOnlyCollection<SyntaxKind> modifiers = GetTargetAccessModifiers(queryDescriptor.AccessModifier);
 
             return new SyntaxTreeQuery(
                 target,
+                modifiers,
                 scope,
                 queryDescriptor.QueryTargetName,
                 queryDescriptor.QueryTargetScopeName);
@@ -29,6 +33,23 @@ namespace dngrep.core.Queries
                 QueryTarget.Method => typeof(MethodDeclarationSyntax),
                 _ => throw new NotImplementedException("The requested target isn't registered."),
             };
+        }
+
+        public static IReadOnlyCollection<SyntaxKind> GetTargetAccessModifiers(QueryAccessModifier accessModifier)
+        {
+            var modifiers = new List<SyntaxKind>();
+
+            SyntaxKind modifier = accessModifier switch
+            {
+                QueryAccessModifier.Any => SyntaxKind.None,
+                QueryAccessModifier.Public => SyntaxKind.PublicKeyword,
+                QueryAccessModifier.Private => SyntaxKind.PrivateKeyword,
+                _ => throw new NotImplementedException("The requested access modifier isn't registered."),
+            };
+
+            if (modifier != SyntaxKind.None) modifiers.Add(modifier);
+
+            return modifiers;
         }
 
         private static Type GetTargetScopeSyntaxNodeType(QueryTargetScope scope)

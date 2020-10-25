@@ -396,5 +396,147 @@ namespace dngrep.core.xunit.Queries
                 }
             }
         }
+
+        public static class AmbigiusMethodsInClassesPublicAndPrivate
+        {
+            private const string SourceCode = @"
+                public class Harry
+                {
+                    public void Walk1()
+                    {
+                    }
+
+                    public void Jump1()
+                    {
+                    }
+
+                    private void UseCloak()
+                    {
+                    }
+                }
+
+                public class Sam
+                {
+                    private void Walk2()
+                    {
+                    }
+
+                    private void Jump2()
+                    {
+                    }
+                }
+            ";
+            
+            public class GetPrivateMethodsInAnyClass
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetPrivateMethodsInAnyClass()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Private,
+                        QueryTargetScope.Class,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetThreeMatches()
+                {
+                    Assert.Equal(3, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetPrivateMethodsFromClasses()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("UseCloak", names);
+                    Assert.Contains("Walk2", names);
+                    Assert.Contains("Jump2", names);
+                }
+            }
+
+            public class GetPrivateMethodsInSpecificClass
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetPrivateMethodsInSpecificClass()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Private,
+                        QueryTargetScope.Class,
+                        null,
+                        "Harry"
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Equal(1, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodsFromMatchingClass()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("UseCloak", names);
+                }
+            }
+            
+            public class GetPublicMethodsInSpecificClass
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetPublicMethodsInSpecificClass()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Public,
+                        QueryTargetScope.Class,
+                        null,
+                        "Harry"
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetTwoMatches()
+                {
+                    Assert.Equal(2, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodsFromMatchingClass()
+                {
+                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    Assert.Contains("Walk1", names);
+                    Assert.Contains("Jump1", names);
+                }
+            }
+        }
     }
 }
