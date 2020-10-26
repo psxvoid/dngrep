@@ -6,7 +6,6 @@
         Namespace,
         Interface,
         Class,
-        AbstractClass,
         Struct
     }
 }

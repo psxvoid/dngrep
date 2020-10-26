@@ -254,5 +254,71 @@ namespace dngrep.core.xunit.Queries
                 Assert.Contains(SyntaxKind.ProtectedKeyword, result.TargetAccessModifiers);
             }
         }
+
+        public class ScopeTests
+        {
+            private readonly IFixture fixture;
+
+            public ScopeTests()
+            {
+                this.fixture = AutoFixtureFactory.Default();
+                this.fixture.Inject(QueryTarget.Class);
+                this.fixture.Inject(QueryAccessModifier.Any);
+            }
+
+            [Fact]
+            public void FromDescriptor_NoneScope_Null()
+            {
+                var queryDescriptor = this.DescribeQuery(QueryTargetScope.None);
+
+                Assert.Null(SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+            }
+
+            [Fact]
+            public void FromDescriptor_ClassScope_ClassDeclarationSyntax()
+            {
+                var queryDescriptor = this.DescribeQuery(QueryTargetScope.Class);
+
+                Assert.Equal(
+                    typeof(ClassDeclarationSyntax),
+                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+            }
+
+            [Fact]
+            public void FromDescriptor_StructScope_StructDeclarationSyntax()
+            {
+                var queryDescriptor = this.DescribeQuery(QueryTargetScope.Struct);
+
+                Assert.Equal(
+                    typeof(StructDeclarationSyntax),
+                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+            }
+
+            [Fact]
+            public void FromDescriptor_NamespaceScope_NamespaceDeclarationSyntax()
+            {
+                var queryDescriptor = this.DescribeQuery(QueryTargetScope.Namespace);
+
+                Assert.Equal(
+                    typeof(NamespaceDeclarationSyntax),
+                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+            }
+
+            [Fact]
+            public void FromDescriptor_InterfaceScope_InterfaceDeclarationSyntax()
+            {
+                var queryDescriptor = this.DescribeQuery(QueryTargetScope.Interface);
+
+                Assert.Equal(
+                    typeof(InterfaceDeclarationSyntax),
+                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+            }
+
+            private SyntaxTreeQueryDescriptor DescribeQuery(QueryTargetScope scope)
+            {
+                return this.fixture.Create<SyntaxTreeQueryDescriptor>(
+                    new { targetScope = scope });
+            }
+        }
     }
 }

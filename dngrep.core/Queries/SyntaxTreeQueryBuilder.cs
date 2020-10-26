@@ -59,6 +59,8 @@ namespace dngrep.core.Queries
             QueryTargetScope.None => (Type?)null,
             QueryTargetScope.Class => typeof(ClassDeclarationSyntax),
             QueryTargetScope.Struct => typeof(StructDeclarationSyntax),
+            QueryTargetScope.Namespace => typeof(NamespaceDeclarationSyntax),
+            QueryTargetScope.Interface => typeof(InterfaceDeclarationSyntax),
             _ => throw new NotImplementedException($"The requested scope isn't registered. Kind: {scope}"),
         };
     }
