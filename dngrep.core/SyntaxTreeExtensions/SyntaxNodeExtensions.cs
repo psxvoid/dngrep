@@ -122,6 +122,7 @@ namespace dngrep.core.SyntaxTreeExtensions
                 EventDeclarationSyntax @event => @event.Identifier.ValueText,
                 EnumMemberDeclarationSyntax enumMember => enumMember.Identifier.ValueText,
                 NamespaceDeclarationSyntax @namespace => @namespace.Name.ToString(),
+                EventFieldDeclarationSyntax eventField => eventField.Declaration.Variables[0].Identifier.ValueText,
                 _ => null,
             };
         }

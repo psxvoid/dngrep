@@ -828,6 +828,95 @@ namespace dngrep.core.xunit.Queries
                     Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
                 }
             }
+
+            public class GetAnyTargetPublicModifiers
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetAnyTargetPublicModifiers()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Any,
+                        QueryAccessModifier.Public,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetAllSyntaxNodes()
+                {
+                    Assert.Equal(7, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldNotGetNamespace()
+                {
+                    Assert.DoesNotContain("Zoo", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetClass()
+                {
+                    Assert.Contains("Cat", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetStruct()
+                {
+                    Assert.Contains("Sun", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetEnum()
+                {
+                    Assert.Contains("WeatherState", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetInterface()
+                {
+                    Assert.Contains("IAnimal", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldNotGetField()
+                {
+                    Assert.DoesNotContain("lives", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetProperty()
+                {
+                    Assert.Contains("RemainingLives", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetEvent()
+                {
+                    Assert.Contains("OnWakeUp", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetMethod()
+                {
+                    Assert.Contains("GetPurrText", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldNotGetVariable()
+                {
+                    Assert.DoesNotContain("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+            }
         }
     }
 }
