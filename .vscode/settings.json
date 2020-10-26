@@ -3,5 +3,6 @@
         "Xunit",
         "dngrep"
     ],
-    "omnisharp.enableRoslynAnalyzers": true
+    "omnisharp.enableRoslynAnalyzers": true,
+    "omnisharp.enableEditorConfigSupport": true
 }
