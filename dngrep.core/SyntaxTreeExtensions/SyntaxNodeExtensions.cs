@@ -118,11 +118,15 @@ namespace dngrep.core.SyntaxTreeExtensions
                 BaseTypeDeclarationSyntax baseType => baseType.Identifier.ValueText,
                 MethodDeclarationSyntax method => method.Identifier.ValueText,
                 PropertyDeclarationSyntax property => property.Identifier.ValueText,
-                VariableDeclaratorSyntax variable => variable.Identifier.ValueText,
+                VariableDeclaratorSyntax varDeclarator => varDeclarator.Identifier.ValueText,
+                VariableDeclarationSyntax variable => variable.Variables[0].Identifier.ValueText,
+                LocalDeclarationStatementSyntax localVariable => localVariable
+                    .Declaration.Variables[0].Identifier.ValueText,
                 EventDeclarationSyntax @event => @event.Identifier.ValueText,
                 EnumMemberDeclarationSyntax enumMember => enumMember.Identifier.ValueText,
                 NamespaceDeclarationSyntax @namespace => @namespace.Name.ToString(),
-                EventFieldDeclarationSyntax eventField => eventField.Declaration.Variables[0].Identifier.ValueText,
+                EventFieldDeclarationSyntax eventField => eventField
+                    .Declaration.Variables[0].Identifier.ValueText,
                 _ => null,
             };
         }

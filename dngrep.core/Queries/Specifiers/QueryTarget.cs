@@ -12,6 +12,6 @@
         Property,
         Method,
         MethodArgument,
-        Variable,
+        LocalVariable,
     }
 }

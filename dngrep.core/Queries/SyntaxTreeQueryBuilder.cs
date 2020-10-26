@@ -35,7 +35,7 @@ namespace dngrep.core.Queries
             QueryTarget.Method => typeof(MethodDeclarationSyntax),
             QueryTarget.Namespace => typeof(NamespaceDeclarationSyntax),
             QueryTarget.Property => typeof(PropertyDeclarationSyntax),
-            QueryTarget.Variable => typeof(VariableDeclaratorSyntax),
+            QueryTarget.LocalVariable => typeof(LocalDeclarationStatementSyntax),
             _ => throw new NotImplementedException($"The requested target isn't registered. Kind: {target}"),
         };
 

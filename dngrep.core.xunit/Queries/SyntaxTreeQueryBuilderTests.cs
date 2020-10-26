@@ -82,7 +82,7 @@ namespace dngrep.core.xunit.Queries
                 Assert.Equal(typeof(MethodDeclarationSyntax), result.TargetType);
             }
 
-            [Fact(Skip = "Not implemented")]
+            [Fact]
             public void FromDescriptor_MethodArgument_MethodArgumentDeclaration()
             {
                 SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.Method);
@@ -125,11 +125,11 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_Variable_VariableDeclaration()
             {
-                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.Variable);
+                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.LocalVariable);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(VariableDeclaratorSyntax), result.TargetType);
+                Assert.Equal(typeof(LocalDeclarationStatementSyntax), result.TargetType);
             }
 
             private SyntaxTreeQueryDescriptor DescribeQuery(QueryTarget target)

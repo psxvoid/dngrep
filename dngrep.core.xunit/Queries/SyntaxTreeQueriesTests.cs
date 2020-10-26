@@ -917,6 +917,41 @@ namespace dngrep.core.xunit.Queries
                     Assert.DoesNotContain("catName", this.results.Select(x => x.TryGetIdentifierName()));
                 }
             }
+
+            public class GetVariables
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetVariables()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.LocalVariable,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.None,
+                        null,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetAllSyntaxNodes()
+                {
+                    Assert.Equal(1, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetVariable()
+                {
+                    Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+            }
         }
     }
 }
