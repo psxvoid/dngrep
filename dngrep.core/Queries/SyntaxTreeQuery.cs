@@ -6,7 +6,7 @@ namespace dngrep.core.Queries
 {
     public class SyntaxTreeQuery
     {
-        public Type TargetType { get; }
+        public Type? TargetType { get; }
         public string? TargetName { get; }
         public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
 
@@ -14,7 +14,7 @@ namespace dngrep.core.Queries
         public string? TargetScopeName { get; }
 
         internal SyntaxTreeQuery(
-            Type targetType,
+            Type? targetType,
             IReadOnlyCollection<SyntaxKind> targetAccessModifiers,
             Type? scopeType,
             string? targetName,

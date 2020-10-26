@@ -22,14 +22,14 @@ namespace dngrep.core.xunit.Queries
                 this.fixture.Inject(QueryTargetScope.Class);
             }
 
-            [Fact(Skip = "Not implemented")]
+            [Fact()]
             public void FromDescriptor_Any_AnyDeclaration()
             {
                 SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.Any);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(MethodDeclarationSyntax), result.TargetType);
+                Assert.Null(result.TargetType);
             }
 
             [Fact]
