@@ -36,7 +36,7 @@ namespace dngrep.core.Queries
                 }
             }
 
-            if (this.query.TargetType == nodeType)
+            if (this.query.TargetType == nodeType || this.query.TargetType == null)
             {
                 if (
                     // match target name

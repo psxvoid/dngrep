@@ -93,37 +93,37 @@ namespace dngrep.core.SyntaxTreeExtensions
         /// Thrown when a specified <see cref="SyntaxNode"/> does not have an associated name.
         /// </exception>
         /// <param name="syntaxNode"></param>
-        /// <returns></returns>
+        /// <returns>Returns the identifier name.</returns>
         public static string GetIdentifierName(this SyntaxNode syntaxNode)
         {
             _ = syntaxNode ?? throw new ArgumentNullException(nameof(syntaxNode));
 
-            if (syntaxNode is BaseTypeDeclarationSyntax baseType)
-            {
-                return baseType.Identifier.ValueText;
-            }
-            else if (syntaxNode is MethodDeclarationSyntax method)
-            {
-                return method.Identifier.ValueText;
-            }
-            else if (syntaxNode is PropertyDeclarationSyntax property)
-            {
-                return property.Identifier.ValueText;
-            }
-            else if (syntaxNode is VariableDeclaratorSyntax variable)
-            {
-                return variable.Identifier.ValueText;
-            }
-            else if (syntaxNode is EventDeclarationSyntax @event)
-            {
-                return @event.Identifier.ValueText;
-            }
-            else if (syntaxNode is EnumMemberDeclarationSyntax enumMember)
-            {
-                return enumMember.Identifier.ValueText;
-            }
+            string? identifier = TryGetIdentifierName(syntaxNode);
 
-            throw new InvalidOperationException($"Unable to get identifier node for {syntaxNode.GetType()}");
+            return identifier ?? throw new InvalidOperationException(
+                $"Unable to get identifier node for {syntaxNode.GetType()}");
+        }
+
+        /// <summary>
+        /// Gets  an identifier name from a supported <see cref="SyntaxNode"/>.
+        /// </summary>
+        /// <param name="syntaxNode"></param>
+        /// <returns>Returns the identifier name or <see langword="null"/>.</returns>
+        public static string? TryGetIdentifierName(this SyntaxNode syntaxNode)
+        {
+            _ = syntaxNode ?? throw new ArgumentNullException(nameof(syntaxNode));
+
+            return syntaxNode switch
+            {
+                BaseTypeDeclarationSyntax baseType => baseType.Identifier.ValueText,
+                MethodDeclarationSyntax method => method.Identifier.ValueText,
+                PropertyDeclarationSyntax property => property.Identifier.ValueText,
+                VariableDeclaratorSyntax variable => variable.Identifier.ValueText,
+                EventDeclarationSyntax @event => @event.Identifier.ValueText,
+                EnumMemberDeclarationSyntax enumMember => enumMember.Identifier.ValueText,
+                NamespaceDeclarationSyntax @namespace => @namespace.Name.ToString(),
+                _ => null,
+            };
         }
     }
 }
