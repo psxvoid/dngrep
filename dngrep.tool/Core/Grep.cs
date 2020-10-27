@@ -3,18 +3,29 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using dngrep.core.CompilationExtensions;
+using dngrep.tool.Abstractions;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.MSBuild;
 
 namespace dngrep.tool.Core
 {
-    public static class Grep
+    public class Grep
     {
-        public static async Task FolderAsync(GrepOptions options)
+        private readonly IMSBuildWorkspaceStatic workspaceStatic;
+
+        public Grep(IMSBuildWorkspaceStatic workspaceStatic)
+        {
+            this.workspaceStatic = workspaceStatic;
+        }
+
+        public Grep() : this(new MSBuildWorkspaceStatic())
+        {
+        }
+
+        public async Task FolderAsync(GrepOptions options)
         {
             string? currentDirectory = Directory.GetCurrentDirectory();
 
@@ -23,7 +34,7 @@ namespace dngrep.tool.Core
 
             MSBuildLocator.RegisterDefaults();
 
-            using var workspace = MSBuildWorkspace.Create();
+            using IMSBuildWorkspace? workspace = this.workspaceStatic.Create();
             workspace.LoadMetadataForReferencedProjects = true;
             // workspace.WorkspaceFailed += Workspace_WorkspaceFailed;
 
