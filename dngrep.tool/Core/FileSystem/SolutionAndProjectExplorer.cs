@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace dngrep.tool
+namespace dngrep.tool.Core.FileSystem
 {
     public static class SolutionAndProjectExplorer
     {
