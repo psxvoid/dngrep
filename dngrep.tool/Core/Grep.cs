@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using dngrep.core.CompilationExtensions;
-using dngrep.tool.Abstractions;
+using dngrep.tool.Abstractions.CodeAnalysis;
+using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
+using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
 using Microsoft.Build.Locator;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.tool.Core
 {
@@ -38,7 +38,7 @@ namespace dngrep.tool.Core
             workspace.LoadMetadataForReferencedProjects = true;
             // workspace.WorkspaceFailed += Workspace_WorkspaceFailed;
 
-            IEnumerable<Project> projects;
+            IEnumerable<IProject> projects;
 
             switch (kind)
             {
@@ -47,13 +47,13 @@ namespace dngrep.tool.Core
                     return;
                 case SolutionAndProjectExplorer.PathKind.Solution:
                     {
-                        Solution solution = await workspace.OpenSolutionAsync(path).ConfigureAwait(false);
+                        ISolution solution = await workspace.OpenSolutionAsync(path).ConfigureAwait(false);
                         projects = solution.Projects;
                     }
                     break;
                 case SolutionAndProjectExplorer.PathKind.Project:
                     {
-                        Project project = await workspace.OpenProjectAsync(path).ConfigureAwait(false);
+                        IProject project = await workspace.OpenProjectAsync(path).ConfigureAwait(false);
                         projects = new[] { project };
                     }
                     break;
@@ -65,11 +65,13 @@ namespace dngrep.tool.Core
 
             foreach (var proj in projects)
             {
-                Compilation? compilation = await proj.GetCompilationAsync().ConfigureAwait(false);
+                ICompilation? compilation = await proj.GetCompilationAsync().ConfigureAwait(false);
 
-                if (compilation != null && compilation is CSharpCompilation cSharpCompilation)
+                if (compilation != null && compilation is ICSharpCompilation cSharpCompilation)
                 {
-                    IReadOnlyCollection<string>? projectMethods = cSharpCompilation.GetMethodNames();
+                    IReadOnlyCollection<string>? projectMethods = cSharpCompilation
+                        .MSCSharpCompilation
+                        .GetMethodNames();
 
                     methodNames.AddRange(projectMethods);
                 }
