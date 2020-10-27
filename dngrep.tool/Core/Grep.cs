@@ -6,6 +6,7 @@ using dngrep.core.CompilationExtensions;
 using dngrep.tool.Abstractions.CodeAnalysis;
 using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
+using dngrep.tool.Core.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
 using Microsoft.Build.Locator;
@@ -38,28 +39,9 @@ namespace dngrep.tool.Core
             workspace.LoadMetadataForReferencedProjects = true;
             // workspace.WorkspaceFailed += Workspace_WorkspaceFailed;
 
-            IEnumerable<IProject> projects;
 
-            switch (kind)
-            {
-                case SolutionAndProjectExplorer.PathKind.None:
-                    Console.WriteLine("No solution or project is found in the current directory");
-                    return;
-                case SolutionAndProjectExplorer.PathKind.Solution:
-                    {
-                        ISolution solution = await workspace.OpenSolutionAsync(path).ConfigureAwait(false);
-                        projects = solution.Projects;
-                    }
-                    break;
-                case SolutionAndProjectExplorer.PathKind.Project:
-                    {
-                        IProject project = await workspace.OpenProjectAsync(path).ConfigureAwait(false);
-                        projects = new[] { project };
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException("Unsupported path target.");
-            }
+            IEnumerable<IProject> projects = await workspace.GetProjectsAsync(kind, path)
+                .ConfigureAwait(false);
 
             var methodNames = new List<string>();
 
