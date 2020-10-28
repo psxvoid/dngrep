@@ -69,6 +69,5 @@ namespace dngrep.tool.Abstractions.CodeAnalysis.MSBuild
     {
         public IMSBuildWorkspace Create() =>
             new MSBuildWorkspaceDecorator(MSBuildWorkspace.Create());
-
     }
 }
