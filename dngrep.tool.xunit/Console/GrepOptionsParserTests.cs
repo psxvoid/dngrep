@@ -10,7 +10,7 @@ namespace dngrep.tool.xunit.Console
     public static class GrepOptionsParserTests
     {
         private static readonly Parser Parser = AbstractParser.Default();
-        
+
         public class TargetTests
         {
             [Fact]
@@ -30,7 +30,7 @@ namespace dngrep.tool.xunit.Console
 
                 Assert.Equal(QueryTarget.Class, result.Value.Target);
             }
-            
+
             [Fact]
             public void ParseArguments_FullNameAndClass_ShouldParseAsClass()
             {
@@ -38,6 +38,36 @@ namespace dngrep.tool.xunit.Console
                     Parser.ParseArguments<GrepOptions>(new[] { "--target", "class" });
 
                 Assert.Equal(QueryTarget.Class, result.Value.Target);
+            }
+        }
+
+        public class ScopeTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsNone()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Equal(QueryTargetScope.None, result.Value.Scope);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndNamespace_ShouldParseAsNamespace()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-s", "namespace" });
+
+                Assert.Equal(QueryTargetScope.Namespace, result.Value.Scope);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndNamespace_ShouldParseAsNamespace()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--scope", "namespace" });
+
+                Assert.Equal(QueryTargetScope.Namespace, result.Value.Scope);
             }
         }
     }
