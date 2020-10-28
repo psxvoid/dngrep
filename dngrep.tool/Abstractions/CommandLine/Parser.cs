@@ -15,6 +15,13 @@ namespace dngrep.tool.Abstractions.CommandLine
     {
         private readonly CLParser parser;
 
+        public static CLParser Default() => new CLParser(with =>
+        {
+            with.HelpWriter = System.Console.Error;
+            with.CaseSensitive = false;
+            with.CaseInsensitiveEnumValues = true;
+        });
+
         public Parser(CLParser parser)
         {
             this.parser = parser;

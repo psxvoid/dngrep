@@ -1,5 +1,5 @@
-﻿using CommandLine;
-using dngrep.core.Queries;
+﻿using dngrep.core.Queries;
+using dngrep.tool.Abstractions.CommandLine;
 using dngrep.tool.Console;
 using Lamar;
 using Microsoft.Extensions.DependencyInjection;
@@ -20,7 +20,7 @@ namespace dngrep.tool
                     o.AssemblyContainingType<SyntaxTreeQuery>();
                 });
 
-                x.AddSingleton(Parser.Default);
+                x.AddSingleton(Parser.Default());
             });
 
             var pipeline = container.GetInstance<GrepCommandLinePipeline>();
