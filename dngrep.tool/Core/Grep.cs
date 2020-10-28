@@ -13,7 +13,12 @@ using Microsoft.Build.Locator;
 
 namespace dngrep.tool.Core
 {
-    public class Grep
+    public interface IProjectGrep
+    {
+        Task FolderAsync(GrepOptions options);
+    }
+
+    public class Grep : IProjectGrep
     {
         private readonly IMSBuildWorkspaceStatic workspaceStatic;
 
@@ -65,7 +70,7 @@ namespace dngrep.tool.Core
 
             foreach (var methodName in methodNames)
             {
-                Console.WriteLine(methodName);
+                System.Console.WriteLine(methodName);
             }
         }
     }

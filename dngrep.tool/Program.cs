@@ -1,6 +1,8 @@
 ﻿using CommandLine;
-using dngrep.tool.Core;
-using dngrep.tool.Core.Options;
+using dngrep.core.Queries;
+using dngrep.tool.Console;
+using Lamar;
+using Microsoft.Extensions.DependencyInjection;
 using System.Threading.Tasks;
 
 namespace dngrep.tool
@@ -10,8 +12,20 @@ namespace dngrep.tool
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Should be fixed during further development.")]
         static async Task Main(string[] args)
         {
-            await Parser.Default.ParseArguments<GrepOptions>(args)
-                   .WithParsedAsync(new Grep().FolderAsync).ConfigureAwait(false);
+            using var container = new Container(x =>
+            {
+                x.Scan(o =>
+                {
+                    o.TheCallingAssembly();
+                    o.AssemblyContainingType<SyntaxTreeQuery>();
+                });
+
+                x.AddSingleton(Parser.Default);
+            });
+
+            var pipeline = container.GetInstance<GrepCommandLinePipeline>();
+
+            await pipeline.ParseArgsAndRun(args).ConfigureAwait(false);
         }
     }
 }
