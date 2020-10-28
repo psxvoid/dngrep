@@ -14,6 +14,13 @@ namespace dngrep.tool.Core.Options
         public QueryTarget? Target { get; set; }
 
         [Option(
+            'c',
+            "contains",
+            Required = false,
+            HelpText = "A part of the target name (e.g. Foo) to filter for.")]
+        public string? TargetName { get; set; }
+
+        [Option(
             's',
             "scope",
             Default = QueryTargetScope.None,
