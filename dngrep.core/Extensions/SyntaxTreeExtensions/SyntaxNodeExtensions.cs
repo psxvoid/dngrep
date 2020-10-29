@@ -3,6 +3,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace dngrep.core.Extensions.SyntaxTreeExtensions
 {
@@ -68,15 +69,15 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         /// <typeparam name="T"></typeparam>
         /// <param name="nodes"></param>
         /// <returns></returns>
-        public static IEnumerable<SyntaxNode> GetNodesOfTypeRecursively<T>(this IEnumerable<SyntaxNode> nodes)
+        public static IEnumerable<T> GetNodesOfTypeRecursively<T>(this IEnumerable<SyntaxNode> nodes)
             where T : SyntaxNode
         {
             if (nodes == null || !nodes.Any())
             {
-                return Enumerable.Empty<SyntaxNode>();
+                return Enumerable.Empty<T>();
             }
 
-            var flatNodes = new List<SyntaxNode>(nodes.OfType<T>());
+            var flatNodes = new List<T>(nodes.OfType<T>());
 
             foreach (var node in nodes)
             {
@@ -129,6 +130,80 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
                     .Declaration.Variables[0].Identifier.ValueText,
                 _ => null,
             };
+        }
+
+        /// <summary>
+        /// Gets a syntax node full name, including containing
+        /// method, class, namespace, etc.
+        /// </summary>
+        /// <param name="target">
+        /// The target node for which the full name should be retrieved.
+        /// </param>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the target node does not have a name.
+        /// For example, <see cref="BlockSyntax"/> does not have a name.
+        /// </exception>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the target node is set to <see cref="null"/>.
+        /// </exception>
+        /// <returns>
+        /// The full name of the syntax node. For example,
+        /// for a method it could be MyNamespace.MyClass.MyMethod
+        /// instead of just MyMethod.
+        /// </returns>
+        public static string GetFullName(this SyntaxNode? target)
+        {
+            _ = target ?? throw new ArgumentNullException(nameof(target));
+
+            return target.TryGetFullName()
+                ?? throw new InvalidOperationException("The source node does not have a name.");
+        }
+
+        /// <summary>
+        /// Tries to get a syntax node full name, including containing
+        /// method, class, namespace, etc.
+        /// </summary>
+        /// <param name="target">
+        /// The target node for which the full name should be retrieved.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the target node is set to <see langword="null"/>.
+        /// </exception>
+        /// <returns>
+        /// The full name of the syntax node or <see langword="null"/>
+        /// if the node does not have a name.
+        /// For example, for a method it could be MyNamespace.MyClass.MyMethod
+        /// instead of just MyMethod.
+        /// </returns>
+        public static string? TryGetFullName(this SyntaxNode? target)
+        {
+            _ = target ?? throw new ArgumentNullException(nameof(target));
+
+            var sb = new StringBuilder();
+            bool isFirstOccurence = true;
+
+            while (target != null && target.GetType() != typeof(CompilationUnitSyntax))
+            {
+                string? targetName = target.TryGetIdentifierName();
+
+                if (targetName != null)
+                {
+                    if (!isFirstOccurence)
+                    {
+                        sb.Insert(0, '.');
+                    }
+                    sb.Insert(0, targetName);
+                    isFirstOccurence = false;
+                }
+                else if (isFirstOccurence)
+                {
+                    return null;
+                }
+
+                target = target.Parent;
+            }
+
+            return sb.ToString();
         }
     }
 }
