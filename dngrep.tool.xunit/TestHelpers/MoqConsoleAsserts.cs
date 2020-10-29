@@ -13,6 +13,13 @@ namespace dngrep.tool.xunit.TestHelpers
             mock.Verify(x => x.Write(It.Is<string>(it => it == text)), times);
         }
 
+        public static void VerifyWriteAny(this Mock<IConsole> mock, Times times)
+        {
+            _ = mock ?? throw new ArgumentNullException(nameof(mock));
+
+            mock.Verify(x => x.Write(It.IsAny<string>()), times);
+        }
+
         public static void VerifyWriteLine(this Mock<IConsole> mock, string? text, Times times)
         {
             _ = mock ?? throw new ArgumentNullException(nameof(mock));

@@ -17,6 +17,9 @@ namespace dngrep.tool.Core.Output.Presenters
     {
         private readonly IConsole console;
 
+        private const string PositionSeparator = ":";
+        private const string FileAndPositionPrefix = "at ";
+
         public ConsoleSyntaxNodePresenter(IConsole console)
         {
             this.console = console;
@@ -37,20 +40,27 @@ namespace dngrep.tool.Core.Output.Presenters
 
                 this.console.WriteLine(name);
 
-                if (options.ShowFilePath ?? false)
+                bool isPathShown = options.ShowFilePath ?? false;
+                bool isPositionShown = options.ShowPosition ?? false;
+
+                if (isPathShown)
                 {
                     string? path = node.GetLocation()?.SourceTree?.FilePath;
 
                     if (!string.IsNullOrWhiteSpace(path))
                     {
-                        this.console.WriteLine($"\t{path}");
+                        string newLine = isPositionShown ? string.Empty : Environment.NewLine;
+                        this.console.Write($"\t{FileAndPositionPrefix}{path}{newLine}");
                     }
                 }
 
                 if (options.ShowPosition ?? false)
                 {
                     LinePosition position = node.GetLocation().GetLineSpan().StartLinePosition;
-                    this.console.WriteLine($"\tLn: {position.Line}, Ch: {position.Character}");
+                    string separator = isPathShown ? PositionSeparator : FileAndPositionPrefix;
+                    string tabulator = isPathShown ? string.Empty : "\t";
+                    this.console.WriteLine(
+                        $"{tabulator}{separator}line {position.Line}, char {position.Character}");
                 }
             }
         }

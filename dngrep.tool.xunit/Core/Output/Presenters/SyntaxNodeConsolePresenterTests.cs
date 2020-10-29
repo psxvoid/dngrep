@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using AutoFixture;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.tool.Abstractions.System;
@@ -78,8 +79,9 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 this.sut.ProduceOutput(this.nodes, options);
 
                 this.consoleMock.VerifyWriteLine("Spin", Times.Once());
-                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+                this.consoleMock.VerifyWrite($"\tat x:/code.cs{Environment.NewLine}", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Once());
+                this.consoleMock.VerifyWriteAny(Times.Once());
             }
 
             [Fact]
@@ -93,7 +95,7 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 this.sut.ProduceOutput(this.nodes, options);
 
                 this.consoleMock.VerifyWriteLine("Spin", Times.Once());
-                this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
+                this.consoleMock.VerifyWriteLine($"\tat line {5}, char {24}", Times.Once());
                 this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
             }
 
@@ -109,8 +111,9 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 this.sut.ProduceOutput(this.nodes, options);
 
                 this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
-                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+                this.consoleMock.VerifyWrite($"\tat x:/code.cs{Environment.NewLine}", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Once());
+                this.consoleMock.VerifyWriteAny(Times.Once());
             }
 
             [Fact]
@@ -126,9 +129,10 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 this.sut.ProduceOutput(this.nodes, options);
 
                 this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
-                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-                this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
-                this.consoleMock.VerifyWriteLineAny(Times.Exactly(3));
+                this.consoleMock.VerifyWrite("\tat x:/code.cs", Times.Once());
+                this.consoleMock.VerifyWriteLine(":line 5, char 24", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+                this.consoleMock.VerifyWriteAny(Times.Once());
             }
 
             [Fact]
