@@ -1,4 +1,4 @@
-﻿using dngrep.core.SyntaxTreeExtensions;
+﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System;

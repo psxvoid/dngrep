@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dngrep.core.SyntaxTreeExtensions
+namespace dngrep.core.Extensions.SyntaxTreeExtensions
 {
     public static class SyntaxNodeExtensions
     {
@@ -55,7 +55,7 @@ namespace dngrep.core.SyntaxTreeExtensions
 
             foreach (var node in nodes)
             {
-                flatNodes.AddRange(GetChildNodesRecursively(node.ChildNodes()));
+                flatNodes.AddRange(node.ChildNodes().GetChildNodesRecursively());
             }
 
             return flatNodes;
@@ -98,7 +98,7 @@ namespace dngrep.core.SyntaxTreeExtensions
         {
             _ = syntaxNode ?? throw new ArgumentNullException(nameof(syntaxNode));
 
-            string? identifier = TryGetIdentifierName(syntaxNode);
+            string? identifier = syntaxNode.TryGetIdentifierName();
 
             return identifier ?? throw new InvalidOperationException(
                 $"Unable to get identifier node for {syntaxNode.GetType()}");

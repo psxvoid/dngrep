@@ -1,6 +1,6 @@
-﻿using dngrep.core.Queries;
+﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
+using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
-using dngrep.core.SyntaxTreeExtensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;

@@ -5,7 +5,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace dngrep.core.CompilationExtensions
+namespace dngrep.core.Extensions.CompilationExtensions
 {
     public static class ClassExtensions
     {

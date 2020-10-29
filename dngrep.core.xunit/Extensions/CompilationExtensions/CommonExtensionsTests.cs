@@ -1,9 +1,9 @@
-﻿using dngrep.core.CompilationExtensions;
+﻿using dngrep.core.Extensions.CompilationExtensions;
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Generic;
 using Xunit;
 
-namespace dngrep.core.xunit.CompilationExtensions
+namespace dngrep.core.xunit.Extensions.CompilationExtensions
 {
     public static class CommonExtensionsTests
     {

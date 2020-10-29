@@ -1,4 +1,4 @@
-﻿using dngrep.core.SyntaxTreeExtensions;
+﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace dngrep.core.CompilationExtensions
+namespace dngrep.core.Extensions.CompilationExtensions
 {
     public static class MethodExtensions
     {

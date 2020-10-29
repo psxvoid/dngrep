@@ -1,9 +1,9 @@
-using System.Collections.Generic;
-using dngrep.core.CompilationExtensions;
+﻿using System.Collections.Generic;
+using dngrep.core.Extensions.CompilationExtensions;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 
-namespace dngrep.core.xunit
+namespace dngrep.core.xunit.Extensions.CompilationExtensions
 {
     public static class ClassExtensionsTests
     {
@@ -31,7 +31,7 @@ namespace dngrep.core.xunit
                 this.compilation = TestCompiler.Compile(SourceCode);
                 this.names = this.compilation.GetClassNames();
             }
-            
+
             [Fact]
             public void GetClassNames_ShouldGetPublicAndPrivateClasses()
             {
@@ -71,7 +71,7 @@ namespace dngrep.core.xunit
                 this.compilation = TestCompiler.Compile(SourceCode);
                 this.names = this.compilation.GetClassNames();
             }
-            
+
             [Fact]
             public void GetClassNames_ShouldNotGetInterface()
             {
@@ -85,7 +85,7 @@ namespace dngrep.core.xunit
                 Assert.Contains("Dog", this.names);
             }
         }
-        
+
         public class ThreeClassesOneAbstractTests
         {
             private const string SourceCode = @"
@@ -110,7 +110,7 @@ namespace dngrep.core.xunit
                 this.compilation = TestCompiler.Compile(SourceCode);
                 this.names = this.compilation.GetClassNames();
             }
-            
+
             [Fact]
             public void GetClassNames_ShouldIncludeAbstractClasses()
             {

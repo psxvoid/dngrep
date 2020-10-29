@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
-using dngrep.core.SyntaxTreeExtensions;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.tool.Abstractions.CodeAnalysis;
 using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
