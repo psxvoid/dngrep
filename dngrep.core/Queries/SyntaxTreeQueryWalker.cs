@@ -40,7 +40,10 @@ namespace dngrep.core.Queries
             {
                 if (
                     // match target name
-                    (string.IsNullOrWhiteSpace(this.query.TargetName) || node.GetIdentifierName().Contains(this.query.TargetName))
+                    (this.query.TargetNameContains == null
+                        || !this.query.TargetNameContains.Any()
+                        || this.query.TargetNameContains.Any(
+                            x => node.GetIdentifierName().Contains(x)))
                     // match scope type
                     && (this.query.ScopeType == null || this.scope != null && node.HasParent(this.scope))
                     // match access modifiers

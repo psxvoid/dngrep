@@ -1,4 +1,5 @@
-﻿using CommandLine;
+﻿using System.Collections.Generic;
+using CommandLine;
 using dngrep.core.Queries.Specifiers;
 
 namespace dngrep.tool.Core.Options
@@ -17,8 +18,9 @@ namespace dngrep.tool.Core.Options
             'c',
             "contains",
             Required = false,
-            HelpText = "A part of the target name (e.g. Foo) to filter for.")]
-        public string? TargetName { get; set; }
+            HelpText = "A part of the target name (e.g. Foo) to filter for. "
+                + "Supports multiple space-separated values.")]
+        public IEnumerable<string>? TargetName { get; set; }
 
         [Option(
             's',

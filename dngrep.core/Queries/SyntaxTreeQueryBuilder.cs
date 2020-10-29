@@ -20,7 +20,7 @@ namespace dngrep.core.Queries
                 target,
                 modifiers,
                 scope,
-                queryDescriptor.QueryTargetName,
+                queryDescriptor.TargetNameContains,
                 queryDescriptor.QueryTargetScopeName);
         }
 

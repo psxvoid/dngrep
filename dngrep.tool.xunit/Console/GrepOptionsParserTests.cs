@@ -44,30 +44,48 @@ namespace dngrep.tool.xunit.Console
         public class TargetNameTests
         {
             [Fact]
-            public void ParseArguments_Empty_ShouldParseAsNull()
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
 
-                Assert.Null(result.Value.TargetName);
+                Assert.Empty(result.Value.TargetName);
             }
 
             [Fact]
-            public void ParseArguments_ShortNameAndFoo_ShouldParseAsClass()
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "-c", "Foo" });
 
-                Assert.Equal("Foo", result.Value.TargetName);
+                Assert.Equal(new[] { "Foo" }, result.Value.TargetName);
             }
 
             [Fact]
-            public void ParseArguments_FullNameAndFoo_ShouldParseAsClass()
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-c", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.TargetName);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--contains", "Foo" });
 
-                Assert.Equal("Foo", result.Value.TargetName);
+                Assert.Equal(new[] { "Foo" }, result.Value.TargetName);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--contains", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.TargetName);
             }
         }
 

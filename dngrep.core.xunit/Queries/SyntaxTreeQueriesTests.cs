@@ -51,7 +51,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
-                        "Read",
+                        new[] { "Read" },
                         "LordOfTheRingsBook"
                         );
 
@@ -337,7 +337,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
-                        "Read",
+                        new[] { "Read" },
                         "LordOfTheRingsBook"
                         );
 
@@ -372,7 +372,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Struct,
-                        "Read",
+                        new[] { "Read" },
                         "HarryPotterBook"
                         );
 

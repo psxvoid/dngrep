@@ -7,7 +7,7 @@ namespace dngrep.core.Queries
     public class SyntaxTreeQuery
     {
         public Type? TargetType { get; }
-        public string? TargetName { get; }
+        public IEnumerable<string>? TargetNameContains { get; }
         public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
 
         public Type? ScopeType { get; }
@@ -17,11 +17,11 @@ namespace dngrep.core.Queries
             Type? targetType,
             IReadOnlyCollection<SyntaxKind> targetAccessModifiers,
             Type? scopeType,
-            string? targetName,
+            IEnumerable<string>? targetNameContains,
             string? targetScopeName)
         {
             this.TargetType = targetType;
-            this.TargetName = targetName;
+            this.TargetNameContains = targetNameContains;
             this.TargetAccessModifiers = targetAccessModifiers;
             this.ScopeType = scopeType;
             this.TargetScopeName = targetScopeName;
