@@ -177,7 +177,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         /// For example, for a method it could be MyNamespace.MyClass.MyMethod
         /// instead of just MyMethod.
         /// </returns>
-        public static string? TryGetFullName(this SyntaxNode? target)
+        public static string? TryGetFullName(this SyntaxNode? target, bool ignoreNamespaces = false)
         {
             _ = target ?? throw new ArgumentNullException(nameof(target));
 
@@ -190,10 +190,19 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
                 if (targetName != null)
                 {
+                    if (!isFirstOccurence
+                        && ignoreNamespaces
+                        && target.GetType() == typeof(NamespaceDeclarationSyntax))
+                    {
+                        target = target.Parent;
+                        continue;
+                    }
+
                     if (!isFirstOccurence)
                     {
                         sb.Insert(0, '.');
                     }
+
                     sb.Insert(0, targetName);
                     isFirstOccurence = false;
                 }

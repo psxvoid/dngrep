@@ -130,6 +130,21 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
                 this.consoleMock.VerifyWriteLineAny(Times.Exactly(3));
             }
+
+            [Fact]
+            public void ProduceOutput_FullNameAndHideNamespaces_NoNamespaces()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFullName, true)
+                    .With(x => x.HideNamespaces, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("Earth.Spin", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(1));
+            }
         }
 
         /// <summary>

@@ -166,5 +166,44 @@ namespace dngrep.tool.xunit.Console
                 Assert.Equal(true, result.Value.ShowFullName);
             }
         }
+
+        public class HideNamespacesTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Equal(false, result.Value.HideNamespaces);
+            }
+
+            [Fact(Skip = "https://github.com/commandlineparser/commandline/issues/316")]
+            public void ParseArguments_FullNameFlagOnly_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--hide-namespaces" });
+
+                Assert.Equal(true, result.Value.HideNamespaces);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameTrue_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--hide-namespaces", "true" });
+
+                Assert.Equal(true, result.Value.HideNamespaces);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameFalse_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--hide-namespaces", "false" });
+
+                Assert.Equal(false, result.Value.HideNamespaces);
+            }
+        }
     }
 }

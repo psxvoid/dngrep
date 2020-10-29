@@ -29,8 +29,9 @@ namespace dngrep.tool.Core.Output.Presenters
 
             foreach (var node in nodes)
             {
-                string? name = options.ShowFullName ?? false ?
-                    node.TryGetFullName() : node.TryGetIdentifierName();
+                string? name = options.ShowFullName ?? false
+                    ? node.TryGetFullName(options.HideNamespaces ?? false)
+                    : node.TryGetIdentifierName();
 
                 if (name == null) continue;
 

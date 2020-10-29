@@ -54,5 +54,13 @@ namespace dngrep.tool.Core.Options
             HelpText = "When set to true, then output will contain a line and, "
             + "the character location of the target. (default=true).")]
         public bool? ShowPosition { get; set; }
+        
+        [Option(
+            "hide-namespaces",
+            Default = false,
+            Required = false,
+            HelpText = "When set to true, then namespaces will be omitted when show-full-name "
+            + "is used, ignored else (default=false).")]
+        public bool? HideNamespaces { get; set; }
     }
 }
