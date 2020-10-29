@@ -72,7 +72,7 @@ namespace dngrep.tool.Core
                         var walker = new SyntaxTreeQueryWalker(query);
                         walker.Visit(tree.GetRoot());
                         methodNames.AddRange(walker.Results
-                            .Select(x => x.TryGetIdentifierName() ?? string.Empty)
+                            .Select(x => x.TryGetFullName() ?? string.Empty)
                             .Where(x => !string.IsNullOrWhiteSpace(x)));
                     }
                 }
