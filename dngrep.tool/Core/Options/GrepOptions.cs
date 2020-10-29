@@ -27,5 +27,32 @@ namespace dngrep.tool.Core.Options
             Required = false,
             HelpText = "The type, containing the target (e.g. namespace, class, etc)")]
         public QueryTargetScope? Scope { get; set; }
+
+        [Option(
+            'f',
+            "show-full-name",
+            Default = true,
+            Required = false,
+            HelpText = "When set to true, then output will contain full target name, "
+            + "including namespace, etc (default=true).")]
+        public bool? ShowFullName { get; set; }
+
+        [Option(
+            'p',
+            "show-file-path",
+            Default = true,
+            Required = false,
+            HelpText = "When set to true, then output will contain a file name, "
+            + "containing the target. (default=true).")]
+        public bool? ShowFilePath { get; set; }
+        
+        [Option(
+            'l',
+            "show-location",
+            Default = true,
+            Required = false,
+            HelpText = "When set to true, then output will contain a line and, "
+            + "the character location of the target. (default=true).")]
+        public bool? ShowPosition { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using SystemConsole = System.Console;
 using CLParser = CommandLine.Parser;
 
 namespace dngrep.tool.Abstractions.CommandLine
@@ -17,7 +18,7 @@ namespace dngrep.tool.Abstractions.CommandLine
 
         public static CLParser Default() => new CLParser(with =>
         {
-            with.HelpWriter = System.Console.Error;
+            with.HelpWriter = SystemConsole.Error;
             with.CaseSensitive = false;
             with.CaseInsensitiveEnumValues = true;
         });

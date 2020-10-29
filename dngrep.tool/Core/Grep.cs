@@ -14,6 +14,7 @@ using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
+using dngrep.tool.Core.Output.Presenters;
 
 namespace dngrep.tool.Core
 {
@@ -25,12 +26,15 @@ namespace dngrep.tool.Core
     public class Grep : IProjectGrep
     {
         private readonly IMSBuildWorkspaceStatic workspaceStatic;
+        private readonly ISyntaxNodePresenter presenter;
 
         public Grep(
-            IMSBuildWorkspaceStatic workspaceStatic
+            IMSBuildWorkspaceStatic workspaceStatic,
+            ISyntaxNodePresenter presenter
             )
         {
             this.workspaceStatic = workspaceStatic;
+            this.presenter = presenter;
         }
 
         public async Task FolderAsync(GrepOptions options)
@@ -52,8 +56,6 @@ namespace dngrep.tool.Core
             IEnumerable<IProject> projects = await workspace.GetProjectsAsync(kind, path)
                 .ConfigureAwait(false);
 
-            var methodNames = new List<string>();
-
             foreach (var proj in projects)
             {
                 ICompilation? compilation = await proj.GetCompilationAsync().ConfigureAwait(false);
@@ -71,20 +73,14 @@ namespace dngrep.tool.Core
                         var query = SyntaxTreeQueryBuilder.From(queryDescriptor);
                         var walker = new SyntaxTreeQueryWalker(query);
                         walker.Visit(tree.GetRoot());
-                        methodNames.AddRange(walker.Results
-                            .Select(x => x.TryGetFullName() ?? string.Empty)
-                            .Where(x => !string.IsNullOrWhiteSpace(x)));
+
+                        this.presenter.ProduceOutput(walker.Results, options);
                     }
                 }
                 else
                 {
                     throw new InvalidOperationException("Only C# projects are supported.");
                 }
-            }
-
-            foreach (var methodName in methodNames)
-            {
-                System.Console.WriteLine(methodName);
             }
         }
     }

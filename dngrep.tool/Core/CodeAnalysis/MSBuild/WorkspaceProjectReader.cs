@@ -14,6 +14,7 @@ namespace dngrep.tool.Core.CodeAnalysis.MSBuild
         public static async Task<IEnumerable<IProject>> GetProjectsAsync(this IMSBuildWorkspace workspace, PathKind kind, string path, ILogger? logger = null)
         {
             _ = workspace ?? throw new ArgumentNullException(nameof(workspace));
+
             if (kind != PathKind.None && path == null)
             {
                 throw new ArgumentNullException(nameof(path));
