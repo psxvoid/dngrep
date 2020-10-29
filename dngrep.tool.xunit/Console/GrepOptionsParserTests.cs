@@ -100,5 +100,71 @@ namespace dngrep.tool.xunit.Console
                 Assert.Equal(QueryTargetScope.Namespace, result.Value.Scope);
             }
         }
+
+        public class ShowFullNameTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Equal(true, result.Value.ShowFullName);
+            }
+
+            [Fact(Skip="https://github.com/commandlineparser/commandline/issues/316")]
+            public void ParseArguments_ShortNameFlagOnly_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-f" });
+
+                Assert.Equal(true, result.Value.ShowFullName);
+            }
+            
+            [Fact]
+            public void ParseArguments_ShortNameFalse_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-f", "false" });
+
+                Assert.Equal(false, result.Value.ShowFullName);
+            }
+            
+            [Fact]
+            public void ParseArguments_ShortNameTrue_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-f", "true" });
+
+                Assert.Equal(true, result.Value.ShowFullName);
+            }
+
+            [Fact(Skip="https://github.com/commandlineparser/commandline/issues/316")]
+            public void ParseArguments_FullNameFlagOnly_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--show-full-name" });
+
+                Assert.Equal(true, result.Value.ShowFullName);
+            }
+            
+            [Fact]
+            public void ParseArguments_FullNameFalse_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--show-full-name", "false" });
+
+                Assert.Equal(false, result.Value.ShowFullName);
+            }
+            
+            [Fact]
+            public void ParseArguments_FullNameTrue_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--show-full-name", "true" });
+
+                Assert.Equal(true, result.Value.ShowFullName);
+            }
+        }
     }
 }
