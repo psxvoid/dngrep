@@ -1,8 +1,8 @@
 ﻿using System.Threading.Tasks;
-using MSProject = Microsoft.CodeAnalysis.Project;
+using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using MSCompilation = Microsoft.CodeAnalysis.Compilation;
 using MSCSharpCompilation = Microsoft.CodeAnalysis.CSharp.CSharpCompilation;
-using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
+using MSProject = Microsoft.CodeAnalysis.Project;
 
 namespace dngrep.tool.Abstractions.CodeAnalysis
 {

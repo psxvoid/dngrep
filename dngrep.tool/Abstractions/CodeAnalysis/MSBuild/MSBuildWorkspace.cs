@@ -9,9 +9,13 @@ namespace dngrep.tool.Abstractions.CodeAnalysis.MSBuild
     public interface IMSBuildWorkspace : IDisposable
     {
         bool LoadMetadataForReferencedProjects { get; set; }
+
         Task<ISolution> OpenSolutionAsync(string solutionFilePath, IProgress<ProjectLoadProgress>? progress = null, CancellationToken cancellationToken = default);
+
         Task<ISolution> OpenSolutionAsync(string solutionFilePath, ILogger msbuildLogger, IProgress<ProjectLoadProgress>? progress = null, CancellationToken cancellationToken = default);
+
         Task<IProject> OpenProjectAsync(string projectFilePath, IProgress<ProjectLoadProgress>? progress = null, CancellationToken cancellationToken = default);
+
         Task<IProject> OpenProjectAsync(string projectFilePath, ILogger msbuildLogger, IProgress<ProjectLoadProgress>? progress = null, CancellationToken cancellationToken = default);
     }
 

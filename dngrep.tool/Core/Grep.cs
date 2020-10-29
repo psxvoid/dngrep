@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
-using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.tool.Abstractions.CodeAnalysis;
 using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
+using dngrep.tool.Core.Output.Presenters;
 using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
-using dngrep.tool.Core.Output.Presenters;
 
 namespace dngrep.tool.Core
 {
@@ -52,7 +50,6 @@ namespace dngrep.tool.Core
             workspace.LoadMetadataForReferencedProjects = true;
             // workspace.WorkspaceFailed += Workspace_WorkspaceFailed;
 
-
             IEnumerable<IProject> projects = await workspace.GetProjectsAsync(kind, path)
                 .ConfigureAwait(false);
 
@@ -85,4 +82,3 @@ namespace dngrep.tool.Core
         }
     }
 }
-

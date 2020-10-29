@@ -1,11 +1,11 @@
-﻿using dngrep.core.Queries;
+﻿using System.Threading.Tasks;
+using dngrep.core.Queries;
 using dngrep.tool.Abstractions.CommandLine;
 using dngrep.tool.Console;
 using dngrep.tool.Core;
 using Lamar;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 
 namespace dngrep.tool
 {

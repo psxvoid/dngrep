@@ -1,10 +1,10 @@
-﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
+﻿using System.Collections.Generic;
+using System.Linq;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Generic;
-using System.Linq;
 using Xunit;
 
 namespace dngrep.core.xunit.Queries
@@ -545,7 +545,7 @@ namespace dngrep.core.xunit.Queries
                 public class Warrior
                 {
                 }
-                
+
                 internal class PoliceMan
                 {
                 }

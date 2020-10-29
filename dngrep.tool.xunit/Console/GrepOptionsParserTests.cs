@@ -112,7 +112,7 @@ namespace dngrep.tool.xunit.Console
                 Assert.Equal(true, result.Value.ShowFullName);
             }
 
-            [Fact(Skip="https://github.com/commandlineparser/commandline/issues/316")]
+            [Fact(Skip = "https://github.com/commandlineparser/commandline/issues/316")]
             public void ParseArguments_ShortNameFlagOnly_True()
             {
                 ParserResult<GrepOptions>? result =
@@ -120,7 +120,7 @@ namespace dngrep.tool.xunit.Console
 
                 Assert.Equal(true, result.Value.ShowFullName);
             }
-            
+
             [Fact]
             public void ParseArguments_ShortNameFalse_False()
             {
@@ -129,7 +129,7 @@ namespace dngrep.tool.xunit.Console
 
                 Assert.Equal(false, result.Value.ShowFullName);
             }
-            
+
             [Fact]
             public void ParseArguments_ShortNameTrue_True()
             {
@@ -139,7 +139,7 @@ namespace dngrep.tool.xunit.Console
                 Assert.Equal(true, result.Value.ShowFullName);
             }
 
-            [Fact(Skip="https://github.com/commandlineparser/commandline/issues/316")]
+            [Fact(Skip = "https://github.com/commandlineparser/commandline/issues/316")]
             public void ParseArguments_FullNameFlagOnly_True()
             {
                 ParserResult<GrepOptions>? result =
@@ -147,7 +147,7 @@ namespace dngrep.tool.xunit.Console
 
                 Assert.Equal(true, result.Value.ShowFullName);
             }
-            
+
             [Fact]
             public void ParseArguments_FullNameFalse_False()
             {
@@ -156,7 +156,7 @@ namespace dngrep.tool.xunit.Console
 
                 Assert.Equal(false, result.Value.ShowFullName);
             }
-            
+
             [Fact]
             public void ParseArguments_FullNameTrue_True()
             {

@@ -1,6 +1,6 @@
-﻿using Microsoft.CodeAnalysis.CSharp;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.core.Queries
 {

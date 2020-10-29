@@ -7,6 +7,7 @@ namespace dngrep.tool.Abstractions.System
         void Write(string value);
 
         void WriteLine(string value);
+
         void WriteLine();
     }
 

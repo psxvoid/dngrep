@@ -1,14 +1,14 @@
-﻿using AutoFixture;
+﻿using System.Collections.Generic;
+using AutoFixture;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
+using dngrep.tool.Abstractions.System;
 using dngrep.tool.Core.Options;
 using dngrep.tool.Core.Output.Presenters;
 using dngrep.tool.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using dngrep.core.Extensions.SyntaxTreeExtensions;
-using dngrep.tool.Abstractions.System;
 using Moq;
-using System.Collections.Generic;
 using Xunit;
 
 namespace dngrep.tool.xunit.Core.Output.Presenters

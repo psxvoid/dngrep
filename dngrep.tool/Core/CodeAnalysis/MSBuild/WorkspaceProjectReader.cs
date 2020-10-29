@@ -32,6 +32,7 @@ namespace dngrep.tool.Core.CodeAnalysis.MSBuild
                 case PathKind.None:
                     logger?.LogWarning("No solution or project is found in the current directory");
                     break;
+
                 case PathKind.Solution:
                     {
                         ISolution solution = await workspace.OpenSolutionAsync(path)
@@ -40,6 +41,7 @@ namespace dngrep.tool.Core.CodeAnalysis.MSBuild
                         projects = solution.Projects;
                     }
                     break;
+
                 case PathKind.Project:
                     {
                         IProject project = await workspace.OpenProjectAsync(path)
@@ -48,6 +50,7 @@ namespace dngrep.tool.Core.CodeAnalysis.MSBuild
                         projects = new[] { project };
                     }
                     break;
+
                 default:
                     throw new InvalidOperationException("Unsupported path target.");
             }

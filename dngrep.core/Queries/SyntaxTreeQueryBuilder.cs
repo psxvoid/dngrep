@@ -1,8 +1,8 @@
-﻿using dngrep.core.Queries.Specifiers;
+﻿using System;
+using System.Collections.Generic;
+using dngrep.core.Queries.Specifiers;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using System;
-using System.Collections.Generic;
 
 namespace dngrep.core.Queries
 {

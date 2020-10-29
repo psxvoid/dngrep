@@ -45,7 +45,7 @@ namespace dngrep.tool.Core.Options
             HelpText = "When set to true, then output will contain a file name, "
             + "containing the target. (default=true).")]
         public bool? ShowFilePath { get; set; }
-        
+
         [Option(
             'l',
             "show-location",

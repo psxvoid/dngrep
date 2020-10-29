@@ -1,6 +1,6 @@
-﻿using dngrep.core.Extensions.CompilationExtensions;
+﻿using System.Collections.Generic;
+using dngrep.core.Extensions.CompilationExtensions;
 using Microsoft.CodeAnalysis.CSharp;
-using System.Collections.Generic;
 using Xunit;
 
 namespace dngrep.core.xunit.Extensions.CompilationExtensions

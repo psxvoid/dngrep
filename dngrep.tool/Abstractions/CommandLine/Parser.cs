@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using SystemConsole = System.Console;
 using CLParser = CommandLine.Parser;
+using SystemConsole = System.Console;
 
 namespace dngrep.tool.Abstractions.CommandLine
 {
     public interface IParser
     {
         IParserResult<T> ParseArguments<T>(IEnumerable<string> args);
+
         IParserResult<T> ParseArguments<T>(Func<T> factory, IEnumerable<string> args);
+
         IParserResult<object> ParseArguments(IEnumerable<string> args, params Type[] types);
     }
 

@@ -1,10 +1,10 @@
-﻿using Microsoft.CodeAnalysis;
+﻿using System;
+using System.Linq;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using dngrep.core.Extensions.SyntaxTreeExtensions;
 using Xunit;
-using System.Linq;
-using System;
 
 namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
 {
