@@ -13,9 +13,11 @@ using Xunit;
 
 namespace dngrep.tool.xunit.Core.Output.Presenters
 {
-    public class SyntaxNodeConsolePresenterTests
+    public static class SyntaxNodeConsolePresenterTests
     {
-        private const string SourceCode = @"
+        public class MethodInClassInNamespaceWithFilePath
+        {
+            private const string SourceCode = @"
                 namespace SolarSystem
                 {
                     public class Earth
@@ -29,110 +31,164 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                 }
             ";
 
-        private readonly IFixture fixture;
-        private readonly SyntaxTree syntaxTree;
-        private readonly IEnumerable<SyntaxNode> nodes;
+            private readonly IFixture fixture;
+            private readonly SyntaxTree syntaxTree;
+            private readonly IEnumerable<SyntaxNode> nodes;
 
-        private readonly Mock<IConsole> consoleMock;
+            private readonly Mock<IConsole> consoleMock;
 
-        private readonly ConsoleSyntaxNodePresenter sut;
+            private readonly ConsoleSyntaxNodePresenter sut;
 
-        public SyntaxNodeConsolePresenterTests()
-        {
-            this.syntaxTree = CSharpSyntaxTree.ParseText(SourceCode, null, "x:/code.cs");
-            this.nodes = this.GetNode<MethodDeclarationSyntax>();
+            public MethodInClassInNamespaceWithFilePath()
+            {
+                this.syntaxTree = CSharpSyntaxTree.ParseText(SourceCode, null, "x:/code.cs");
+                this.nodes = this.syntaxTree
+                    .GetRoot()
+                    .ChildNodes()
+                    .GetNodesOfTypeRecursively<MethodDeclarationSyntax>();
 
-            this.fixture = AutoFixtureFactory.Default();
-            this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
+                this.fixture = AutoFixtureFactory.Default();
+                this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
 
-            this.sut = this.fixture.Create<ConsoleSyntaxNodePresenter>();
+                this.sut = this.fixture.Create<ConsoleSyntaxNodePresenter>();
+            }
+
+            [Fact]
+            public void ProduceOutput_FullName_FullName()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFullName, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Once());
+            }
+
+            [Fact]
+            public void ProduceOutput_Path_NameAndPath()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFilePath, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("Spin", Times.Once());
+                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+            }
+
+            [Fact]
+            public void ProduceOutput_Position_NamePosition()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowPosition, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("Spin", Times.Once());
+                this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+            }
+
+            [Fact]
+            public void ProduceOutput_FullNameAndPath_FullNameAndPath()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFullName, true)
+                    .With(x => x.ShowFilePath, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
+                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
+            }
+
+            [Fact]
+            public void ProduceOutput_FullNameAndPathAndPosition_FullNameAndPath()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFullName, true)
+                    .With(x => x.ShowFilePath, true)
+                    .With(x => x.ShowPosition, true)
+                    .Create();
+
+                this.sut.ProduceOutput(this.nodes, options);
+
+                this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
+                this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
+                this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
+                this.consoleMock.VerifyWriteLineAny(Times.Exactly(3));
+            }
         }
 
-        [Fact]
-        public void ProduceOutput_FullName_FullName()
+        /// <summary>
+        /// The tests verifies the case where a node has no
+        /// known way to get it's name using <see cref="SyntaxNodeExtensions.TryGetFullName"/>
+        /// or <see cref="SyntaxNodeExtensions.TryGetIdentifierName"/> method.
+        /// </summary>
+        public class NodeWithoutKnownName
         {
-            GrepOptions options = this.fixture.Build<GrepOptions>()
-                .OmitAutoProperties()
-                .With(x => x.ShowFullName, true)
-                .Create();
+            private const string SourceCode = @"
+                using System;
+            ";
 
-            this.sut.ProduceOutput(this.nodes, options);
+            private readonly IFixture fixture;
+            private readonly SyntaxTree syntaxTree;
+            private readonly IEnumerable<SyntaxNode> nodes;
 
-            this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
-            this.consoleMock.VerifyWriteLineAny(Times.Once());
-        }
+            private readonly Mock<IConsole> consoleMock;
 
-        [Fact]
-        public void ProduceOutput_Path_NameAndPath()
-        {
-            GrepOptions options = this.fixture.Build<GrepOptions>()
-                .OmitAutoProperties()
-                .With(x => x.ShowFilePath, true)
-                .Create();
+            private readonly ConsoleSyntaxNodePresenter sut;
 
-            this.sut.ProduceOutput(this.nodes, options);
+            public NodeWithoutKnownName()
+            {
+                this.syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                this.nodes = this.syntaxTree
+                    .GetRoot()
+                    .ChildNodes()
+                    .GetNodesOfTypeRecursively<MethodDeclarationSyntax>();
 
-            this.consoleMock.VerifyWriteLine("Spin", Times.Once());
-            this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-            this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
-        }
-        
-        [Fact]
-        public void ProduceOutput_Position_NamePosition()
-        {
-            GrepOptions options = this.fixture.Build<GrepOptions>()
-                .OmitAutoProperties()
-                .With(x => x.ShowPosition, true)
-                .Create();
+                this.fixture = AutoFixtureFactory.Default();
+                this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
 
-            this.sut.ProduceOutput(this.nodes, options);
+                this.sut = this.fixture.Create<ConsoleSyntaxNodePresenter>();
+            }
 
-            this.consoleMock.VerifyWriteLine("Spin", Times.Once());
-            this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
-            this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
-        }
+            [Fact]
+            public void ProduceOutput_UsingDirectiveAndFullName_NoOutput()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .With(x => x.ShowFullName, true)
+                    .Create();
 
-        [Fact]
-        public void ProduceOutput_FullNameAndPath_FullNameAndPath()
-        {
-            GrepOptions options = this.fixture.Build<GrepOptions>()
-                .OmitAutoProperties()
-                .With(x => x.ShowFullName, true)
-                .With(x => x.ShowFilePath, true)
-                .Create();
+                this.sut.ProduceOutput(this.nodes, options);
 
-            this.sut.ProduceOutput(this.nodes, options);
+                this.consoleMock.VerifyWriteLineAny(Times.Never());
+            }
 
-            this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
-            this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-            this.consoleMock.VerifyWriteLineAny(Times.Exactly(2));
-        }
-        
-        [Fact]
-        public void ProduceOutput_FullNameAndPathAndPosition_FullNameAndPath()
-        {
-            GrepOptions options = this.fixture.Build<GrepOptions>()
-                .OmitAutoProperties()
-                .With(x => x.ShowFullName, true)
-                .With(x => x.ShowFilePath, true)
-                .With(x => x.ShowPosition, true)
-                .Create();
+            [Fact]
+            public void ProduceOutput_UsingDirectiveAndNoFullName_NoOutput()
+            {
+                GrepOptions options = this.fixture.Build<GrepOptions>()
+                    .OmitAutoProperties()
+                    .Create();
 
-            this.sut.ProduceOutput(this.nodes, options);
+                this.sut.ProduceOutput(this.nodes, options);
 
-            this.consoleMock.VerifyWriteLine("SolarSystem.Earth.Spin", Times.Once());
-            this.consoleMock.VerifyWriteLine("\tx:/code.cs", Times.Once());
-            this.consoleMock.VerifyWriteLine($"\tLn: {5}, Ch: {24}", Times.Once());
-            this.consoleMock.VerifyWriteLineAny(Times.Exactly(3));
-        }
-
-
-        private IEnumerable<T> GetNode<T>() where T : SyntaxNode
-        {
-            return this.syntaxTree
-                .GetRoot()
-                .ChildNodes()
-                .GetNodesOfTypeRecursively<T>();
+                this.consoleMock.VerifyWriteLineAny(Times.Never());
+            }
         }
     }
 }

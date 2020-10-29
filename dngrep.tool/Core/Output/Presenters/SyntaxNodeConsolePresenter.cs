@@ -29,14 +29,12 @@ namespace dngrep.tool.Core.Output.Presenters
 
             foreach (var node in nodes)
             {
-                if (options.ShowFullName ?? false)
-                {
-                    this.console.WriteLine(node.GetFullName());
-                }
-                else
-                {
-                    this.console.WriteLine(node.GetIdentifierName());
-                }
+                string? name = options.ShowFullName ?? false ?
+                    node.TryGetFullName() : node.TryGetIdentifierName();
+
+                if (name == null) continue;
+
+                this.console.WriteLine(name);
 
                 if (options.ShowFilePath ?? false)
                 {

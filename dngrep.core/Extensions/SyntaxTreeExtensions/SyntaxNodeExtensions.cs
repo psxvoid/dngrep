@@ -1,4 +1,5 @@
 ﻿using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System;
 using System.Collections.Generic;
@@ -156,7 +157,8 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             _ = target ?? throw new ArgumentNullException(nameof(target));
 
             return target.TryGetFullName()
-                ?? throw new InvalidOperationException("The source node does not have a name.");
+                ?? throw new InvalidOperationException(
+                    $"The source node does not have a name. Kind: {target.Kind()} Node: {target}");
         }
 
         /// <summary>
