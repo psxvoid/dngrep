@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using AutoFixture;
+using dngrep.tool.Abstractions.Build;
 using dngrep.tool.Abstractions.CommandLine;
 using dngrep.tool.Console;
 using dngrep.tool.Core;
@@ -25,6 +26,8 @@ namespace dngrep.tool.xunit.Console
             parser.Setup(x => x.ParseArguments<GrepOptions>(It.IsAny<string[]>()))
                 .Returns(options.Object);
 
+            this.fixture.Freeze<Mock<IMSBuildLocator>>();
+
             this.sut = this.fixture.Create<GrepCommandLinePipeline>();
         }
 
@@ -47,6 +50,15 @@ namespace dngrep.tool.xunit.Console
                 .Verify(x => x.WithParsedAsync(
                     this.fixture.Create<Mock<IProjectGrep>>().Object.FolderAsync
                 ), Times.Once());
+        }
+
+        [Fact]
+        public async Task NonEmptyArguments_ShouldRegisterBuildLocatorDefaults()
+        {
+            await this.sut.ParseArgsAndRun(new[] { "arg1", "arg2" }).ConfigureAwait(false);
+
+            this.fixture.Create<Mock<IMSBuildLocator>>()
+                .Verify(x => x.RegisterDefaults(), Times.Once());
         }
     }
 }

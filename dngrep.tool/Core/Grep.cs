@@ -11,7 +11,6 @@ using dngrep.tool.Core.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
 using dngrep.tool.Core.Output.Presenters;
-using Microsoft.Build.Locator;
 using Microsoft.CodeAnalysis;
 
 namespace dngrep.tool.Core
@@ -43,8 +42,6 @@ namespace dngrep.tool.Core
 
             (SolutionAndProjectExplorer.PathKind kind, string path) =
                 SolutionAndProjectExplorer.GetSolutionOrProject(currentDirectory);
-
-            MSBuildLocator.RegisterDefaults();
 
             using IMSBuildWorkspace? workspace = this.workspaceStatic.Create();
             workspace.LoadMetadataForReferencedProjects = true;
