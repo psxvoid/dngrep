@@ -67,7 +67,8 @@ namespace dngrep.tool.Core
                             options.Scope ?? QueryTargetScope.None,
                             options.Contains,
                             options.Exclude,
-                            null);
+                            null,
+                            options.EnableRegexp ?? false);
                         var query = SyntaxTreeQueryBuilder.From(queryDescriptor);
                         var walker = new SyntaxTreeQueryWalker(query);
                         walker.Visit(tree.GetRoot());

@@ -1057,10 +1057,42 @@ namespace dngrep.core.xunit.Queries
                         walker.Results.Select(x => x.TryGetIdentifierName()));
                 }
 
+                [Fact]
+                public void Visit_ClassContainsRegexp_TwoClasses()
+                {
+                    SyntaxTreeQueryWalker? walker = Init(
+                        QueryTarget.Class,
+                        new[] { @".*ar.*" },
+                        enableRegex: true);
+
+                    walker.Visit(this.tree.GetCompilationUnitRoot());
+
+                    Assert.Equal(
+                        new[] { "Earth", "Mars" },
+                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void Visit_ClassContainsRegexpExcluding_SingleClass()
+                {
+                    SyntaxTreeQueryWalker? walker = Init(
+                        QueryTarget.Class,
+                        new[] { @".*ar.*" },
+                        new[] { @"^.{4,4}$" },
+                        enableRegex: true);
+
+                    walker.Visit(this.tree.GetCompilationUnitRoot());
+
+                    Assert.Equal(
+                        new[] { "Earth" },
+                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                }
+
                 private static SyntaxTreeQueryWalker Init(
                     QueryTarget target,
                     IEnumerable<string>? contains = null,
-                    IEnumerable<string>? excludes = null)
+                    IEnumerable<string>? excludes = null,
+                    bool enableRegex = false)
                 {
 
                     var queryDescriptor = new SyntaxTreeQueryDescriptor(
@@ -1069,7 +1101,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.None,
                         contains,
                         excludes,
-                        null
+                        null,
+                        enableRegex
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);

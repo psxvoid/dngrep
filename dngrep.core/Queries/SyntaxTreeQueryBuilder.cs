@@ -22,7 +22,8 @@ namespace dngrep.core.Queries
                 scope,
                 queryDescriptor.TargetNameContains,
                 queryDescriptor.TargetNameExcludes,
-                queryDescriptor.QueryTargetScopeName);
+                queryDescriptor.QueryTargetScopeName,
+                queryDescriptor.EnableRegex);
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch

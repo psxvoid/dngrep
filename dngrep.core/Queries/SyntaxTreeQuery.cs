@@ -14,13 +14,16 @@ namespace dngrep.core.Queries
         public Type? ScopeType { get; }
         public string? TargetScopeName { get; }
 
+        public bool EnableRegex { get; }
+
         internal SyntaxTreeQuery(
             Type? targetType,
             IReadOnlyCollection<SyntaxKind> targetAccessModifiers,
             Type? scopeType,
             IEnumerable<string>? targetNameContains,
             IEnumerable<string>? targetNameExcludes,
-            string? targetScopeName)
+            string? targetScopeName,
+            bool enableRegex)
         {
             this.TargetType = targetType;
             this.TargetNameContains = targetNameContains;
@@ -28,6 +31,7 @@ namespace dngrep.core.Queries
             this.TargetAccessModifiers = targetAccessModifiers;
             this.ScopeType = scopeType;
             this.TargetScopeName = targetScopeName;
+            this.EnableRegex = enableRegex;
         }
     }
 }
