@@ -137,6 +137,72 @@ namespace dngrep.tool.xunit.Console
             }
         }
 
+        public class EnableRegexpTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Equal(false, result.Value.EnableRegexp);
+            }
+
+            [Fact(Skip = "https://github.com/commandlineparser/commandline/issues/316")]
+            public void ParseArguments_ShortNameFlagOnly_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--r" });
+
+                Assert.Equal(true, result.Value.EnableRegexp);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameTrue_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--r", "true" });
+
+                Assert.Equal(true, result.Value.EnableRegexp);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameFalse_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--r", "false" });
+
+                Assert.Equal(false, result.Value.EnableRegexp);
+            }
+
+            [Fact(Skip = "https://github.com/commandlineparser/commandline/issues/316")]
+            public void ParseArguments_FullNameFlagOnly_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--regexp" });
+
+                Assert.Equal(true, result.Value.EnableRegexp);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameTrue_True()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--regexp", "true" });
+
+                Assert.Equal(true, result.Value.EnableRegexp);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameFalse_False()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--regexp", "false" });
+
+                Assert.Equal(false, result.Value.EnableRegexp);
+            }
+        }
+
         public class ScopeTests
         {
             [Fact]

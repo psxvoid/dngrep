@@ -21,7 +21,7 @@ namespace dngrep.tool.Core.Options
             HelpText = "A part of the target name (e.g. Foo) to filter for. "
                 + "Supports multiple space-separated values.")]
         public IEnumerable<string>? Contains { get; set; }
-        
+
         [Option(
             'e',
             "exclude",
@@ -29,6 +29,15 @@ namespace dngrep.tool.Core.Options
             HelpText = "A part of the target name (e.g. Foo) to exclude from results. "
                 + "Supports multiple space-separated values.")]
         public IEnumerable<string>? Exclude { get; set; }
+
+        [Option(
+            'r',
+            "regexp",
+            Default = false,
+            Required = false,
+            HelpText = "Enables passing regular expressions to contains and exclude "
+            + "options. (default=false).")]
+        public bool? EnableRegexp { get; set; }
 
         [Option(
             's',
@@ -64,7 +73,7 @@ namespace dngrep.tool.Core.Options
             HelpText = "When set to true, then output will contain a line and, "
             + "the character location of the target. (default=true).")]
         public bool? ShowPosition { get; set; }
-        
+
         [Option(
             "hide-namespaces",
             Default = false,
