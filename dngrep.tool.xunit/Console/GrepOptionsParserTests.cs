@@ -41,7 +41,7 @@ namespace dngrep.tool.xunit.Console
             }
         }
 
-        public class TargetNameTests
+        public class ContainsTests
         {
             [Fact]
             public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
@@ -49,7 +49,7 @@ namespace dngrep.tool.xunit.Console
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
 
-                Assert.Empty(result.Value.TargetName);
+                Assert.Empty(result.Value.Contains);
             }
 
             [Fact]
@@ -58,7 +58,7 @@ namespace dngrep.tool.xunit.Console
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "-c", "Foo" });
 
-                Assert.Equal(new[] { "Foo" }, result.Value.TargetName);
+                Assert.Equal(new[] { "Foo" }, result.Value.Contains);
             }
 
             [Fact]
@@ -67,7 +67,7 @@ namespace dngrep.tool.xunit.Console
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "-c", "Foo", "Bar" });
 
-                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.TargetName);
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.Contains);
             }
 
             [Fact]
@@ -76,7 +76,7 @@ namespace dngrep.tool.xunit.Console
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--contains", "Foo" });
 
-                Assert.Equal(new[] { "Foo" }, result.Value.TargetName);
+                Assert.Equal(new[] { "Foo" }, result.Value.Contains);
             }
 
             [Fact]
@@ -85,7 +85,55 @@ namespace dngrep.tool.xunit.Console
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--contains", "Foo", "Bar" });
 
-                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.TargetName);
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.Contains);
+            }
+        }
+
+        public class ExcludeTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Empty(result.Value.Exclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-e", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.Exclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-e", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.Exclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--exclude", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.Exclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--exclude", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.Exclude);
             }
         }
 

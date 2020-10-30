@@ -8,6 +8,7 @@ namespace dngrep.core.Queries
     {
         public Type? TargetType { get; }
         public IEnumerable<string>? TargetNameContains { get; }
+        public IEnumerable<string>? TargetNameExcludes { get; }
         public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
 
         public Type? ScopeType { get; }
@@ -18,10 +19,12 @@ namespace dngrep.core.Queries
             IReadOnlyCollection<SyntaxKind> targetAccessModifiers,
             Type? scopeType,
             IEnumerable<string>? targetNameContains,
+            IEnumerable<string>? targetNameExcludes,
             string? targetScopeName)
         {
             this.TargetType = targetType;
             this.TargetNameContains = targetNameContains;
+            this.TargetNameExcludes = targetNameExcludes;
             this.TargetAccessModifiers = targetAccessModifiers;
             this.ScopeType = scopeType;
             this.TargetScopeName = targetScopeName;

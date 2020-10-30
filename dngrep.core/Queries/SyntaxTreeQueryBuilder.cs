@@ -21,6 +21,7 @@ namespace dngrep.core.Queries
                 modifiers,
                 scope,
                 queryDescriptor.TargetNameContains,
+                queryDescriptor.TargetNameExcludes,
                 queryDescriptor.QueryTargetScopeName);
         }
 

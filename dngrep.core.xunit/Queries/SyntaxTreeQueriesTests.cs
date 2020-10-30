@@ -52,6 +52,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
                         new[] { "Read" },
+                        null,
                         "LordOfTheRingsBook"
                         );
 
@@ -86,6 +87,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
+                        null,
                         null,
                         "LordOfTheRingsBook"
                         );
@@ -123,6 +125,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
+                        null,
                         null,
                         null
                         );
@@ -190,6 +193,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
                         null,
+                        null,
                         null
                         );
 
@@ -226,6 +230,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Struct,
+                        null,
                         null,
                         null
                         );
@@ -264,6 +269,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
                         null,
+                        null,
                         "LordOfTheRingsBook"
                         );
 
@@ -300,6 +306,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Struct,
+                        null,
                         null,
                         "HarryPotterBook"
                         );
@@ -338,6 +345,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
                         new[] { "Read" },
+                        null,
                         "LordOfTheRingsBook"
                         );
 
@@ -373,6 +381,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.Struct,
                         new[] { "Read" },
+                        null,
                         "HarryPotterBook"
                         );
 
@@ -439,6 +448,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Private,
                         QueryTargetScope.Class,
                         null,
+                        null,
                         null
                         );
 
@@ -477,6 +487,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Private,
                         QueryTargetScope.Class,
                         null,
+                        null,
                         "Harry"
                         );
 
@@ -512,6 +523,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Public,
                         QueryTargetScope.Class,
+                        null,
                         null,
                         "Harry"
                         );
@@ -567,6 +579,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Public,
                         QueryTargetScope.None,
                         null,
+                        null,
                         null
                         );
 
@@ -602,6 +615,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Class,
                         QueryAccessModifier.ProtectedInternal,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null
                         );
@@ -639,6 +653,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Protected,
                         QueryTargetScope.None,
                         null,
+                        null,
                         null
                         );
 
@@ -674,6 +689,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Class,
                         QueryAccessModifier.Internal,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null
                         );
@@ -751,6 +767,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Any,
                         QueryAccessModifier.Any,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null
                         );
@@ -841,6 +858,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Public,
                         QueryTargetScope.None,
                         null,
+                        null,
                         null
                         );
 
@@ -930,6 +948,7 @@ namespace dngrep.core.xunit.Queries
                         QueryAccessModifier.Any,
                         QueryTargetScope.None,
                         null,
+                        null,
                         null
                         );
 
@@ -950,6 +969,112 @@ namespace dngrep.core.xunit.Queries
                 public void ShouldGetVariable()
                 {
                     Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+            }
+        }
+
+        public static class MultipleQueryTargets
+        {
+            private const string SourceCode = @"
+                namespace SolarSystem
+                {
+                    public class Earth
+                    {
+                        public string Spin()
+                        {
+                            string action = ""Spinning!"";
+                            return action;
+                        }
+
+                        public string SpinFaster()
+                        {
+                            string action = ""Spinning Faster!"";
+                            return action;
+                        }
+                        
+                        public string SpinSlower()
+                        {
+                            string action = ""Spinning Slower!"";
+                            return action;
+                        }
+                    }
+
+                    public class Mars
+                    {
+                    }
+                }
+            ";
+
+            public class ContainsAndExclude
+            {
+                private readonly SyntaxTree tree;
+
+                public ContainsAndExclude()
+                {
+                    this.tree = CSharpSyntaxTree.ParseText(SourceCode);
+                }
+
+                [Fact]
+                public void Visit_MethodContainsSpin_ThreeMethods()
+                {
+                    SyntaxTreeQueryWalker? walker = Init(
+                        QueryTarget.Method,
+                        new[] { "Spin" });
+
+                    walker.Visit(this.tree.GetCompilationUnitRoot());
+
+                    Assert.Equal(
+                        new[] { "Spin", "SpinFaster", "SpinSlower" },
+                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void Visit_MethodContainsFasterAndSlower_TwoMethods()
+                {
+                    SyntaxTreeQueryWalker? walker = Init(
+                        QueryTarget.Method,
+                        new[] { "Faster", "Slower" });
+
+                    walker.Visit(this.tree.GetCompilationUnitRoot());
+
+                    Assert.Equal(
+                        new[] { "SpinFaster", "SpinSlower" },
+                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void Visit_MethodContainsSpinButNotSlowerAndFaster_SingleMethod()
+                {
+                    SyntaxTreeQueryWalker? walker = Init(
+                        QueryTarget.Method,
+                        new[] { "Spin" },
+                        new[] { "Slower", "Faster" });
+
+                    walker.Visit(this.tree.GetCompilationUnitRoot());
+
+                    Assert.Equal(
+                        new[] { "Spin" },
+                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                private static SyntaxTreeQueryWalker Init(
+                    QueryTarget target,
+                    IEnumerable<string>? contains = null,
+                    IEnumerable<string>? excludes = null)
+                {
+
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        target,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.None,
+                        contains,
+                        excludes,
+                        null
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    return new SyntaxTreeQueryWalker(query);
                 }
             }
         }

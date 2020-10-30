@@ -20,7 +20,15 @@ namespace dngrep.tool.Core.Options
             Required = false,
             HelpText = "A part of the target name (e.g. Foo) to filter for. "
                 + "Supports multiple space-separated values.")]
-        public IEnumerable<string>? TargetName { get; set; }
+        public IEnumerable<string>? Contains { get; set; }
+        
+        [Option(
+            'e',
+            "exclude",
+            Required = false,
+            HelpText = "A part of the target name (e.g. Foo) to exclude from results. "
+                + "Supports multiple space-separated values.")]
+        public IEnumerable<string>? Exclude { get; set; }
 
         [Option(
             's',

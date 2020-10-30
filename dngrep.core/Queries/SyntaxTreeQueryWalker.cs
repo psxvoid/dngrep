@@ -39,10 +39,15 @@ namespace dngrep.core.Queries
             if (this.query.TargetType == nodeType || this.query.TargetType == null)
             {
                 if (
-                    // match target name
+                    // match target name, OR boolean query
                     (this.query.TargetNameContains == null
                         || !this.query.TargetNameContains.Any()
                         || this.query.TargetNameContains.Any(
+                            x => node.GetIdentifierName().Contains(x)))
+                    // exclude target name, OR boolean query
+                    && (this.query.TargetNameExcludes == null
+                        || !this.query.TargetNameExcludes.Any()
+                        || !this.query.TargetNameExcludes.Any(
                             x => node.GetIdentifierName().Contains(x)))
                     // match scope type
                     && (this.query.ScopeType == null || this.scope != null && node.HasParent(this.scope))
