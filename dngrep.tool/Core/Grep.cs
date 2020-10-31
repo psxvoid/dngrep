@@ -95,17 +95,33 @@ namespace dngrep.tool.Core
             catch (Exception ex)
             {
                 throw new GrepException(
-                    "The application is unable to read one or more solution or project.", ex);
+                    "The application is unable to read one or more solutions or projects.", ex);
             }
 
+            bool hasAnyProjects = false;
+            bool hasNonCSharpProjects = false;
+            bool hasCSharpProjects = false;
+            bool hasNonCompilableProjects = false;
+            bool hasAnySearchableUnits = false;
+            bool hasAnyResults = false;
             foreach (var proj in projects ?? Enumerable.Empty<IProject>())
             {
+                hasAnyProjects = true;
+
                 ICompilation? compilation = await proj.GetCompilationAsync().ConfigureAwait(false);
 
                 if (compilation != null && compilation is ICSharpCompilation cSharpCompilation)
                 {
-                    foreach (SyntaxTree? tree in compilation.MSCompilation.SyntaxTrees)
+                    hasCSharpProjects = true;
+
+                    foreach (
+                        SyntaxTree? tree
+                        in compilation.MSCompilation?.SyntaxTrees
+                        ?? Enumerable.Empty<SyntaxTree>()
+                        )
                     {
+                        hasAnySearchableUnits = true;
+
                         var queryDescriptor = new SyntaxTreeQueryDescriptor(
                             options.Target ?? QueryTarget.Any,
                             QueryAccessModifier.Any,
@@ -118,13 +134,55 @@ namespace dngrep.tool.Core
                         var walker = new SyntaxTreeQueryWalker(query);
                         walker.Visit(tree.GetRoot());
 
+                        if (walker.Results.Count > 0)
+                        {
+                            hasAnyResults = true;
+                        }
+
                         this.presenter.ProduceOutput(walker.Results, options);
                     }
                 }
+                else if (compilation != null)
+                {
+                    hasNonCSharpProjects = true;
+                }
                 else
                 {
-                    throw new InvalidOperationException("Only C# projects are supported.");
+                    hasNonCompilableProjects = true;
                 }
+            }
+
+            if (!hasAnyProjects)
+            {
+                throw new GrepException(
+                    "The application was unable to find any projects.");
+            }
+
+            if (hasNonCSharpProjects && !hasCSharpProjects)
+            {
+                throw new GrepException(
+                    "The application found at least one project but it's not a C# project.");
+            }
+
+            if (hasNonCompilableProjects && !hasCSharpProjects)
+            {
+                throw new GrepException(
+                    "The application found at least one project but it is not compilable.");
+            }
+
+            // situations where C# projects exists with non-C# or non-compilable project
+            // are normal and shouldn't be handled separately
+
+            if (!hasAnySearchableUnits)
+            {
+                throw new GrepException(
+                    "At lease one project was detected and compiled but it doesn't have any code.");
+            }
+
+            if (!hasAnyResults)
+            {
+                throw new GrepException(
+                    "At least one C# project detected and compiled but nothing is found.");
             }
         }
     }

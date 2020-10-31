@@ -8,11 +8,11 @@ namespace dngrep.tool.Abstractions.CodeAnalysis.CSharp
         MSCSharpCompilation MSCSharpCompilation { get; }
     }
 
-    public class CSharpCompilation : ICSharpCompilation
+    public sealed class CSharpCompilation : ICSharpCompilation
     {
         public MSCSharpCompilation MSCSharpCompilation { get; }
 
-        public MSCompilation MSCompilation => this.MSCSharpCompilation;
+        MSCompilation ICompilation.MSCompilation => this.MSCSharpCompilation;
 
         public CSharpCompilation(MSCSharpCompilation compilation)
         {

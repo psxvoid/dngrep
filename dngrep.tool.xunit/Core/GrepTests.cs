@@ -4,14 +4,18 @@ using System.IO.Abstractions;
 using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.tool.Abstractions.CodeAnalysis;
+using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
 using dngrep.tool.Core;
 using dngrep.tool.Core.CodeAnalysis.MSBuild;
 using dngrep.tool.Core.Exceptions;
 using dngrep.tool.Core.FileSystem;
 using dngrep.tool.Core.Options;
+using dngrep.tool.Core.Output.Presenters;
 using dngrep.tool.xunit.TestHelpers;
+using Microsoft.CodeAnalysis;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -23,8 +27,8 @@ namespace dngrep.tool.xunit.Core
     {
         private readonly IFixture fixture;
         private readonly Mock<IDirectory> directoryMock;
-        private readonly Mock<ISolutionAndProjectExplorer> explorerMock;
         private readonly Mock<IWorkspaceProjectReader> projectReaderMock;
+        private readonly Mock<ISyntaxNodePresenter> presenterMock;
         private readonly Mock<IMSBuildWorkspace> workspaceMock;
         private readonly Mock<IMSBuildWorkspaceStatic> workspaceStaticMock;
         private readonly Grep sut;
@@ -39,7 +43,7 @@ namespace dngrep.tool.xunit.Core
                 .SetupGet(x => x.Directory)
                 .Returns(this.directoryMock.Object);
 
-            this.explorerMock = this.fixture.Freeze<Mock<ISolutionAndProjectExplorer>>();
+            this.fixture.Freeze<Mock<ISolutionAndProjectExplorer>>();
             this.workspaceMock = this.fixture.Freeze<Mock<IMSBuildWorkspace>>();
             this.workspaceStaticMock = this.fixture.Freeze<Mock<IMSBuildWorkspaceStatic>>();
             this.workspaceStaticMock
@@ -47,6 +51,7 @@ namespace dngrep.tool.xunit.Core
                 .Returns(this.workspaceMock.Object);
 
             this.projectReaderMock = this.fixture.Freeze<Mock<IWorkspaceProjectReader>>();
+            this.presenterMock = this.fixture.Freeze<Mock<ISyntaxNodePresenter>>();
 
             this.sut = this.fixture.Create<Grep>();
         }
@@ -139,7 +144,7 @@ namespace dngrep.tool.xunit.Core
         }
 
         [Fact]
-        public async Task FolderAsync_NonEmptyDirAndNullProjects_ShouldGetProjectOrSolution()
+        public async Task FolderAsync_NonEmptyDirAndNullProjects_ShouldThrow()
         {
             this.WithCurrentDirectory("x:/test.sln");
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -149,14 +154,16 @@ namespace dngrep.tool.xunit.Core
                 .WithAutoProperties()
                 .Create();
 
-            await this.sut.FolderAsync(options).ConfigureAwait(false);
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
-            this.explorerMock.Verify(x => x.GetSolutionOrProject(
-                It.Is<string>(it => it == "x:/test.sln")), Times.Once());
+            Assert.Equal(
+                "The application was unable to find any projects.",
+                exception.Message);
         }
 
         [Fact]
-        public async Task FolderAsync_NonEmptyDirAndEmptyProjects_ShouldGetProjectOrSolution()
+        public async Task FolderAsync_NonEmptyDirAndEmptyProjects_ShouldThrow()
         {
             this.WithCurrentDirectory("x:/test.sln");
             this.WithProjects(Enumerable.Empty<IProject>());
@@ -164,10 +171,122 @@ namespace dngrep.tool.xunit.Core
                 .WithAutoProperties()
                 .Create();
 
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
+
+            Assert.Equal(
+                "The application was unable to find any projects.",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NonEmptyDirNonCSharpProject_ShouldThrow()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult(this.fixture.Create<ICompilation?>()));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .WithAutoProperties()
+                .Create();
+
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
+
+            Assert.Equal(
+                "The application found at least one project but it's not a C# project.",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NonEmptyDirSingleProjectNotCSharpCompilation_ShouldThrow()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            ICompilation? compilationWrapper = CreateCompilation(null);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .WithAutoProperties()
+                .Create();
+
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
+
+            Assert.Equal(
+                "The application found at least one project but it's not a C# project.",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NonEmptyDirCSharpProjectCSharpCompilationNoCode_ShouldThrow()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(null);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .WithAutoProperties()
+                .Create();
+
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
+
+            Assert.Equal(
+                 "At lease one project was detected and compiled but it doesn't have any code.",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsButNothingFound_ShouldThrow()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System;");
+
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .OmitAutoProperties()
+                .Create();
+
+            var exception = await Assert.ThrowsAsync<GrepException>(
+                () => this.sut.FolderAsync(options)).ConfigureAwait(false);
+
+            Assert.Equal(
+                "At least one C# project detected and compiled but nothing is found.",
+                exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsAndHasMatches_ShouldPresentResults()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System; class Test {};");
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .OmitAutoProperties()
+                .Create();
+
             await this.sut.FolderAsync(options).ConfigureAwait(false);
 
-            this.explorerMock.Verify(x => x.GetSolutionOrProject(
-                It.Is<string>(it => it == "x:/test.sln")), Times.Once());
+            this.presenterMock.Verify(x => x.ProduceOutput(
+                It.Is<IEnumerable<SyntaxNode>>(
+                    it => it.Count() == 1 && it.Any(x => x.TryGetIdentifierName() == "Test")),
+                It.Is<GrepOptions>(it => it == options)));
         }
 
         private void WithCurrentDirectory(string path) =>
@@ -192,5 +311,32 @@ namespace dngrep.tool.xunit.Core
                     It.IsAny<string>(),
                     It.IsAny<ILogger>()))
                 .Throws<T>();
+
+        private static ICompilation? CreateCompilation(
+            Microsoft.CodeAnalysis.Compilation? compilation)
+        {
+            var compilationMock = new Mock<ICompilation>();
+#pragma warning disable CS8604 // Possible null reference argument.
+            compilationMock
+                .SetupGet(x => x.MSCompilation)
+                .Returns(compilation);
+#pragma warning restore CS8604 // Possible null reference argument.
+            return compilationMock.Object;
+        }
+
+        private static ICSharpCompilation? CreateCSharpCompilation(
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation)
+        {
+            var compilationMock = new Mock<ICSharpCompilation>();
+#pragma warning disable CS8604 // Possible null reference argument.
+            compilationMock
+                .SetupGet(x => x.MSCompilation)
+                .Returns(compilation);
+            compilationMock
+                .SetupGet(x => x.MSCSharpCompilation)
+                .Returns(compilation);
+#pragma warning restore CS8604 // Possible null reference argument.
+            return compilationMock.Object;
+        }
     }
 }
