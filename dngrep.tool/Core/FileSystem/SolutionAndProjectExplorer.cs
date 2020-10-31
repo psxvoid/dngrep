@@ -1,8 +1,14 @@
-﻿using System.IO;
+﻿using System.IO.Abstractions;
+using static dngrep.tool.Core.FileSystem.SolutionAndProjectExplorer;
 
 namespace dngrep.tool.Core.FileSystem
 {
-    public static class SolutionAndProjectExplorer
+    public interface ISolutionAndProjectExplorer
+    {
+        (PathKind kind, string path) GetSolutionOrProject(string path);
+    }
+
+    public class SolutionAndProjectExplorer : ISolutionAndProjectExplorer
     {
         public enum PathKind
         {
@@ -11,9 +17,16 @@ namespace dngrep.tool.Core.FileSystem
             Project
         }
 
-        public static (PathKind kind, string path) GetSolutionOrProject(string path)
+        private readonly IFileSystem fs;
+
+        public SolutionAndProjectExplorer(IFileSystem fs)
         {
-            string[] solutions = Directory.GetFiles(path, "*.sln");
+            this.fs = fs;
+        }
+
+        public (PathKind kind, string path) GetSolutionOrProject(string path)
+        {
+            string[] solutions = this.fs.Directory.GetFiles(path, "*.sln");
             string[]? projects;
 
             if (solutions.Length > 0)
@@ -22,7 +35,7 @@ namespace dngrep.tool.Core.FileSystem
             }
             else
             {
-                projects = Directory.GetFiles(path, "*.csproj");
+                projects = this.fs.Directory.GetFiles(path, "*.csproj");
             }
 
             if (projects != null && projects.Length > 0)

@@ -25,20 +25,24 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
 
             private readonly Mock<IMSBuildWorkspace> workspaceMock;
 
+            private readonly WorkspaceProjectReader sut;
+
             public NoneKind()
             {
                 this.fixture = AutoFixtureFactory.Default();
                 this.loggerMock = this.fixture.Freeze<Mock<ILogger>>();
                 this.workspaceMock = new Mock<IMSBuildWorkspace>();
+                this.sut = this.fixture.Create<WorkspaceProjectReader>();
             }
 
             [Fact]
             public async Task GetProjectsAsync_NoneKindAnyPathLoggerSpecified_ShouldLogWarning()
             {
-                await this.workspaceMock.Object.GetProjectsAsync(
-                     PathKind.None,
-                     "any",
-                     this.loggerMock.Object).ConfigureAwait(false);
+                await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
+                    PathKind.None,
+                    "any",
+                    this.loggerMock.Object).ConfigureAwait(false);
 
                 this.loggerMock.VerifyLogLevel(LogLevel.Warning, Times.Once());
             }
@@ -46,10 +50,11 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_NoneKindEmptyPathLoggerSpecified_ShouldLogWarning()
             {
-                await this.workspaceMock.Object.GetProjectsAsync(
-                     PathKind.None,
-                     "  ",
-                     this.loggerMock.Object).ConfigureAwait(false);
+                await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
+                    PathKind.None,
+                    "  ",
+                    this.loggerMock.Object).ConfigureAwait(false);
 
                 this.loggerMock.VerifyLogLevel(LogLevel.Warning, Times.Once());
             }
@@ -57,10 +62,11 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_NoneKindEmptyPathLoggerSpecified_ShouldReturnEmpty()
             {
-                Assert.Empty(await this.workspaceMock.Object.GetProjectsAsync(
-                     PathKind.None,
-                     "  ",
-                     this.loggerMock.Object).ConfigureAwait(false));
+                Assert.Empty(await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
+                    PathKind.None,
+                    "  ",
+                    this.loggerMock.Object).ConfigureAwait(false));
             }
         }
 
@@ -72,6 +78,7 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             private readonly Mock<ISolution> solutionMock;
 
             private readonly Mock<IMSBuildWorkspace> workspaceMock;
+            private readonly WorkspaceProjectReader sut;
 
             public SolutionKind()
             {
@@ -88,13 +95,16 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
                     It.IsAny<IProgress<ProjectLoadProgress>>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(this.solutionMock.Object));
+
+                this.sut = this.fixture.Create<WorkspaceProjectReader>();
             }
 
             [Fact]
             public async Task GetProjectsAsync_SolutionKindNullPath_ShouldThrow()
             {
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    async () => await this.workspaceMock.Object.GetProjectsAsync(
+                    async () => await this.sut.GetProjectsAsync(
+                        this.workspaceMock.Object,
                         PathKind.Solution,
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                         null,
@@ -106,7 +116,8 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             public async Task GetProjectsAsync_SolutionKindEmptyPath_ShouldThrow()
             {
                 await Assert.ThrowsAsync<ArgumentException>(
-                    async () => await this.workspaceMock.Object.GetProjectsAsync(
+                    async () => await this.sut.GetProjectsAsync(
+                        this.workspaceMock.Object,
                         PathKind.Solution,
                         "   ",
                         this.loggerMock.Object).ConfigureAwait(false)).ConfigureAwait(false);
@@ -115,7 +126,8 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_SolutionKindNonEmptyPath_ShouldPassCorrectPathToWorkspace()
             {
-                IEnumerable<IProject> actual = await this.workspaceMock.Object.GetProjectsAsync(
+                IEnumerable<IProject> actual = await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
                     PathKind.Solution,
                     "x:/solution.sln",
                     this.loggerMock.Object).ConfigureAwait(false);
@@ -129,7 +141,8 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_SolutionKindNonEmptyPath_ShouldReturnProjectsFromSolution()
             {
-                IEnumerable<IProject> actual = await this.workspaceMock.Object.GetProjectsAsync(
+                IEnumerable<IProject> actual = await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
                      PathKind.Solution,
                      "x:/solution.sln",
                      this.loggerMock.Object).ConfigureAwait(false);
@@ -145,6 +158,7 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             private readonly Mock<IProject> project;
 
             private readonly Mock<IMSBuildWorkspace> workspaceMock;
+            private readonly WorkspaceProjectReader sut;
 
             public ProjectKind()
             {
@@ -158,13 +172,16 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
                     It.IsAny<IProgress<ProjectLoadProgress>>(),
                     It.IsAny<CancellationToken>()))
                 .Returns(() => Task.FromResult(this.project.Object));
+
+                this.sut = this.fixture.Create<WorkspaceProjectReader>();
             }
 
             [Fact]
             public async Task GetProjectsAsync_ProjectKindNullPath_ShouldThrow()
             {
                 await Assert.ThrowsAsync<ArgumentNullException>(
-                    async () => await this.workspaceMock.Object.GetProjectsAsync(
+                    async () => await this.sut.GetProjectsAsync(
+                        this.workspaceMock.Object,
                         PathKind.Project,
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                         null,
@@ -176,7 +193,8 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             public async Task GetProjectsAsync_ProjectKindWhitespacePath_ShouldThrow()
             {
                 await Assert.ThrowsAsync<ArgumentException>(
-                    async () => await this.workspaceMock.Object.GetProjectsAsync(
+                    async () => await this.sut.GetProjectsAsync(
+                        this.workspaceMock.Object,
                         PathKind.Project,
                         "   ",
                         this.loggerMock.Object).ConfigureAwait(false)).ConfigureAwait(false);
@@ -185,10 +203,11 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_ProjectKindNonEmptyPath_ShouldPassCorrectPathToWorkspace()
             {
-                IEnumerable<IProject> actual = await this.workspaceMock.Object.GetProjectsAsync(
-                     PathKind.Project,
-                     "x:/proj.csproj",
-                     this.loggerMock.Object).ConfigureAwait(false);
+                IEnumerable<IProject> actual = await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
+                    PathKind.Project,
+                    "x:/proj.csproj",
+                    this.loggerMock.Object).ConfigureAwait(false);
 
                 this.workspaceMock.Verify(x => x.OpenProjectAsync(
                     It.Is<string>(it => it == "x:/proj.csproj"),
@@ -199,10 +218,11 @@ namespace dngrep.tool.xunit.Core.CodeAnalysis.MSBuild
             [Fact]
             public async Task GetProjectsAsync_ProjectKindNonEmptyPath_ShouldReturnOpenedProject()
             {
-                IEnumerable<IProject> actual = await this.workspaceMock.Object.GetProjectsAsync(
-                     PathKind.Project,
-                     "x:/proj.csproj",
-                     this.loggerMock.Object).ConfigureAwait(false);
+                IEnumerable<IProject> actual = await this.sut.GetProjectsAsync(
+                    this.workspaceMock.Object,
+                    PathKind.Project,
+                    "x:/proj.csproj",
+                    this.loggerMock.Object).ConfigureAwait(false);
 
                 Assert.Same(this.project.Object, actual.First());
             }

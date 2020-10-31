@@ -9,9 +9,14 @@ using static dngrep.tool.Core.FileSystem.SolutionAndProjectExplorer;
 
 namespace dngrep.tool.Core.CodeAnalysis.MSBuild
 {
-    public static class WorkspaceProjectReader
+    public interface IWorkspaceProjectReader
     {
-        public static async Task<IEnumerable<IProject>> GetProjectsAsync(this IMSBuildWorkspace workspace, PathKind kind, string path, ILogger? logger = null)
+        Task<IEnumerable<IProject>> GetProjectsAsync(IMSBuildWorkspace workspace, PathKind kind, string path, ILogger? logger = null);
+    }
+
+    public class WorkspaceProjectReader : IWorkspaceProjectReader
+    {
+        public async Task<IEnumerable<IProject>> GetProjectsAsync(IMSBuildWorkspace workspace, PathKind kind, string path, ILogger? logger = null)
         {
             _ = workspace ?? throw new ArgumentNullException(nameof(workspace));
 

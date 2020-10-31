@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO.Abstractions;
+using System.Threading.Tasks;
 using dngrep.core.Queries;
 using dngrep.tool.Abstractions.CommandLine;
 using dngrep.tool.Console;
@@ -27,6 +28,7 @@ namespace dngrep.tool
                 });
 
                 x.AddSingleton(Parser.Default());
+                x.AddSingleton<IFileSystem, FileSystem>();
                 x.AddTransient<CSharpSyntaxWalker, SyntaxTreeQueryWalker>();
             });
 
