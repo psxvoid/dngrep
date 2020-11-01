@@ -76,6 +76,43 @@ namespace dngrep.core.xunit.Queries
                 }
             }
 
+            public class GetMethodWithNameContainingStringInClassWithNameRegex
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetMethodWithNameContainingStringInClassWithNameRegex()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.Class,
+                        new[] { "Read" },
+                        null,
+                        new[] { "o.{4,4}Book" },
+                        true
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Equal(1, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodFromMatchingClass()
+                {
+                    Assert.Equal("Read1", this.results.First().GetIdentifierName());
+                }
+            }
+
             public class GetMethodsInClassWithName
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;

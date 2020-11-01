@@ -15,6 +15,7 @@ namespace dngrep.core.Queries
 
         private readonly IEnumerable<Regex>? includes;
         private readonly IEnumerable<Regex>? excludes;
+        private readonly IEnumerable<Regex>? scopeIncludes;
 
         private SyntaxNode? scope;
 
@@ -33,6 +34,9 @@ namespace dngrep.core.Queries
                 bool hasExcludes = query.TargetNameExcludes != null
                     && query.TargetNameExcludes.Any(x => !string.IsNullOrEmpty(x));
 
+                bool hasScopeIncludes = query.TargetScopeContains != null
+                    && query.TargetScopeContains.Any(x => !string.IsNullOrEmpty(x));
+
                 this.includes = hasIncludes
                     ? query.TargetNameContains
                         .Where(x => !string.IsNullOrEmpty(x))
@@ -41,6 +45,12 @@ namespace dngrep.core.Queries
 
                 this.excludes = hasExcludes
                     ? query.TargetNameExcludes
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .Select(x => new Regex(x))
+                    : null;
+                
+                this.scopeIncludes = hasScopeIncludes
+                    ? query.TargetScopeContains
                         .Where(x => !string.IsNullOrEmpty(x))
                         .Select(x => new Regex(x))
                     : null;
@@ -59,7 +69,12 @@ namespace dngrep.core.Queries
                 if (
                     this.query.TargetScopeContains == null
                     || !this.query.TargetScopeContains.Any()
-                    || (nodeName != null && this.query.TargetScopeContains.Any(x => nodeName.Contains(x))))
+                    || (nodeName != null && this.query.EnableRegex
+                        ? this.scopeIncludes != null
+                            && this.scopeIncludes.Any(x => x.IsMatch(nodeName))
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+                        : this.query.TargetScopeContains.Any(x => nodeName.Contains(x))))
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
                 {
                     this.scope = node;
                 }
