@@ -12,6 +12,7 @@
     <Version>0.0.1</Version>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <Description>Global tool for searching inside C# projects.</Description>
+    <PackageTags>dotnet, global tools, search</PackageTags>
 
     <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
   </PropertyGroup>
