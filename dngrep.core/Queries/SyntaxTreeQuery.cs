@@ -12,7 +12,7 @@ namespace dngrep.core.Queries
         public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
 
         public Type? ScopeType { get; }
-        public string? TargetScopeName { get; }
+        public IEnumerable<string>? TargetScopeContains { get; }
 
         public bool EnableRegex { get; }
 
@@ -22,7 +22,7 @@ namespace dngrep.core.Queries
             Type? scopeType,
             IEnumerable<string>? targetNameContains,
             IEnumerable<string>? targetNameExcludes,
-            string? targetScopeName,
+            IEnumerable<string>? targetScopeContains,
             bool enableRegex)
         {
             this.TargetType = targetType;
@@ -30,7 +30,7 @@ namespace dngrep.core.Queries
             this.TargetNameExcludes = targetNameExcludes;
             this.TargetAccessModifiers = targetAccessModifiers;
             this.ScopeType = scopeType;
-            this.TargetScopeName = targetScopeName;
+            this.TargetScopeContains = targetScopeContains;
             this.EnableRegex = enableRegex;
         }
     }

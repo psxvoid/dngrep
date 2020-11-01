@@ -53,8 +53,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         new[] { "Read" },
                         null,
-                        "LordOfTheRingsBook"
-                        );
+                        new[] { "LordOfTheRingsBook" }
+                        ); ;
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -89,7 +89,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        "LordOfTheRingsBook"
+                        new[] { "LordOfTheRingsBook" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -270,7 +270,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        "LordOfTheRingsBook"
+                        new[] { "LordOfTheRingsBook" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -308,7 +308,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Struct,
                         null,
                         null,
-                        "HarryPotterBook"
+                        new[] { "HarryPotterBook" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -346,7 +346,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         new[] { "Read" },
                         null,
-                        "LordOfTheRingsBook"
+                        new[] { "LordOfTheRingsBook" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -382,7 +382,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Struct,
                         new[] { "Read" },
                         null,
-                        "HarryPotterBook"
+                        new[] { "HarryPotterBook" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -488,7 +488,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        "Harry"
+                        new[] { "Harry" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -525,7 +525,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        "Harry"
+                        new[] { "Harry" }
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoFixture;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
+using dngrep.core.Queries.Specifiers;
 using dngrep.tool.Abstractions.CodeAnalysis;
 using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
@@ -286,7 +287,36 @@ namespace dngrep.tool.xunit.Core
             this.presenterMock.Verify(x => x.ProduceOutput(
                 It.Is<IEnumerable<SyntaxNode>>(
                     it => it.Count() == 1 && it.Any(x => x.TryGetIdentifierName() == "Test")),
-                It.Is<GrepOptions>(it => it == options)));
+                It.Is<GrepOptions>(it => it == options)), Times.Once());
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsAndNamedScope_ShouldFilterByScopeName()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System;
+                    class Test1 { void MyMethodX() {} }
+                    class Test2 { void MyMethodY() {} }
+                    ");
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .With(x => x.Target, QueryTarget.Method)
+                .With(x => x.Scope, QueryTargetScope.Class)
+                .With(x => x.ScopeContains, new[] { "st1" })
+                .OmitAutoProperties()
+                .Create();
+
+            await this.sut.FolderAsync(options).ConfigureAwait(false);
+
+            this.presenterMock.Verify(x => x.ProduceOutput(
+                It.Is<IEnumerable<SyntaxNode>>(
+                    it => it.Count() == 1 && it.Any(x => x.TryGetIdentifierName() == "MyMethodX")),
+                It.Is<GrepOptions>(it => it == options)), Times.Once());
         }
 
         private void WithCurrentDirectory(string path) =>

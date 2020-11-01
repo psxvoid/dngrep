@@ -233,6 +233,36 @@ namespace dngrep.tool.xunit.Console
             }
         }
 
+        public class ScopeContainsTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Empty(result.Value.ScopeContains);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--scope-contains", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.ScopeContains);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--scope-contains", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeContains);
+            }
+        }
+
         public class ShowFullNameTests
         {
             [Fact]

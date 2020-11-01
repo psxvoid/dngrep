@@ -22,7 +22,7 @@ namespace dngrep.core.Queries
                 scope,
                 queryDescriptor.TargetNameContains,
                 queryDescriptor.TargetNameExcludes,
-                queryDescriptor.QueryTargetScopeName,
+                queryDescriptor.TargetScopeContains,
                 queryDescriptor.EnableRegex);
         }
 

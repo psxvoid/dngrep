@@ -14,7 +14,7 @@ namespace dngrep.core.Queries
         public QueryTargetScope Scope { get; }
         public IEnumerable<string>? TargetNameContains { get; }
         public IEnumerable<string>? TargetNameExcludes { get; }
-        public string? QueryTargetScopeName { get; }
+        public IEnumerable<string>? TargetScopeContains { get; }
         public bool EnableRegex { get; }
 
         public SyntaxTreeQueryDescriptor(
@@ -23,7 +23,7 @@ namespace dngrep.core.Queries
             QueryTargetScope targetScope,
             IEnumerable<string>? targetNameContains,
             IEnumerable<string>? targetNameExcludes,
-            string? queryTargetScopeName,
+            IEnumerable<string>? scopeContains,
             bool enableRegex = false)
         {
             this.Target = queryTarget;
@@ -31,7 +31,7 @@ namespace dngrep.core.Queries
             this.Scope = targetScope;
             this.TargetNameContains = targetNameContains;
             this.TargetNameExcludes = targetNameExcludes;
-            this.QueryTargetScopeName = queryTargetScopeName;
+            this.TargetScopeContains = scopeContains;
             this.EnableRegex = enableRegex;
         }
     }

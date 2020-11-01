@@ -48,6 +48,13 @@ namespace dngrep.tool.Core.Options
         public QueryTargetScope? Scope { get; set; }
 
         [Option(
+            "scope-contains",
+            Required = false,
+            HelpText = "A part of the target scope name (e.g. Foo) to exclude from results. "
+                + "Supports multiple space-separated values.")]
+        public IEnumerable<string>? ScopeContains { get; set; }
+
+        [Option(
             'f',
             "show-full-name",
             Default = true,

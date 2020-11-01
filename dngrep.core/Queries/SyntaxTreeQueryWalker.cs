@@ -52,11 +52,14 @@ namespace dngrep.core.Queries
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             Type nodeType = node.GetType();
+            string? nodeName = node.TryGetIdentifierName();
 
             if (this.query.ScopeType != null && nodeType == this.query.ScopeType)
             {
-                if (string.IsNullOrWhiteSpace(this.query.TargetScopeName)
-                 || node.GetIdentifierName().Contains(this.query.TargetScopeName))
+                if (
+                    this.query.TargetScopeContains == null
+                    || !this.query.TargetScopeContains.Any()
+                    || (nodeName != null && this.query.TargetScopeContains.Any(x => nodeName.Contains(x))))
                 {
                     this.scope = node;
                 }
@@ -64,8 +67,6 @@ namespace dngrep.core.Queries
 
             if (this.query.TargetType == nodeType || this.query.TargetType == null)
             {
-                string? nodeName = node.TryGetIdentifierName();
-
                 if (
                     // do not include nodes without the name in results
                     nodeName != null
