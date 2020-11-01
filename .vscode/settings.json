@@ -1,7 +1,8 @@
 {
     "cSpell.words": [
         "Xunit",
-        "dngrep"
+        "dngrep",
+        "nupkg"
     ],
     "omnisharp.enableRoslynAnalyzers": true,
     "omnisharp.enableEditorConfigSupport": true
