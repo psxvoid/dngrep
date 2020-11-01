@@ -13,6 +13,7 @@ namespace dngrep.core.Queries
 
         public Type? ScopeType { get; }
         public IEnumerable<string>? TargetScopeContains { get; }
+        public IEnumerable<string>? TargetScopeExcludes { get; }
 
         public bool EnableRegex { get; }
 
@@ -23,6 +24,7 @@ namespace dngrep.core.Queries
             IEnumerable<string>? targetNameContains,
             IEnumerable<string>? targetNameExcludes,
             IEnumerable<string>? targetScopeContains,
+            IEnumerable<string>? targetScopeExcludes,
             bool enableRegex)
         {
             this.TargetType = targetType;
@@ -31,6 +33,7 @@ namespace dngrep.core.Queries
             this.TargetAccessModifiers = targetAccessModifiers;
             this.ScopeType = scopeType;
             this.TargetScopeContains = targetScopeContains;
+            this.TargetScopeExcludes = targetScopeExcludes;
             this.EnableRegex = enableRegex;
         }
     }

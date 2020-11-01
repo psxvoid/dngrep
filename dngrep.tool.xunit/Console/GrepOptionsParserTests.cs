@@ -245,6 +245,24 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-C", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.ScopeContains);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-C", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeContains);
+            }
+
+            [Fact]
             public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
             {
                 ParserResult<GrepOptions>? result =
@@ -260,6 +278,54 @@ namespace dngrep.tool.xunit.Console
                     Parser.ParseArguments<GrepOptions>(new[] { "--scope-contains", "Foo", "Bar" });
 
                 Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeContains);
+            }
+        }
+
+        public class ScopeExcludeTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Empty(result.Value.ScopeExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-E", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.ScopeExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-E", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--scope-exclude", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.ScopeExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--scope-exclude", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeExclude);
             }
         }
 

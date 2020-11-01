@@ -53,7 +53,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         new[] { "Read" },
                         null,
-                        new[] { "LordOfTheRingsBook" }
+                        new[] { "LordOfTheRingsBook" },
+                        null
                         ); ;
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -90,6 +91,7 @@ namespace dngrep.core.xunit.Queries
                         new[] { "Read" },
                         null,
                         new[] { "o.{4,4}Book" },
+                        null,
                         true
                         );
 
@@ -113,6 +115,44 @@ namespace dngrep.core.xunit.Queries
                 }
             }
 
+            public class GetMethodWithNameContainingStringInClassWithWithoutNameRegex
+            {
+                private readonly IReadOnlyCollection<SyntaxNode> results;
+
+                public GetMethodWithNameContainingStringInClassWithWithoutNameRegex()
+                {
+                    SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
+                        QueryTarget.Method,
+                        QueryAccessModifier.Any,
+                        QueryTargetScope.Class,
+                        new[] { "Read" },
+                        null,
+                        new[] { "o.*Book" },
+                        new[] { "[tT]e" },
+                        true
+                        );
+
+                    SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                    var walker = new SyntaxTreeQueryWalker(query);
+                    walker.Visit(syntaxTree.GetCompilationUnitRoot());
+                    this.results = walker.Results;
+                }
+
+                [Fact]
+                public void ShouldGetSingleMatch()
+                {
+                    Assert.Equal(1, this.results.Count);
+                }
+
+                [Fact]
+                public void ShouldGetMethodFromMatchingClass()
+                {
+                    Assert.Equal("Read2", this.results.First().GetIdentifierName());
+                }
+            }
+
             public class GetMethodsInClassWithName
             {
                 private readonly IReadOnlyCollection<SyntaxNode> results;
@@ -126,7 +166,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        new[] { "LordOfTheRingsBook" }
+                        new[] { "LordOfTheRingsBook" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -162,6 +203,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Class,
+                        null,
                         null,
                         null,
                         null
@@ -231,6 +273,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
+                        null,
                         null
                         );
 
@@ -267,6 +310,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Method,
                         QueryAccessModifier.Any,
                         QueryTargetScope.Struct,
+                        null,
                         null,
                         null,
                         null
@@ -307,7 +351,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        new[] { "LordOfTheRingsBook" }
+                        new[] { "LordOfTheRingsBook" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -345,7 +390,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Struct,
                         null,
                         null,
-                        new[] { "HarryPotterBook" }
+                        new[] { "HarryPotterBook" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -383,7 +429,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         new[] { "Read" },
                         null,
-                        new[] { "LordOfTheRingsBook" }
+                        new[] { "LordOfTheRingsBook" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -419,7 +466,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Struct,
                         new[] { "Read" },
                         null,
-                        new[] { "HarryPotterBook" }
+                        new[] { "HarryPotterBook" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -486,6 +534,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
+                        null,
                         null
                         );
 
@@ -525,7 +574,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        new[] { "Harry" }
+                        new[] { "Harry" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -562,7 +612,8 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.Class,
                         null,
                         null,
-                        new[] { "Harry" }
+                        new[] { "Harry" },
+                        null
                         );
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
@@ -617,6 +668,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.None,
                         null,
                         null,
+                        null,
                         null
                         );
 
@@ -652,6 +704,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Class,
                         QueryAccessModifier.ProtectedInternal,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null,
                         null
@@ -691,6 +744,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.None,
                         null,
                         null,
+                        null,
                         null
                         );
 
@@ -726,6 +780,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Class,
                         QueryAccessModifier.Internal,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null,
                         null
@@ -804,6 +859,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.Any,
                         QueryAccessModifier.Any,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null,
                         null
@@ -896,6 +952,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.None,
                         null,
                         null,
+                        null,
                         null
                         );
 
@@ -984,6 +1041,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTarget.LocalVariable,
                         QueryAccessModifier.Any,
                         QueryTargetScope.None,
+                        null,
                         null,
                         null,
                         null
@@ -1138,6 +1196,7 @@ namespace dngrep.core.xunit.Queries
                         QueryTargetScope.None,
                         contains,
                         excludes,
+                        null,
                         null,
                         enableRegex
                         );

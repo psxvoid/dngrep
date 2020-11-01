@@ -21,7 +21,7 @@ namespace dngrep.tool.Abstractions.CommandLine
         public static CLParser Default() => new CLParser(with =>
         {
             with.HelpWriter = SystemConsole.Error;
-            with.CaseSensitive = false;
+            with.CaseSensitive = true;
             with.CaseInsensitiveEnumValues = true;
         });
 

@@ -16,6 +16,7 @@ namespace dngrep.core.Queries
         private readonly IEnumerable<Regex>? includes;
         private readonly IEnumerable<Regex>? excludes;
         private readonly IEnumerable<Regex>? scopeIncludes;
+        private readonly IEnumerable<Regex>? scopeExcludes;
 
         private SyntaxNode? scope;
 
@@ -37,6 +38,9 @@ namespace dngrep.core.Queries
                 bool hasScopeIncludes = query.TargetScopeContains != null
                     && query.TargetScopeContains.Any(x => !string.IsNullOrEmpty(x));
 
+                bool hasScopeExcludes = query.TargetScopeExcludes != null
+                    && query.TargetScopeExcludes.Any(x => !string.IsNullOrEmpty(x));
+
                 this.includes = hasIncludes
                     ? query.TargetNameContains
                         .Where(x => !string.IsNullOrEmpty(x))
@@ -48,9 +52,15 @@ namespace dngrep.core.Queries
                         .Where(x => !string.IsNullOrEmpty(x))
                         .Select(x => new Regex(x))
                     : null;
-                
+
                 this.scopeIncludes = hasScopeIncludes
                     ? query.TargetScopeContains
+                        .Where(x => !string.IsNullOrEmpty(x))
+                        .Select(x => new Regex(x))
+                    : null;
+
+                this.scopeExcludes = hasScopeExcludes
+                    ? query.TargetScopeExcludes
                         .Where(x => !string.IsNullOrEmpty(x))
                         .Select(x => new Regex(x))
                     : null;
@@ -67,14 +77,14 @@ namespace dngrep.core.Queries
             if (this.query.ScopeType != null && nodeType == this.query.ScopeType)
             {
                 if (
-                    this.query.TargetScopeContains == null
-                    || !this.query.TargetScopeContains.Any()
-                    || (nodeName != null && this.query.EnableRegex
-                        ? this.scopeIncludes != null
-                            && this.scopeIncludes.Any(x => x.IsMatch(nodeName))
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                        : this.query.TargetScopeContains.Any(x => nodeName.Contains(x))))
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+                    (this.query.TargetScopeContains == null || this.query.EnableRegex
+                            ? this.scopeIncludes == null || nodeName != null
+                                && this.scopeIncludes.Any(x => x.IsMatch(nodeName))
+                            : nodeName != null && this.query.TargetScopeContains.Any(x => nodeName.Contains(x)))
+                    && (this.query.TargetScopeExcludes == null || this.query.EnableRegex
+                        ? this.scopeExcludes == null || nodeName != null
+                            && !this.scopeExcludes.Any(x => x.IsMatch(nodeName))
+                        : nodeName != null && !this.query.TargetScopeExcludes.Any(x => nodeName.Contains(x))))
                 {
                     this.scope = node;
                 }

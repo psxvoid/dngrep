@@ -129,6 +129,7 @@ namespace dngrep.tool.Core
                             options.Contains,
                             options.Exclude,
                             options.ScopeContains,
+                            options.ScopeExclude,
                             options.EnableRegexp ?? false);
                         var query = SyntaxTreeQueryBuilder.From(queryDescriptor);
                         var walker = new SyntaxTreeQueryWalker(query);
