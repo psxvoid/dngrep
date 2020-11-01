@@ -9,7 +9,9 @@
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dngrep</ToolCommandName>
+    <Version>0.0.1</Version>
     <PackageOutputPath>./nupkg</PackageOutputPath>
+    <Description>Global tool for searching inside C# projects.</Description>
 
     <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
   </PropertyGroup>
