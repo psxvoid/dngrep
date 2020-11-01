@@ -12,7 +12,6 @@ namespace dngrep.tool
 {
     public static class Program
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1303:Do not pass literals as localized parameters", Justification = "Should be fixed during further development.")]
         public static async Task Main(string[] args)
         {
             using var container = new Container(x =>
