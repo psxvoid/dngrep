@@ -15,6 +15,8 @@
     <PackageId>dngrep</PackageId>
     <PackageTags>dotnet, global tools, search</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <RepositoryUrl>https://github.com/psxvoid/dngrep</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
 
     <DisableMSBuildAssemblyCopyCheck>true</DisableMSBuildAssemblyCopyCheck>
   </PropertyGroup>
