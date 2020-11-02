@@ -17,6 +17,7 @@
     <PackageId>dngrep</PackageId>
     <PackageTags>dotnet, global tools, search</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+    <Authors>psxvoid</Authors>
     <RepositoryUrl>https://github.com/psxvoid/dngrep</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
 
