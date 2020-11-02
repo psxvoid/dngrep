@@ -75,4 +75,4 @@ dngrep -t class --hide-namespaces true -r true -p false -l false -c Syntax.*Exte
 
 Output:
 
-![output - class example 3](./resources/readme/class-example-4.png)
+![output - class example 4](./resources/readme/class-example-4.png)
