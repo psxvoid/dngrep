@@ -11,7 +11,9 @@
     <ToolCommandName>dngrep</ToolCommandName>
     <Version>0.0.1</Version>
     <PackageOutputPath>./nupkg</PackageOutputPath>
-    <Description>Global tool for searching inside C# projects.</Description>
+    <Description>
+      Global tool for syntax-aware search inside C# projects directly from a command line.
+    </Description>
     <PackageId>dngrep</PackageId>
     <PackageTags>dotnet, global tools, search</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
