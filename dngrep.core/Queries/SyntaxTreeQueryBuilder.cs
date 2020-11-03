@@ -89,7 +89,7 @@ namespace dngrep.core.Queries
             _ => throw new NotImplementedException($"The requested target isn't registered. Kind: {target}"),
         };
 
-        public static IReadOnlyCollection<SyntaxKind>
+        private static IReadOnlyCollection<SyntaxKind>
             GetTargetAccessModifiers(QueryAccessModifier accessModifier) => accessModifier switch
             {
                 QueryAccessModifier.Any => Array.Empty<SyntaxKind>(),
