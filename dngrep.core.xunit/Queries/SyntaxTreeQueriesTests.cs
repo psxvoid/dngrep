@@ -875,7 +875,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetAllSyntaxNodesThatHaveName()
                 {
-                    Assert.Equal(16, this.results.Count);
+                    Assert.Equal(17, this.results.Count);
                 }
 
                 [Fact]

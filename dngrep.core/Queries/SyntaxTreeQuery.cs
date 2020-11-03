@@ -1,40 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.core.Queries
 {
     public class SyntaxTreeQuery
     {
-        public Type? TargetType { get; }
-        public IEnumerable<string>? TargetNameContains { get; }
-        public IEnumerable<string>? TargetNameExcludes { get; }
+        public IReadOnlyCollection<ISyntaxNodeMatcher> TargetMatchers { get; }
+
+        public IReadOnlyCollection<ISyntaxNodeMatcher> ScopeMatchers { get; }
+
         public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
 
-        public Type? ScopeType { get; }
-        public IEnumerable<string>? TargetScopeContains { get; }
-        public IEnumerable<string>? TargetScopeExcludes { get; }
+        public bool HasTarget =>
+            this.TargetMatchers != null && this.TargetMatchers.Count > 0;
 
-        public bool EnableRegex { get; }
+        public bool HasScope =>
+            this.ScopeMatchers != null && this.ScopeMatchers.Count > 0;
 
         internal SyntaxTreeQuery(
-            Type? targetType,
-            IReadOnlyCollection<SyntaxKind> targetAccessModifiers,
-            Type? scopeType,
-            IEnumerable<string>? targetNameContains,
-            IEnumerable<string>? targetNameExcludes,
-            IEnumerable<string>? targetScopeContains,
-            IEnumerable<string>? targetScopeExcludes,
-            bool enableRegex)
+            IReadOnlyCollection<ISyntaxNodeMatcher> targetMatchers,
+            IReadOnlyCollection<ISyntaxNodeMatcher> scopeMatchers,
+            IReadOnlyCollection<SyntaxKind> targetAccessModifiers
+            )
         {
-            this.TargetType = targetType;
-            this.TargetNameContains = targetNameContains;
-            this.TargetNameExcludes = targetNameExcludes;
+            this.TargetMatchers = targetMatchers;
+            this.ScopeMatchers = scopeMatchers;
             this.TargetAccessModifiers = targetAccessModifiers;
-            this.ScopeType = scopeType;
-            this.TargetScopeContains = targetScopeContains;
-            this.TargetScopeExcludes = targetScopeExcludes;
-            this.EnableRegex = enableRegex;
         }
+
     }
 }

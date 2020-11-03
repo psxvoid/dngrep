@@ -1,4 +1,5 @@
-﻿using AutoFixture;
+﻿using System.Linq;
+using AutoFixture;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.xunit.TestHelpers;
@@ -29,7 +30,7 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Null(result.TargetType);
+                Assert.Empty(result.TargetMatchers);
             }
 
             [Fact]
@@ -39,7 +40,9 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(ClassDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(SyntaxFactory.ClassDeclaration("any")));
             }
 
             [Fact]
@@ -49,7 +52,9 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(EnumDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(SyntaxFactory.EnumDeclaration("any")));
             }
 
             [Fact]
@@ -59,7 +64,13 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(FieldDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(SyntaxFactory.FieldDeclaration(
+                        SyntaxFactory.VariableDeclaration(
+                            SyntaxFactory.ParseTypeName("bool"),
+                            SyntaxFactory.SeparatedList(
+                                new[] { SyntaxFactory.VariableDeclarator("any") })))));
             }
 
             [Fact]
@@ -69,7 +80,9 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(InterfaceDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(SyntaxFactory.InterfaceDeclaration("any")));
             }
 
             [Fact]
@@ -79,17 +92,29 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(MethodDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(
+                        SyntaxFactory.MethodDeclaration(
+                            SyntaxFactory.ParseTypeName("bool"),
+                            "any")));
             }
 
             [Fact]
             public void FromDescriptor_MethodArgument_MethodArgumentDeclaration()
             {
-                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.Method);
+                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.MethodArgument);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(MethodDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(
+                        SyntaxFactory.Argument(
+                            SyntaxFactory.MemberAccessExpression(
+                                SyntaxKind.SimpleMemberAccessExpression,
+                                SyntaxFactory.IdentifierName("any"),
+                                SyntaxFactory.IdentifierName("any")))));
             }
 
             [Fact]
@@ -99,7 +124,11 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(NamespaceDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(
+                        SyntaxFactory.NamespaceDeclaration(
+                            SyntaxFactory.ParseName("any"))));
             }
 
             [Fact]
@@ -109,7 +138,12 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(PropertyDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(
+                        SyntaxFactory.PropertyDeclaration(
+                            SyntaxFactory.ParseTypeName("bool"),
+                            "any")));
             }
 
             [Fact]
@@ -119,7 +153,9 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(StructDeclarationSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(SyntaxFactory.StructDeclaration("any")));
             }
 
             [Fact]
@@ -129,13 +165,30 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(typeof(LocalDeclarationStatementSyntax), result.TargetType);
+                Assert.Contains(
+                    result.TargetMatchers,
+                    x => x.Match(
+                        SyntaxFactory.LocalDeclarationStatement(
+                            SyntaxFactory.VariableDeclaration(
+                                SyntaxFactory.ParseTypeName("bool"),
+                                SyntaxFactory.SeparatedList(
+                                    new[] { SyntaxFactory.VariableDeclarator("any") })))));
             }
 
             private SyntaxTreeQueryDescriptor DescribeQuery(QueryTarget target)
             {
                 return this.fixture.Create<SyntaxTreeQueryDescriptor>(
-                    new { queryTarget = target });
+                    new
+                    {
+                        queryTarget = target,
+                        targetScope = QueryTargetScope.None,
+                        accessModifier = QueryAccessModifier.Any,
+                        targetNameContains = Enumerable.Empty<string>(),
+                        targetNameExcludes = Enumerable.Empty<string>(),
+                        scopeContains = Enumerable.Empty<string>(),
+                        scopeExclude = Enumerable.Empty<string>(),
+                        enableRegex = false
+                    });
             }
         }
 
@@ -271,7 +324,7 @@ namespace dngrep.core.xunit.Queries
             {
                 var queryDescriptor = this.DescribeQuery(QueryTargetScope.None);
 
-                Assert.Null(SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+                Assert.Empty(SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeMatchers);
             }
 
             [Fact]
@@ -279,9 +332,11 @@ namespace dngrep.core.xunit.Queries
             {
                 var queryDescriptor = this.DescribeQuery(QueryTargetScope.Class);
 
-                Assert.Equal(
-                    typeof(ClassDeclarationSyntax),
-                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+                SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                Assert.Contains(
+                    result.ScopeMatchers,
+                    x => x.Match(SyntaxFactory.ClassDeclaration("any")));
             }
 
             [Fact]
@@ -289,9 +344,11 @@ namespace dngrep.core.xunit.Queries
             {
                 var queryDescriptor = this.DescribeQuery(QueryTargetScope.Struct);
 
-                Assert.Equal(
-                    typeof(StructDeclarationSyntax),
-                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+                SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                Assert.Contains(
+                    result.ScopeMatchers,
+                    x => x.Match(SyntaxFactory.StructDeclaration("any")));
             }
 
             [Fact]
@@ -299,9 +356,13 @@ namespace dngrep.core.xunit.Queries
             {
                 var queryDescriptor = this.DescribeQuery(QueryTargetScope.Namespace);
 
-                Assert.Equal(
-                    typeof(NamespaceDeclarationSyntax),
-                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+                SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                Assert.Contains(
+                    result.ScopeMatchers,
+                    x => x.Match(
+                        SyntaxFactory.NamespaceDeclaration(
+                            SyntaxFactory.ParseName("any"))));
             }
 
             [Fact]
@@ -309,15 +370,28 @@ namespace dngrep.core.xunit.Queries
             {
                 var queryDescriptor = this.DescribeQuery(QueryTargetScope.Interface);
 
-                Assert.Equal(
-                    typeof(InterfaceDeclarationSyntax),
-                    SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeType);
+                SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
+
+                Assert.Contains(
+                    result.ScopeMatchers,
+                    x => x.Match(SyntaxFactory.InterfaceDeclaration("any")));
             }
 
-            private SyntaxTreeQueryDescriptor DescribeQuery(QueryTargetScope scope)
+            private SyntaxTreeQueryDescriptor DescribeQuery(
+                QueryTargetScope scope,
+                bool enableRegex = false)
             {
                 return this.fixture.Create<SyntaxTreeQueryDescriptor>(
-                    new { targetScope = scope });
+                    new
+                    {
+                        targetScope = scope,
+                        accessModifier = QueryAccessModifier.Any,
+                        targetNameContains = Enumerable.Empty<string>(),
+                        targetNameExcludes = Enumerable.Empty<string>(),
+                        scopeContains = Enumerable.Empty<string>(),
+                        scopeExclude = Enumerable.Empty<string>(),
+                        enableRegex
+                    });
             }
         }
     }

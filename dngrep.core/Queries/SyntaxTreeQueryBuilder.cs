@@ -1,6 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
+using dngrep.core.Queries.SyntaxNodeMatchers;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
@@ -8,23 +11,63 @@ namespace dngrep.core.Queries
 {
     public static class SyntaxTreeQueryBuilder
     {
-        public static SyntaxTreeQuery From(SyntaxTreeQueryDescriptor queryDescriptor)
+        public static SyntaxTreeQuery From(SyntaxTreeQueryDescriptor descriptor)
         {
-            _ = queryDescriptor ?? throw new ArgumentNullException(nameof(queryDescriptor));
+            _ = descriptor ?? throw new ArgumentNullException(nameof(descriptor));
 
-            Type? target = GetTargetSyntaxNodeType(queryDescriptor.Target);
-            Type? scope = GetTargetScopeSyntaxNodeType(queryDescriptor.Scope);
-            IReadOnlyCollection<SyntaxKind> modifiers = GetTargetAccessModifiers(queryDescriptor.AccessModifier);
+            Type? target = GetTargetSyntaxNodeType(descriptor.Target);
+            Type? scope = GetTargetScopeSyntaxNodeType(descriptor.Scope);
+            IReadOnlyCollection<SyntaxKind> modifiers = GetTargetAccessModifiers(descriptor.AccessModifier);
+
 
             return new SyntaxTreeQuery(
-                target,
-                modifiers,
-                scope,
-                queryDescriptor.TargetNameContains,
-                queryDescriptor.TargetNameExcludes,
-                queryDescriptor.TargetScopeContains,
-                queryDescriptor.TargetScopeExcludes,
-                queryDescriptor.EnableRegex);
+                descriptor.Target == QueryTarget.Any
+                ? Array.Empty<ISyntaxNodeMatcher>()
+                : descriptor.EnableRegex
+                    ? new[]
+                    {
+                        (ISyntaxNodeMatcher) new ContainsNameRegexSyntaxNodeMatcher(
+                            GetTargetSyntaxNodeType(descriptor.Target),
+                            descriptor.TargetNameContains
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                .Select(x => new Regex(x)),
+                            descriptor.TargetNameExcludes
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                .Select(x => new Regex(x)))
+                    }
+                    : new[]
+                    {
+                        (ISyntaxNodeMatcher) new ContainsNameSyntaxNodeMatcher(
+                            GetTargetSyntaxNodeType(descriptor.Target),
+                            descriptor.TargetNameContains
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x)),
+                            descriptor.TargetNameExcludes
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x)))
+                    },
+                descriptor.Scope == QueryTargetScope.None
+                ? Array.Empty<ISyntaxNodeMatcher>()
+                : descriptor.EnableRegex
+                    ? new[]
+                    {
+                        (ISyntaxNodeMatcher) new ContainsNameRegexSyntaxNodeMatcher(
+                            GetTargetScopeSyntaxNodeType(descriptor.Scope),
+                            descriptor.TargetScopeContains
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                .Select(x => new Regex(x)),
+                            descriptor.TargetScopeExcludes
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x))
+                                .Select(x => new Regex(x)))
+                    }
+                    : new[]
+                    {
+                        (ISyntaxNodeMatcher) new ContainsNameSyntaxNodeMatcher(
+                            GetTargetScopeSyntaxNodeType(descriptor.Scope),
+                            descriptor.TargetScopeContains
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x)),
+                            descriptor.TargetNameExcludes
+                                ?.Where(x => !string.IsNullOrWhiteSpace(x)))
+                    },
+                modifiers);
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch
@@ -39,6 +82,7 @@ namespace dngrep.core.Queries
             QueryTarget.Namespace => typeof(NamespaceDeclarationSyntax),
             QueryTarget.Property => typeof(PropertyDeclarationSyntax),
             QueryTarget.LocalVariable => typeof(LocalDeclarationStatementSyntax),
+            QueryTarget.MethodArgument => typeof(ArgumentSyntax),
             _ => throw new NotImplementedException($"The requested target isn't registered. Kind: {target}"),
         };
 
