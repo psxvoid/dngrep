@@ -38,11 +38,8 @@ namespace dngrep.core.Queries
             if (
                 // do not include nodes without the name in results
                 nodeName != null
-                // match target type and name
                 && (!this.query.HasTarget || this.query.TargetMatchers.Any(x => x.Match(node)))
-                // match scope type
                 && (!this.query.HasScope || (this.scope != null && node.HasParent(this.scope)))
-                // match access modifiers
                 && (!this.query.HasAccessModifiers
                     || this.query.AccessModifierMatchers.Any(x => x.Match(node))))
             {
