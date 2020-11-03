@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using Microsoft.CodeAnalysis.CSharp;
+using dngrep.core.Extensions.EnumerableExtensions;
 
 namespace dngrep.core.Queries
 {
@@ -9,23 +9,26 @@ namespace dngrep.core.Queries
 
         public IReadOnlyCollection<ISyntaxNodeMatcher> ScopeMatchers { get; }
 
-        public IReadOnlyCollection<SyntaxKind> TargetAccessModifiers { get; }
+        public IReadOnlyCollection<ISyntaxNodeMatcher> AccessModifierMatchers { get; }
 
         public bool HasTarget =>
-            this.TargetMatchers != null && this.TargetMatchers.Count > 0;
+            !this.TargetMatchers.IsNullOrEmpty();
 
         public bool HasScope =>
-            this.ScopeMatchers != null && this.ScopeMatchers.Count > 0;
+            !this.ScopeMatchers.IsNullOrEmpty();
+
+        public bool HasAccessModifiers =>
+            !this.AccessModifierMatchers.IsNullOrEmpty();
 
         internal SyntaxTreeQuery(
             IReadOnlyCollection<ISyntaxNodeMatcher> targetMatchers,
             IReadOnlyCollection<ISyntaxNodeMatcher> scopeMatchers,
-            IReadOnlyCollection<SyntaxKind> targetAccessModifiers
+            IReadOnlyCollection<ISyntaxNodeMatcher> accessModifierMatchers
             )
         {
             this.TargetMatchers = targetMatchers;
             this.ScopeMatchers = scopeMatchers;
-            this.TargetAccessModifiers = targetAccessModifiers;
+            this.AccessModifierMatchers = accessModifierMatchers;
         }
 
     }

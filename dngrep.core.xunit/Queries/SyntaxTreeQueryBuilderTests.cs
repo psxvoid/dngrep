@@ -3,8 +3,8 @@ using AutoFixture;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.xunit.TestHelpers;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using SharpJuice.AutoFixture;
 using Xunit;
 
@@ -212,7 +212,7 @@ namespace dngrep.core.xunit.Queries
                         AccessModifier = QueryAccessModifier.Any
                     });
 
-                Assert.Empty(SyntaxTreeQueryBuilder.From(queryDescriptor).TargetAccessModifiers);
+                Assert.Empty(SyntaxTreeQueryBuilder.From(queryDescriptor).AccessModifierMatchers);
             }
 
             [Fact]
@@ -226,8 +226,9 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Single(result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.PublicKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(result.AccessModifierMatchers,
+                    x => x.Match(InitNodeWithModifiers(SyntaxKind.PublicKeyword)));
             }
 
             [Fact]
@@ -241,8 +242,12 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Single(result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.PrivateKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(
+                    result.AccessModifierMatchers,
+                    x => x.Match(
+                        InitNodeWithModifiers(
+                            SyntaxKind.PrivateKeyword)));
             }
 
             [Fact]
@@ -256,8 +261,12 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Single(result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.ProtectedKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(
+                    result.AccessModifierMatchers,
+                    x => x.Match(
+                        InitNodeWithModifiers(
+                            SyntaxKind.ProtectedKeyword)));
             }
 
             [Fact]
@@ -271,8 +280,12 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Single(result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.InternalKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(
+                    result.AccessModifierMatchers,
+                    x => x.Match(
+                        InitNodeWithModifiers(
+                            SyntaxKind.InternalKeyword)));
             }
 
             [Fact]
@@ -286,9 +299,13 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(2, result.TargetAccessModifiers.Count);
-                Assert.Contains(SyntaxKind.ProtectedKeyword, result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.InternalKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(
+                    result.AccessModifierMatchers,
+                    x => x.Match(
+                        InitNodeWithModifiers(
+                            SyntaxKind.ProtectedKeyword,
+                            SyntaxKind.InternalKeyword)));
             }
 
             [Fact]
@@ -302,9 +319,21 @@ namespace dngrep.core.xunit.Queries
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
-                Assert.Equal(2, result.TargetAccessModifiers.Count);
-                Assert.Contains(SyntaxKind.PrivateKeyword, result.TargetAccessModifiers);
-                Assert.Contains(SyntaxKind.ProtectedKeyword, result.TargetAccessModifiers);
+                Assert.Single(result.AccessModifierMatchers);
+                Assert.Contains(
+                    result.AccessModifierMatchers,
+                    x => x.Match(
+                        InitNodeWithModifiers(
+                            SyntaxKind.PrivateKeyword,
+                            SyntaxKind.ProtectedKeyword)));
+            }
+
+            private static SyntaxNode InitNodeWithModifiers(params SyntaxKind[] modifiers)
+            {
+                return SyntaxFactory.ClassDeclaration("any")
+                    .WithModifiers(
+                        SyntaxFactory.TokenList(
+                            modifiers.Select(x => SyntaxFactory.Token(x))));
             }
         }
 

@@ -67,7 +67,10 @@ namespace dngrep.core.Queries
                             descriptor.TargetNameExcludes
                                 ?.Where(x => !string.IsNullOrWhiteSpace(x)))
                     },
-                modifiers);
+                descriptor.AccessModifier == QueryAccessModifier.Any
+                    ? Array.Empty<ISyntaxNodeMatcher>()
+                    : new[] { new AccessModifierSyntaxNodeMatcher(
+                        GetTargetAccessModifiers(descriptor.AccessModifier)) });
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch
