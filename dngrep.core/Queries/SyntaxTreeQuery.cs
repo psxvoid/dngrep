@@ -30,6 +30,5 @@ namespace dngrep.core.Queries
             this.ScopeMatchers = scopeMatchers;
             this.AccessModifierMatchers = accessModifierMatchers;
         }
-
     }
 }
