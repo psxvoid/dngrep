@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
+using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 

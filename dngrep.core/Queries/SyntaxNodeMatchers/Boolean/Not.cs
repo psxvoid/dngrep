@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace dngrep.core.Queries.SyntaxNodeMatchers
+namespace dngrep.core.Queries.SyntaxNodeMatchers.Boolean
 {
     public class Not : ISyntaxNodeMatcher
     {

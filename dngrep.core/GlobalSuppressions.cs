@@ -5,4 +5,4 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "<Pending>", Scope = "type", Target = "~T:dngrep.core.Queries.SyntaxNodeMatchers.Not")]
+[assembly: SuppressMessage("Naming", "CA1716:Identifiers should not match keywords", Justification = "For is't a single-language tool.", Scope = "type", Target = "~T:dngrep.core.Queries.SyntaxNodeMatchers.Boolean.Not")]
