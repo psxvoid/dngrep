@@ -9,7 +9,7 @@
 
     <PackAsTool>true</PackAsTool>
     <ToolCommandName>dngrep</ToolCommandName>
-    <Version>0.0.1</Version>
+    <Version>0.0.2</Version>
     <PackageOutputPath>./nupkg</PackageOutputPath>
     <Description>
       Global tool for syntax-aware search inside C# projects directly from a command line.
