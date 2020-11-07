@@ -47,15 +47,13 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodWithNameContainingStringInClassWithName()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        new[] { "Read" },
-                        null,
-                        new[] { "LordOfTheRingsBook" },
-                        null
-                        ); ;
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetNameContains = new[] { "Read" },
+                        TargetScopeContains = new[] { "LordOfTheRingsBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -84,16 +82,14 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodWithNameContainingStringInClassWithNameRegex()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        new[] { "Read" },
-                        null,
-                        new[] { "o.{4,4}Book" },
-                        null,
-                        true
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetNameContains = new[] { "Read" },
+                        TargetScopeContains = new[] { "o.{4,4}Book" },
+                        EnableRegex = true,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -122,16 +118,15 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodWithNameContainingStringInClassWithWithoutNameRegex()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        new[] { "Read" },
-                        null,
-                        new[] { "o.*Book" },
-                        new[] { "[tT]e" },
-                        true
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetNameContains = new[] { "Read" },
+                        TargetScopeContains = new[] { "o.*Book" },
+                        TargetScopeExcludes = new[] { "[tT]e" },
+                        EnableRegex = true,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -160,15 +155,12 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodsInClassWithName()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        new[] { "LordOfTheRingsBook" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetScopeContains = new[] { "LordOfTheRingsBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -199,15 +191,11 @@ namespace dngrep.core.xunit.Queries
                 public GetAnyMethodsInAnyClasses()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -267,15 +255,11 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodsInAnyClass()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -306,15 +290,11 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodsInAnyStruct()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Struct,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Struct,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -345,15 +325,12 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodsInSpecifiedClass()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        new[] { "LordOfTheRingsBook" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetScopeExcludes = new[] { "LordOfTheRingsBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -384,15 +361,12 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodsInSpecifiedStruct()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Struct,
-                        null,
-                        null,
-                        new[] { "HarryPotterBook" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Struct,
+                        TargetScopeExcludes = new[] { "HarryPotterBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -423,15 +397,13 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodWithNameContainingStringInClassWithName()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Class,
-                        new[] { "Read" },
-                        null,
-                        new[] { "LordOfTheRingsBook" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        TargetNameContains = new[] { "Read" },
+                        TargetScopeContains = new[] { "LordOfTheRingsBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -460,15 +432,13 @@ namespace dngrep.core.xunit.Queries
                 public GetMethodWithNameContainingStringInStructWithName()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.Struct,
-                        new[] { "Read" },
-                        null,
-                        new[] { "HarryPotterBook" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Struct,
+                        TargetNameContains = new[] { "Read" },
+                        TargetScopeContains = new[] { "HarryPotterBook" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -528,15 +498,12 @@ namespace dngrep.core.xunit.Queries
                 public GetPrivateMethodsInAnyClass()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Private,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        AccessModifier = QueryAccessModifier.Private,
+                        Scope = QueryTargetScope.Class,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -568,15 +535,13 @@ namespace dngrep.core.xunit.Queries
                 public GetPrivateMethodsInSpecificClass()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Private,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        new[] { "Harry" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        AccessModifier = QueryAccessModifier.Private,
+                        TargetScopeContains = new[] { "Harry" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -606,15 +571,13 @@ namespace dngrep.core.xunit.Queries
                 public GetPublicMethodsInSpecificClass()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Method,
-                        QueryAccessModifier.Public,
-                        QueryTargetScope.Class,
-                        null,
-                        null,
-                        new[] { "Harry" },
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Method,
+                        Scope = QueryTargetScope.Class,
+                        AccessModifier = QueryAccessModifier.Public,
+                        TargetScopeContains = new[] { "Harry" },
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -662,15 +625,11 @@ namespace dngrep.core.xunit.Queries
                 public GetPublicClasses()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Class,
-                        QueryAccessModifier.Public,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Class,
+                        AccessModifier = QueryAccessModifier.Public,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -700,15 +659,11 @@ namespace dngrep.core.xunit.Queries
                 public GetProtectedInternalClasses()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Class,
-                        QueryAccessModifier.ProtectedInternal,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Class,
+                        AccessModifier = QueryAccessModifier.ProtectedInternal,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -738,15 +693,11 @@ namespace dngrep.core.xunit.Queries
                 public GetProtectedClasses()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Class,
-                        QueryAccessModifier.Protected,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Class,
+                        AccessModifier = QueryAccessModifier.Protected,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -776,15 +727,11 @@ namespace dngrep.core.xunit.Queries
                 public GetInternalClasses()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Class,
-                        QueryAccessModifier.Internal,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.Class,
+                        AccessModifier = QueryAccessModifier.Internal,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -856,15 +803,7 @@ namespace dngrep.core.xunit.Queries
                 public GetAnyTargetWithAnyModifierInAnyScope()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Any,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor();
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -962,15 +901,10 @@ namespace dngrep.core.xunit.Queries
                 public GetAnyTargetPublicModifiers()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.Any,
-                        QueryAccessModifier.Public,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        AccessModifier = QueryAccessModifier.Public,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -1053,15 +987,10 @@ namespace dngrep.core.xunit.Queries
                 public GetVariables()
                 {
                     SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        QueryTarget.LocalVariable,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.None,
-                        null,
-                        null,
-                        null,
-                        null
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = QueryTarget.LocalVariable,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -1206,16 +1135,15 @@ namespace dngrep.core.xunit.Queries
                     bool enableRegex = false)
                 {
 
-                    var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                        target,
-                        QueryAccessModifier.Any,
-                        QueryTargetScope.None,
-                        contains,
-                        excludes,
-                        null,
-                        null,
-                        enableRegex
-                        );
+                    var queryDescriptor = new SyntaxTreeQueryDescriptor
+                    {
+                        Target = target,
+#pragma warning disable CS8601 // Possible null reference assignment.
+                        TargetNameContains = contains,
+                        TargetNameExcludes = excludes,
+#pragma warning restore CS8601 // Possible null reference assignment.
+                        EnableRegex = enableRegex,
+                    };
 
                     SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
 

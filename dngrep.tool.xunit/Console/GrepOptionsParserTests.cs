@@ -80,7 +80,7 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--contains", "Foo", "Bar" });
@@ -128,7 +128,7 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--exclude", "Foo", "Bar" });
@@ -254,7 +254,7 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_ShortNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "-C", "Foo", "Bar" });
@@ -272,7 +272,7 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--scope-contains", "Foo", "Bar" });
@@ -302,7 +302,7 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_ShortNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "-E", "Foo", "Bar" });
@@ -320,12 +320,108 @@ namespace dngrep.tool.xunit.Console
             }
 
             [Fact]
-            public void ParseArguments_FullNameAndFooAndBar_ShouldParsTwoNames()
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
             {
                 ParserResult<GrepOptions>? result =
                     Parser.ParseArguments<GrepOptions>(new[] { "--scope-exclude", "Foo", "Bar" });
 
                 Assert.Equal(new[] { "Foo", "Bar" }, result.Value.ScopeExclude);
+            }
+        }
+
+        public class PathContainsTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Empty(result.Value.PathContains);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-p", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.PathContains);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-p", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.PathContains);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--path-contains", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.PathContains);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--path-contains", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.PathContains);
+            }
+        }
+
+        public class PathExcludeTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_ShouldParseAsEmptyEnumerable()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Empty(result.Value.PathExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-P", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.PathExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-P", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.PathExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFoo_ShouldParseSingleName()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--path-exclude", "Foo" });
+
+                Assert.Equal(new[] { "Foo" }, result.Value.PathExclude);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndFooAndBar_ShouldParseTwoNames()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--path-exclude", "Foo", "Bar" });
+
+                Assert.Equal(new[] { "Foo", "Bar" }, result.Value.PathExclude);
             }
         }
 
@@ -344,7 +440,7 @@ namespace dngrep.tool.xunit.Console
             public void ParseArguments_ShortNameFlagOnly_True()
             {
                 ParserResult<GrepOptions>? result =
-                    Parser.ParseArguments<GrepOptions>(new[] { "-f" });
+                    Parser.ParseArguments<GrepOptions>(new[] { "-n" });
 
                 Assert.Equal(true, result.Value.ShowFullName);
             }
@@ -353,7 +449,7 @@ namespace dngrep.tool.xunit.Console
             public void ParseArguments_ShortNameFalse_False()
             {
                 ParserResult<GrepOptions>? result =
-                    Parser.ParseArguments<GrepOptions>(new[] { "-f", "false" });
+                    Parser.ParseArguments<GrepOptions>(new[] { "-n", "false" });
 
                 Assert.Equal(false, result.Value.ShowFullName);
             }
@@ -362,7 +458,7 @@ namespace dngrep.tool.xunit.Console
             public void ParseArguments_ShortNameTrue_True()
             {
                 ParserResult<GrepOptions>? result =
-                    Parser.ParseArguments<GrepOptions>(new[] { "-f", "true" });
+                    Parser.ParseArguments<GrepOptions>(new[] { "-n", "true" });
 
                 Assert.Equal(true, result.Value.ShowFullName);
             }

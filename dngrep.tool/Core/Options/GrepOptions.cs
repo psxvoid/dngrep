@@ -64,7 +64,21 @@ namespace dngrep.tool.Core.Options
         public IEnumerable<string>? ScopeExclude { get; set; }
 
         [Option(
-            'f',
+            'p',
+            "path-contains",
+            Required = false,
+            HelpText = "A part of a file path of the target to include.")]
+        public IEnumerable<string>? PathContains { get; set; }
+        
+        [Option(
+            'P',
+            "path-exclude",
+            Required = false,
+            HelpText = "A part of a file path of the target to exclude.")]
+        public IEnumerable<string>? PathExclude { get; set; }
+
+        [Option(
+            'n',
             "show-full-name",
             Default = true,
             Required = false,
@@ -73,16 +87,16 @@ namespace dngrep.tool.Core.Options
         public bool? ShowFullName { get; set; }
 
         [Option(
-            'p',
+            'l',
             "show-file-path",
             Default = true,
             Required = false,
-            HelpText = "When set to true, then output will contain a file name, "
+            HelpText = "When set to true, then output will contain a file name (location), "
             + "containing the target. (default=true).")]
         public bool? ShowFilePath { get; set; }
 
         [Option(
-            'l',
+            'L',
             "show-location",
             Default = true,
             Required = false,

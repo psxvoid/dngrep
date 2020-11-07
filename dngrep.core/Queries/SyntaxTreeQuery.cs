@@ -11,6 +11,8 @@ namespace dngrep.core.Queries
 
         public IReadOnlyCollection<ISyntaxNodeMatcher> AccessModifierMatchers { get; }
 
+        public IReadOnlyCollection<ISyntaxNodeMatcher> PathMatchers { get; }
+
         public bool HasTarget =>
             !this.TargetMatchers.IsNullOrEmpty();
 
@@ -20,15 +22,20 @@ namespace dngrep.core.Queries
         public bool HasAccessModifiers =>
             !this.AccessModifierMatchers.IsNullOrEmpty();
 
+        public bool HasPathMatchers =>
+            !this.PathMatchers.IsNullOrEmpty();
+
         internal SyntaxTreeQuery(
             IReadOnlyCollection<ISyntaxNodeMatcher> targetMatchers,
             IReadOnlyCollection<ISyntaxNodeMatcher> scopeMatchers,
-            IReadOnlyCollection<ISyntaxNodeMatcher> accessModifierMatchers
+            IReadOnlyCollection<ISyntaxNodeMatcher> accessModifierMatchers,
+            IReadOnlyCollection<ISyntaxNodeMatcher> pathMatchers
             )
         {
             this.TargetMatchers = targetMatchers;
             this.ScopeMatchers = scopeMatchers;
             this.AccessModifierMatchers = accessModifierMatchers;
+            this.PathMatchers = pathMatchers;
         }
     }
 }

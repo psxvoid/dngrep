@@ -70,7 +70,12 @@ namespace dngrep.core.Queries
                 descriptor.AccessModifier == QueryAccessModifier.Any
                     ? Array.Empty<ISyntaxNodeMatcher>()
                     : new[] { new AccessModifierSyntaxNodeMatcher(
-                        GetTargetAccessModifiers(descriptor.AccessModifier)) });
+                        GetTargetAccessModifiers(descriptor.AccessModifier))
+                    },
+                GetPathMatchers(
+                    descriptor.TargetPathContains,
+                    descriptor.TargetPathExcludes,
+                    descriptor.EnableRegex));
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch
@@ -114,5 +119,43 @@ namespace dngrep.core.Queries
             QueryTargetScope.Interface => typeof(InterfaceDeclarationSyntax),
             _ => throw new NotImplementedException($"The requested scope isn't registered. Kind: {scope}"),
         };
+
+        private static IReadOnlyCollection<ISyntaxNodeMatcher> GetPathMatchers(
+            IEnumerable<string>? includes,
+            IEnumerable<string>? excludes,
+            bool regex)
+        {
+            ISyntaxNodeMatcher CreateMatcher(string pattern)
+            {
+                ISyntaxNodeMatcher matcher;
+
+                if (regex)
+                {
+                    matcher = new ContainsPathRegexMatcher(pattern);
+                }
+                else
+                {
+                    matcher = new ContainsPathMatcher(pattern);
+                }
+
+                return matcher;
+            }
+
+            var pathContains = includes == null
+            || includes.All(x => string.IsNullOrWhiteSpace(x))
+            ? Array.Empty<ISyntaxNodeMatcher>()
+            : includes
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select(x => CreateMatcher(x));
+
+            var pathExclude = excludes == null
+            || excludes.All(x => string.IsNullOrWhiteSpace(x))
+            ? Array.Empty<ISyntaxNodeMatcher>()
+            : excludes
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Select<string, ISyntaxNodeMatcher>(x => new Not(CreateMatcher(x)));
+
+            return pathContains.Concat(pathExclude).ToArray();
+        }
     }
 }

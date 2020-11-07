@@ -41,7 +41,8 @@ namespace dngrep.core.Queries
                 && (!this.query.HasTarget || this.query.TargetMatchers.Any(x => x.Match(node)))
                 && (!this.query.HasScope || (this.scope != null && node.HasParent(this.scope)))
                 && (!this.query.HasAccessModifiers
-                    || this.query.AccessModifierMatchers.Any(x => x.Match(node))))
+                    || this.query.AccessModifierMatchers.Any(x => x.Match(node)))
+                && (!this.query.HasPathMatchers || this.query.PathMatchers.All(x => x.Match(node))))
             {
                 this.results.Add(node);
             }

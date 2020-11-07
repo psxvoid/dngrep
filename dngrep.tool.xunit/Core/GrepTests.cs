@@ -17,6 +17,7 @@ using dngrep.tool.Core.Options;
 using dngrep.tool.Core.Output.Presenters;
 using dngrep.tool.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
@@ -351,6 +352,43 @@ namespace dngrep.tool.xunit.Core
             this.presenterMock.Verify(x => x.ProduceOutput(
                 It.Is<IEnumerable<SyntaxNode>>(
                     it => it.Count() == 1 && it.Any(x => x.TryGetIdentifierName() == "MyMethodY")),
+                It.Is<GrepOptions>(it => it == options)), Times.Once());
+        }
+
+        [Fact]
+        public async Task FolderAsync_TargetAndScopeAndPathRegexp_ShouldFilterByScopeNameAndPath()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System;
+                    class Test1 { void MyMethodX() {} }
+                    class Test2 { void MyMethodY() {} }
+                    ");
+            compilation = compilation.AddSyntaxTrees(
+                CSharpSyntaxTree.ParseText("class Test1 { void MyMethodZ() {} }", path: "x:/test.cs")
+                );
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .With(x => x.Target, QueryTarget.Method)
+                .With(x => x.Scope, QueryTargetScope.Class)
+                .With(x => x.ScopeContains, new[] { "Test[12]" })
+                .With(x => x.PathContains, new[] { @"test.cs$" })
+                .With(x => x.EnableRegexp, true)
+                .OmitAutoProperties()
+                .Create();
+
+            await this.sut.FolderAsync(options).ConfigureAwait(false);
+
+            this.presenterMock.Verify(x => x.ProduceOutput(
+                It.IsAny<IEnumerable<SyntaxNode>>(),
+                It.IsAny<GrepOptions>()), Times.Once());
+            this.presenterMock.Verify(x => x.ProduceOutput(
+                It.Is<IEnumerable<SyntaxNode>>(
+                    it => it.Count() == 1 && it.Any(x => x.TryGetIdentifierName() == "MyMethodZ")),
                 It.Is<GrepOptions>(it => it == options)), Times.Once());
         }
 

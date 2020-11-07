@@ -122,15 +122,20 @@ namespace dngrep.tool.Core
                     {
                         hasAnySearchableUnits = true;
 
-                        var queryDescriptor = new SyntaxTreeQueryDescriptor(
-                            options.Target ?? QueryTarget.Any,
-                            QueryAccessModifier.Any,
-                            options.Scope ?? QueryTargetScope.None,
-                            options.Contains,
-                            options.Exclude,
-                            options.ScopeContains,
-                            options.ScopeExclude,
-                            options.EnableRegexp ?? false);
+                        var queryDescriptor = new SyntaxTreeQueryDescriptor
+                        {
+                            Target = options.Target ?? QueryTarget.Any,
+                            Scope = options.Scope ?? QueryTargetScope.None,
+                            AccessModifier = QueryAccessModifier.Any,
+                            TargetNameContains = options.Contains ?? Enumerable.Empty<string>(),
+                            TargetNameExcludes = options.Exclude ?? Enumerable.Empty<string>(),
+                            TargetScopeContains = options.ScopeContains ?? Enumerable.Empty<string>(),
+                            TargetScopeExcludes = options.ScopeExclude ?? Enumerable.Empty<string>(),
+                            TargetPathContains = options.PathContains ?? Enumerable.Empty<string>(),
+                            TargetPathExcludes = options.PathExclude ?? Enumerable.Empty<string>(),
+                            EnableRegex = options.EnableRegexp ?? false
+                        };
+
                         var query = SyntaxTreeQueryBuilder.From(queryDescriptor);
                         var walker = new SyntaxTreeQueryWalker(query);
                         walker.Visit(tree.GetRoot());
@@ -138,9 +143,8 @@ namespace dngrep.tool.Core
                         if (walker.Results.Count > 0)
                         {
                             hasAnyResults = true;
+                            this.presenter.ProduceOutput(walker.Results, options);
                         }
-
-                        this.presenter.ProduceOutput(walker.Results, options);
                     }
                 }
                 else if (compilation != null)

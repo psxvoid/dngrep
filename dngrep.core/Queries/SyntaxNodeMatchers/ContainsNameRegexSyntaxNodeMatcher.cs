@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using dngrep.core.Extensions.EnumerableExtensions;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
 using Microsoft.CodeAnalysis;
 
@@ -38,12 +39,12 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers
                 return false;
             }
 
-            if (this.contains != null && !this.contains.Any(x => x.IsMatch(nodeName)))
+            if (!this.contains.IsNullOrEmpty() && !this.contains.Any(x => x.IsMatch(nodeName)))
             {
                 return false;
             }
 
-            if(this.exclude != null && this.exclude.Any(x => x.IsMatch(nodeName)))
+            if(!this.exclude.IsNullOrEmpty() && this.exclude.Any(x => x.IsMatch(nodeName)))
             {
                 return false;
             }
