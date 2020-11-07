@@ -11,7 +11,8 @@
         Field,
         Property,
         Method,
-        MethodArgument,
+        InvocationArgument,
         LocalVariable,
+        MethodParameter,
     }
 }

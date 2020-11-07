@@ -129,6 +129,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
                 NamespaceDeclarationSyntax @namespace => @namespace.Name.ToString(),
                 FieldDeclarationSyntax @field =>
                     field?.Declaration?.Variables[0]?.Identifier.ValueText,
+                ParameterSyntax param => param.Identifier.ValueText,
                 ArgumentSyntax arg => arg.ToString(),
                 EventFieldDeclarationSyntax eventField =>
                     eventField?.Declaration?.Variables[0]?.Identifier.ValueText,

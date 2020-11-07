@@ -839,9 +839,10 @@ namespace dngrep.core.xunit.Queries
 
                         public event EventHandler<EventArgs> OnWakeUp;
 
-                        public string GetPurrText()
+                        public string GetPurrText(int purrStrength)
                         {
                             var catName = ""Felix"";
+                            Console.WriteLine($""Log: {catName} starts purring."");
                             return catName + "" is purring"";
                         }
                     }
@@ -875,7 +876,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetAllSyntaxNodesThatHaveName()
                 {
-                    Assert.Equal(17, this.results.Count);
+                    Assert.Equal(19, this.results.Count);
                 }
 
                 [Fact]
@@ -936,6 +937,21 @@ namespace dngrep.core.xunit.Queries
                 public void ShouldGetVariable()
                 {
                     Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                }
+                [Fact]
+                public void ShouldGetMethodParameter()
+                {
+                    Assert.Contains(
+                        "purrStrength",
+                        this.results.Select(x => x.TryGetIdentifierName()));
+                }
+
+                [Fact]
+                public void ShouldGetInvocationName()
+                {
+                    Assert.Contains(
+                        "$\"Log: {catName} starts purring.\"",
+                        this.results.Select(x => x.TryGetIdentifierName()));
                 }
             }
 

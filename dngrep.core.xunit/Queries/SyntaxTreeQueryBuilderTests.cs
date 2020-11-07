@@ -103,7 +103,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_MethodArgument_MethodArgumentDeclaration()
             {
-                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.MethodArgument);
+                SyntaxTreeQueryDescriptor queryDescriptor = this.DescribeQuery(QueryTarget.InvocationArgument);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
