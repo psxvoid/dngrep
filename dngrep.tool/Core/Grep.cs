@@ -156,7 +156,9 @@ namespace dngrep.tool.Core
             if (!hasAnyProjects)
             {
                 throw new GrepException(
-                    "The application was unable to find any projects.");
+                    "The application was unable to find any projects." +
+                    " Please ensure that the current folder" +
+                    " contains a solution or a project.");
             }
 
             if (hasNonCSharpProjects && !hasCSharpProjects)

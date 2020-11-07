@@ -159,7 +159,9 @@ namespace dngrep.tool.xunit.Core
                 () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
             Assert.Equal(
-                "The application was unable to find any projects.",
+                "The application was unable to find any projects." +
+                " Please ensure that the current folder" +
+                " contains a solution or a project.",
                 exception.Message);
         }
 
@@ -176,7 +178,9 @@ namespace dngrep.tool.xunit.Core
                 () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
             Assert.Equal(
-                "The application was unable to find any projects.",
+                "The application was unable to find any projects." +
+                " Please ensure that the current folder" +
+                " contains a solution or a project.",
                 exception.Message);
         }
 
