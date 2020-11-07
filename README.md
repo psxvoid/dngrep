@@ -70,9 +70,9 @@ Output:
 And what if you don't want to see any namespaces and file paths and want a bit cleaner output? Simply add other options:
 
 ```sh
-dngrep -t class --hide-namespaces true -r true -p false -l false -c Syntax.*Extension -e Test
+dngrep -t class --hide-namespaces true -r true -l false -L false -c Syntax.*Extension -e Test
 ```
 
 Output:
 
-![output - class example 4](./resources/readme/class-example-4.png)
+![output - class example 4](./resources/readme/class-example-4.jpg)
