@@ -138,6 +138,25 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         }
 
         /// <summary>
+        /// Tries to retrieve a file path of a node.
+        /// </summary>
+        /// <param name="syntaxNode">
+        /// The node for which a path should be retrieved.
+        /// </param>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when the provided node is <see langword="null"/>.
+        /// </exception>
+        /// <returns>
+        /// A file path of the node or <see langword="null"/> when the path doesn't exist.
+        /// </returns>
+        public static string? TryGetFilePath(this SyntaxNode syntaxNode)
+        {
+            _ = syntaxNode ?? throw new ArgumentNullException(nameof(syntaxNode));
+
+            return syntaxNode.GetLocation()?.SourceTree?.FilePath;
+        }
+
+        /// <summary>
         /// Gets a syntax node full name, including containing
         /// method, class, namespace, etc.
         /// </summary>

@@ -30,7 +30,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
 
             public NamespaceClassMethodVariable()
             {
-                this.syntaxTree = CSharpSyntaxTree.ParseText(SourceCode);
+                this.syntaxTree = CSharpSyntaxTree.ParseText(SourceCode, path: "x:/test.cs");
             }
 
             [Fact]
@@ -127,6 +127,14 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
                 var node = this.GetNode<BlockSyntax>();
 
                 Assert.Null(node.TryGetFullName());
+            }
+
+            [Fact]
+            public void TryGetFilePath_AnyBlock_ShouldReturnFilePath()
+            {
+                var node = this.GetNode<ClassDeclarationSyntax>();
+
+                Assert.Equal("x:/test.cs", node.TryGetFilePath());
             }
 
             private T GetNode<T>() where T : SyntaxNode
