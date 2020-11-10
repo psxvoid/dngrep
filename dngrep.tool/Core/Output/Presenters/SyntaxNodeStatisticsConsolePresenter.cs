@@ -11,6 +11,17 @@ namespace dngrep.tool.Core.Output.Presenters
     {
         private readonly IConsole console;
 
+        private int classes;
+        private int structs;
+        private int enums;
+        private int namespaces;
+        private int interfaces;
+        private int fields;
+        private int props;
+        private int methods;
+        private int args;
+        private int localVariables;
+
         public SyntaxNodeStatisticsConsolePresenter(IConsole console)
         {
             this.console = console;
@@ -20,16 +31,6 @@ namespace dngrep.tool.Core.Output.Presenters
         {
             _ = nodes ?? throw new ArgumentNullException(nameof(nodes));
 
-            var classes = 0;
-            var structs = 0;
-            var enums = 0;
-            var namespaces = 0;
-            var interfaces = 0;
-            var fields = 0;
-            var props = 0;
-            var methods = 0;
-            var args = 0;
-            var localVariables = 0;
 
             foreach (var node in nodes)
             {
@@ -37,95 +38,115 @@ namespace dngrep.tool.Core.Output.Presenters
 
                 if (nodeType == typeof(ClassDeclarationSyntax))
                 {
-                    classes++;
+                    this.classes++;
                 }
                 else if (nodeType == typeof(StructDeclarationSyntax))
                 {
-                    structs++;
+                    this.structs++;
                 }
                 else if (nodeType == typeof(EnumDeclarationSyntax))
                 {
-                    enums++;
+                    this.enums++;
                 }
                 else if (nodeType == typeof(NamespaceDeclarationSyntax))
                 {
-                    namespaces++;
+                    this.namespaces++;
                 }
                 else if (nodeType == typeof(InterfaceDeclarationSyntax))
                 {
-                    interfaces++;
+                    this.interfaces++;
                 }
                 else if (nodeType == typeof(FieldDeclarationSyntax))
                 {
-                    fields++;
+                    this.fields++;
                 }
                 else if (nodeType == typeof(PropertyDeclarationSyntax))
                 {
-                    props++;
+                    this.props++;
                 }
                 else if (nodeType == typeof(MethodDeclarationSyntax))
                 {
-                    methods++;
+                    this.methods++;
                 }
                 else if (nodeType == typeof(ArgumentSyntax))
                 {
-                    args++;
+                    this.args++;
                 }
                 else if (nodeType == typeof(LocalDeclarationStatementSyntax))
                 {
-                    localVariables++;
+                    this.localVariables++;
                 }
             }
 
-            if (classes > 0)
+        }
+
+        public void Flush()
+        {
+            if (this.classes > 0)
             {
-                this.console.WriteLine($"Classes:\t{classes}");
+                this.console.WriteLine($"Classes:\t{this.classes}");
             }
 
-            if (structs > 0)
+            if (this.structs > 0)
             {
-                this.console.WriteLine($"Structs:\t{structs}");
+                this.console.WriteLine($"Structs:\t{this.structs}");
             }
 
-            if (enums > 0)
+            if (this.enums > 0)
             {
-                this.console.WriteLine($"Enums:\t{enums}");
+                this.console.WriteLine($"Enums:\t\t{this.enums}");
             }
 
-            if (namespaces > 0)
+            if (this.namespaces > 0)
             {
-                this.console.WriteLine($"Namespaces:\t{namespaces}");
+                this.console.WriteLine($"Namespaces:\t{this.namespaces}");
             }
 
-            if (interfaces > 0)
+            if (this.interfaces > 0)
             {
-                this.console.WriteLine($"Interfaces:\t{interfaces}");
+                this.console.WriteLine($"Interfaces:\t{this.interfaces}");
             }
 
-            if (fields > 0)
+            if (this.fields > 0)
             {
-                this.console.WriteLine($"Fields:\t{fields}");
+                this.console.WriteLine($"Fields:\t\t{this.fields}");
             }
 
-            if (props > 0)
+            if (this.props > 0)
             {
-                this.console.WriteLine($"Properties:\t{props}");
+                this.console.WriteLine($"Properties:\t{this.props}");
             }
 
-            if (methods > 0)
+            if (this.methods > 0)
             {
-                this.console.WriteLine($"Methods:\t{methods}");
+                this.console.WriteLine($"Methods:\t{this.methods}");
             }
 
-            if (args > 0)
+            if (this.args > 0)
             {
-                this.console.WriteLine($"Arguments:\t{args}");
+                this.console.WriteLine($"Arguments:\t{this.args}");
             }
 
-            if (localVariables > 0)
+            if (this.localVariables > 0)
             {
-                this.console.WriteLine($"Local Variables:\t{localVariables}");
+                this.console.WriteLine($"Local Vars:\t{this.localVariables}");
             }
+
+            this.Reset();
+        }
+
+        private void Reset()
+        {
+            this.classes = 0;
+            this.structs = 0;
+            this.enums = 0;
+            this.namespaces = 0;
+            this.interfaces = 0;
+            this.fields = 0;
+            this.props = 0;
+            this.methods = 0;
+            this.args = 0;
+            this.localVariables = 0;
         }
     }
 }

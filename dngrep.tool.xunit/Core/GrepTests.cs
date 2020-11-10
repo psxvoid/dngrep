@@ -31,6 +31,7 @@ namespace dngrep.tool.xunit.Core
         private readonly Mock<IDirectory> directoryMock;
         private readonly Mock<IWorkspaceProjectReader> projectReaderMock;
         private readonly Mock<ISyntaxNodePresenter> presenterMock;
+        private readonly Mock<IPresenterFactory> presenterFactoryMock;
         private readonly Mock<IMSBuildWorkspace> workspaceMock;
         private readonly Mock<IMSBuildWorkspaceStatic> workspaceStaticMock;
         private readonly Grep sut;
@@ -54,6 +55,10 @@ namespace dngrep.tool.xunit.Core
 
             this.projectReaderMock = this.fixture.Freeze<Mock<IWorkspaceProjectReader>>();
             this.presenterMock = this.fixture.Freeze<Mock<ISyntaxNodePresenter>>();
+            this.presenterFactoryMock = this.fixture.Freeze<Mock<IPresenterFactory>>();
+            this.presenterFactoryMock
+                .Setup(x => x.GetPresenter(It.IsAny<PresenterKind>()))
+                .Returns(this.presenterMock.Object);
 
             this.sut = this.fixture.Create<Grep>();
         }
@@ -270,6 +275,72 @@ namespace dngrep.tool.xunit.Core
             Assert.Equal(
                 "At least one C# project detected and compiled but nothing is found.",
                 exception.Message);
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsAndHasMatches_ShouldGetDefaultPresenter()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System; class Test {};");
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .OmitAutoProperties()
+                .Create();
+
+            await this.sut.FolderAsync(options).ConfigureAwait(false);
+
+            this.presenterFactoryMock.Verify(
+                x => x.GetPresenter(It.Is<PresenterKind>(it => it == PresenterKind.Search)),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsAndHasMatchesAndPresenter_ShouldGetSpecificPresenter()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System; class Test {};");
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .With(x => x.OutputType, PresenterKind.Statistics)
+                .OmitAutoProperties()
+                .Create();
+
+            await this.sut.FolderAsync(options).ConfigureAwait(false);
+
+            this.presenterFactoryMock.Verify(
+                x => x.GetPresenter(It.Is<PresenterKind>(it => it == PresenterKind.Statistics)),
+                Times.Once());
+        }
+
+        [Fact]
+        public async Task FolderAsync_NoErrorsAndHasMatchesAndPresenter_ShouldFlushPresenterOnce()
+        {
+            this.WithCurrentDirectory("x:/test.sln");
+            Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
+                TestCompiler.Compile(@"using System; class Test {};");
+            ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
+            var projectMock = this.fixture.Create<Mock<IProject>>();
+            projectMock.Setup(x => x.GetCompilationAsync())
+                .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
+            this.WithProjects(new[] { projectMock.Object });
+            GrepOptions options = this.fixture.Build<GrepOptions>()
+                .With(x => x.OutputType, PresenterKind.Statistics)
+                .OmitAutoProperties()
+                .Create();
+
+            await this.sut.FolderAsync(options).ConfigureAwait(false);
+
+            this.presenterMock.Verify(x => x.Flush(), Times.Once());
         }
 
         [Fact]

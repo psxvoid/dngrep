@@ -7,5 +7,6 @@ namespace dngrep.tool.Core.Output.Presenters
     public interface ISyntaxNodePresenter
     {
         void ProduceOutput(IEnumerable<SyntaxNode> nodes, GrepOptions options);
+        void Flush();
     }
 }

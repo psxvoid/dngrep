@@ -59,5 +59,10 @@ namespace dngrep.tool.Core.Output.Presenters
                 }
             }
         }
+
+        public void Flush()
+        {
+            // do nothing
+        }
     }
 }

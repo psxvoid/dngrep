@@ -27,19 +27,19 @@ namespace dngrep.tool.Core
         private readonly IMSBuildWorkspaceStatic workspaceStatic;
         private readonly ISolutionAndProjectExplorer explorer;
         private readonly IWorkspaceProjectReader workspaceProjectReader;
-        private readonly ISyntaxNodePresenter presenter;
+        private readonly IPresenterFactory presenterFactory;
         private readonly IFileSystem fs;
 
         public Grep(
             IMSBuildWorkspaceStatic workspaceStatic,
             ISolutionAndProjectExplorer explorer,
-            ISyntaxNodePresenter presenter,
+            IPresenterFactory presenterFactory,
             IFileSystem fs,
             IWorkspaceProjectReader projectReader)
         {
             this.workspaceStatic = workspaceStatic;
             this.explorer = explorer;
-            this.presenter = presenter;
+            this.presenterFactory = presenterFactory;
             this.fs = fs;
             this.workspaceProjectReader = projectReader;
         }
@@ -104,6 +104,10 @@ namespace dngrep.tool.Core
             bool hasNonCompilableProjects = false;
             bool hasAnySearchableUnits = false;
             bool hasAnyResults = false;
+
+            ISyntaxNodePresenter presenter = this.presenterFactory.GetPresenter(
+                        options.OutputType ?? PresenterKind.Search);
+
             foreach (var proj in projects ?? Enumerable.Empty<IProject>())
             {
                 hasAnyProjects = true;
@@ -143,7 +147,7 @@ namespace dngrep.tool.Core
                         if (walker.Results.Count > 0)
                         {
                             hasAnyResults = true;
-                            this.presenter.ProduceOutput(walker.Results, options);
+                            presenter.ProduceOutput(walker.Results, options);
                         }
                     }
                 }
@@ -156,6 +160,8 @@ namespace dngrep.tool.Core
                     hasNonCompilableProjects = true;
                 }
             }
+
+            presenter.Flush();
 
             if (!hasAnyProjects)
             {

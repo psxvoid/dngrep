@@ -11,7 +11,7 @@ namespace dngrep.tool.Core.Output.Presenters
 
     public interface IPresenterFactory
     {
-        ISyntaxNodePresenter? GetPresenter(PresenterKind kind);
+        ISyntaxNodePresenter GetPresenter(PresenterKind kind);
     }
 
     public class PresenterFactory : IPresenterFactory
@@ -23,7 +23,7 @@ namespace dngrep.tool.Core.Output.Presenters
             this.container = container;
         }
 
-        public ISyntaxNodePresenter? GetPresenter(PresenterKind kind)
+        public ISyntaxNodePresenter GetPresenter(PresenterKind kind)
         {
             Type target = kind switch
             {
