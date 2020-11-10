@@ -8,11 +8,6 @@ using Microsoft.CodeAnalysis.Text;
 
 namespace dngrep.tool.Core.Output.Presenters
 {
-    public interface ISyntaxNodePresenter
-    {
-        void ProduceOutput(IEnumerable<SyntaxNode> nodes, GrepOptions options);
-    }
-
     public class ConsoleSyntaxNodePresenter : ISyntaxNodePresenter
     {
         private readonly IConsole console;
