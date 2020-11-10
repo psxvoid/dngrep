@@ -2,6 +2,7 @@
 using CommandLine;
 using dngrep.core.Queries.Specifiers;
 using dngrep.tool.Core.Options;
+using dngrep.tool.Core.Output.Presenters;
 using Xunit;
 using AbstractParser = dngrep.tool.Abstractions.CommandLine.Parser;
 
@@ -527,6 +528,54 @@ namespace dngrep.tool.xunit.Console
                     Parser.ParseArguments<GrepOptions>(new[] { "--hide-namespaces", "false" });
 
                 Assert.Equal(false, result.Value.HideNamespaces);
+            }
+        }
+
+        public class OutputTypeTests
+        {
+            [Fact]
+            public void ParseArguments_Empty_Search()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(Array.Empty<string>());
+
+                Assert.Equal(PresenterKind.Search, result.Value.OutputType);
+            }
+            
+            [Fact]
+            public void ParseArguments_ShortNameAndSearch_Search()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-o", "search" });
+
+                Assert.Equal(PresenterKind.Search, result.Value.OutputType);
+            }
+
+            [Fact]
+            public void ParseArguments_ShortNameAndStatistics_Statistics()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "-o", "statistics" });
+
+                Assert.Equal(PresenterKind.Statistics, result.Value.OutputType);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndSearch_Search()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--output-type", "search" });
+
+                Assert.Equal(PresenterKind.Search, result.Value.OutputType);
+            }
+
+            [Fact]
+            public void ParseArguments_FullNameAndStatistics_Statistics()
+            {
+                ParserResult<GrepOptions>? result =
+                    Parser.ParseArguments<GrepOptions>(new[] { "--output-type", "statistics" });
+
+                Assert.Equal(PresenterKind.Statistics, result.Value.OutputType);
             }
         }
     }

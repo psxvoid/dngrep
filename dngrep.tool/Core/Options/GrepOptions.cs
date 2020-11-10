@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CommandLine;
 using dngrep.core.Queries.Specifiers;
+using dngrep.tool.Core.Output.Presenters;
 
 namespace dngrep.tool.Core.Options
 {
@@ -69,7 +70,7 @@ namespace dngrep.tool.Core.Options
             Required = false,
             HelpText = "A part of a file path of the target to include.")]
         public IEnumerable<string>? PathContains { get; set; }
-        
+
         [Option(
             'P',
             "path-exclude",
@@ -111,5 +112,15 @@ namespace dngrep.tool.Core.Options
             HelpText = "When set to true, then namespaces will be omitted when show-full-name "
             + "is used, ignored else (default=false).")]
         public bool? HideNamespaces { get; set; }
+
+        [Option(
+            'o',
+            "output-type",
+            Default = PresenterKind.Search,
+            Required = false,
+            HelpText = "How to output the type. By default instructs to print search results. "
+                + "Can be set to \"statistics\" to only output search statistics. "
+                + "It requires the same time to search but only shows a number of found nodes.")]
+        public PresenterKind? OutputType { get; set; }
     }
 }
