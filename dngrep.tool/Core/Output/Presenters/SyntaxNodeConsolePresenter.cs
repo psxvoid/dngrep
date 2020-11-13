@@ -10,12 +10,12 @@ namespace dngrep.tool.Core.Output.Presenters
 {
     public class ConsoleSyntaxNodePresenter : ISyntaxNodePresenter
     {
-        private readonly IConsole console;
+        private readonly IStringConsole console;
 
         private const string PositionSeparator = ":";
         private const string FileAndPositionPrefix = "at ";
 
-        public ConsoleSyntaxNodePresenter(IConsole console)
+        public ConsoleSyntaxNodePresenter(IStringConsole console)
         {
             this.console = console;
         }

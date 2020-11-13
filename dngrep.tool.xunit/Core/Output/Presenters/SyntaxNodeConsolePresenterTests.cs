@@ -36,7 +36,7 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
             private readonly SyntaxTree syntaxTree;
             private readonly IEnumerable<SyntaxNode> nodes;
 
-            private readonly Mock<IConsole> consoleMock;
+            private readonly Mock<IStringConsole> consoleMock;
 
             private readonly ConsoleSyntaxNodePresenter sut;
 
@@ -49,7 +49,7 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                     .GetNodesOfTypeRecursively<MethodDeclarationSyntax>();
 
                 this.fixture = AutoFixtureFactory.Default();
-                this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
+                this.consoleMock = this.fixture.Freeze<Mock<IStringConsole>>();
 
                 this.sut = this.fixture.Create<ConsoleSyntaxNodePresenter>();
             }
@@ -166,7 +166,7 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
             private readonly SyntaxTree syntaxTree;
             private readonly IEnumerable<SyntaxNode> nodes;
 
-            private readonly Mock<IConsole> consoleMock;
+            private readonly Mock<IStringConsole> consoleMock;
 
             private readonly ConsoleSyntaxNodePresenter sut;
 
@@ -179,7 +179,7 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
                     .GetNodesOfTypeRecursively<MethodDeclarationSyntax>();
 
                 this.fixture = AutoFixtureFactory.Default();
-                this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
+                this.consoleMock = this.fixture.Freeze<Mock<IStringConsole>>();
 
                 this.sut = this.fixture.Create<ConsoleSyntaxNodePresenter>();
             }

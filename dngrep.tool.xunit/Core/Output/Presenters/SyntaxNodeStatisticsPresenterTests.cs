@@ -13,13 +13,13 @@ namespace dngrep.tool.xunit.Core.Output.Presenters
     public class SyntaxNodeStatisticsPresenterTests
     {
         private readonly IFixture fixture;
-        private readonly Mock<IConsole> consoleMock;
+        private readonly Mock<IStringConsole> consoleMock;
         private readonly SyntaxNodeStatisticsConsolePresenter sut;
 
         public SyntaxNodeStatisticsPresenterTests()
         {
             this.fixture = AutoFixtureFactory.Default();
-            this.consoleMock = this.fixture.Freeze<Mock<IConsole>>();
+            this.consoleMock = this.fixture.Freeze<Mock<IStringConsole>>();
 
             this.sut = this.fixture.Create<SyntaxNodeStatisticsConsolePresenter>();
         }

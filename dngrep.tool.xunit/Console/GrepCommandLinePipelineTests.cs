@@ -17,6 +17,7 @@ namespace dngrep.tool.xunit.Console
     public class GrepCommandLinePipelineTests
     {
         private readonly IFixture fixture;
+        private readonly Mock<IStandardInputReader> inputMock;
         private readonly GrepCommandLinePipeline sut;
 
         public GrepCommandLinePipelineTests()
@@ -31,9 +32,11 @@ namespace dngrep.tool.xunit.Console
             options.Setup(x => x.WithParsedAsync(It.IsAny<Func<GrepOptions, Task>>()))
                 .Callback<Func<GrepOptions, Task>>(
                     c => c.Invoke(this.fixture.Create<GrepOptions>()).Wait());
+            this.inputMock = this.fixture.Freeze<Mock<IStandardInputReader>>();
+            this.inputMock.Setup(x => x.IsInputRedirected()).Returns(false);
 
             this.fixture.Freeze<Mock<IMSBuildLocator>>();
-            this.fixture.Freeze<Mock<IConsole>>();
+            this.fixture.Freeze<Mock<IStringConsole>>();
 
             this.sut = this.fixture.Create<GrepCommandLinePipeline>();
         }
@@ -78,9 +81,48 @@ namespace dngrep.tool.xunit.Console
 
             await this.sut.ParseArgsAndRun(new[] { "arg1", "arg2" }).ConfigureAwait(false);
 
-            this.fixture.Create<Mock<IConsole>>()
+            this.fixture.Create<Mock<IStringConsole>>()
                 .Verify(x => x.WriteLine(
                     It.Is<string>(it => it == message)));
+        }
+
+        [Fact]
+        public async Task InputHasData_ShouldReadInputAsString()
+        {
+            this.inputMock.Setup(x => x.IsInputRedirected()).Returns(true);
+
+            await this.sut.ParseArgsAndRun(new[] { "arg1", "arg2" }).ConfigureAwait(false);
+
+            this.inputMock.Verify(x => x.ReadAsStringAsync(), Times.Once());
+        }
+
+        [Fact]
+        public async Task InputHasData_BuildLocatorShouldNotBeRegisterDefaults()
+        {
+            this.inputMock.Setup(x => x.IsInputRedirected()).Returns(true);
+
+            await this.sut.ParseArgsAndRun(new[] { "arg1", "arg2" }).ConfigureAwait(false);
+
+            this.fixture.Create<Mock<IMSBuildLocator>>()
+                .Verify(x => x.RegisterDefaults(), Times.Never);
+        }
+
+        [Fact]
+        public async Task InputHasDataAndResult_ShouldGrepText()
+        {
+            const string standardInputResult = "code";
+            this.inputMock.Setup(x => x.IsInputRedirected()).Returns(true);
+            this.inputMock.Setup(
+                x => x.ReadAsStringAsync()).Returns(Task.FromResult(standardInputResult));
+
+            await this.sut.ParseArgsAndRun(new[] { "arg1", "arg2" }).ConfigureAwait(false);
+
+            this.fixture.Create<Mock<IProjectGrep>>()
+                .Verify(
+                    x => x.TextAsync(
+                        It.IsAny<GrepOptions>(),
+                        It.Is<string>(it => it == standardInputResult)),
+                    Times.Once());
         }
     }
 }

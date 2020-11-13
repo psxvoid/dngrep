@@ -9,7 +9,7 @@ namespace dngrep.tool.Core.Output.Presenters
 {
     public class SyntaxNodeStatisticsConsolePresenter : ISyntaxNodePresenter
     {
-        private readonly IConsole console;
+        private readonly IStringConsole console;
 
         private int classes;
         private int structs;
@@ -22,7 +22,7 @@ namespace dngrep.tool.Core.Output.Presenters
         private int args;
         private int localVariables;
 
-        public SyntaxNodeStatisticsConsolePresenter(IConsole console)
+        public SyntaxNodeStatisticsConsolePresenter(IStringConsole console)
         {
             this.console = console;
         }

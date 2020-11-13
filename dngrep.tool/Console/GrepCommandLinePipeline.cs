@@ -13,28 +13,40 @@ namespace dngrep.tool.Console
         private readonly IParser parser;
         private readonly IProjectGrep grep;
         private readonly IMSBuildLocator buildLocator;
-        private readonly IConsole console;
+        private readonly IStringConsole console;
+        private readonly IStandardInputReader inputReader;
 
         public GrepCommandLinePipeline(
             IParser parser,
             IProjectGrep grep,
             IMSBuildLocator buildLocator,
-            IConsole console)
+            IStringConsole console,
+            IStandardInputReader inputReader)
         {
             this.parser = parser;
             this.grep = grep;
             this.buildLocator = buildLocator;
             this.console = console;
+            this.inputReader = inputReader;
         }
 
         public async Task ParseArgsAndRun(string[] args)
         {
-            this.buildLocator.RegisterDefaults();
+            IParserResult<GrepOptions> parseResult = this.parser.ParseArguments<GrepOptions>(args);
 
             try
             {
-                await this.parser.ParseArguments<GrepOptions>(args)
-                    .WithParsedAsync(this.grep.FolderAsync).ConfigureAwait(false);
+                if (this.inputReader.IsInputRedirected())
+                {
+                    string text = await this.inputReader.ReadAsStringAsync().ConfigureAwait(false);
+                    await parseResult.WithParsedAsync(
+                        (o) => this.grep.TextAsync(o, text)).ConfigureAwait(false);
+                }
+                else
+                {
+                    this.buildLocator.RegisterDefaults();
+                    await parseResult.WithParsedAsync(this.grep.FolderAsync).ConfigureAwait(false);
+                }
             }
             catch (GrepException grepException)
             {

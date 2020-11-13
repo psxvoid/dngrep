@@ -1,8 +1,9 @@
-﻿using SystemConsole = System.Console;
+﻿using System.IO;
+using SystemConsole = System.Console;
 
 namespace dngrep.tool.Abstractions.System
 {
-    public interface IConsole
+    public interface IStringConsole
     {
         void Write(string value);
 
@@ -11,8 +12,17 @@ namespace dngrep.tool.Abstractions.System
         void WriteLine();
     }
 
-    public class Console : IConsole
+    public interface IStandardInputConsole
     {
+        bool IsInputRedirected { get; }
+
+        Stream OpenStandardInput();
+    }
+
+    public class Console : IStringConsole, IStandardInputConsole
+    {
+        public bool IsInputRedirected => SystemConsole.IsInputRedirected;
+
         public void Write(string value)
         {
             SystemConsole.Write(value);
@@ -26,6 +36,11 @@ namespace dngrep.tool.Abstractions.System
         public void WriteLine()
         {
             SystemConsole.WriteLine();
+        }
+
+        public Stream OpenStandardInput()
+        {
+            return SystemConsole.OpenStandardInput();
         }
     }
 }

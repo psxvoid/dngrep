@@ -2,11 +2,13 @@
 using System.Threading.Tasks;
 using dngrep.core.Queries;
 using dngrep.tool.Abstractions.CommandLine;
+using dngrep.tool.Abstractions.System;
 using dngrep.tool.Console;
 using dngrep.tool.Core;
 using Lamar;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.Extensions.DependencyInjection;
+using ConsoleImpl = dngrep.tool.Abstractions.System.Console;
 
 namespace dngrep.tool
 {
@@ -28,6 +30,8 @@ namespace dngrep.tool
 
                 x.AddSingleton(Parser.Default());
                 x.AddSingleton<IFileSystem, FileSystem>();
+                x.AddSingleton<IStringConsole, ConsoleImpl>();
+                x.AddSingleton<IStandardInputConsole, ConsoleImpl>();
                 x.AddTransient<CSharpSyntaxWalker, SyntaxTreeQueryWalker>();
             });
 

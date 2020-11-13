@@ -20,6 +20,7 @@ namespace dngrep.tool.Core
     public interface IProjectGrep
     {
         Task FolderAsync(GrepOptions options);
+        Task TextAsync(GrepOptions options, string code);
     }
 
     public class Grep : IProjectGrep
@@ -197,6 +198,11 @@ namespace dngrep.tool.Core
                 throw new GrepException(
                     "At least one C# project detected and compiled but nothing is found.");
             }
+        }
+
+        public async Task TextAsync(GrepOptions options, string code)
+        {
+            throw new NotImplementedException();
         }
     }
 }
