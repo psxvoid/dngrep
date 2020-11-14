@@ -119,7 +119,7 @@ namespace dngrep.tool.xunit.Console
 
             this.fixture.Create<Mock<IProjectGrep>>()
                 .Verify(
-                    x => x.TextAsync(
+                    x => x.TextAsSyntaxTree(
                         It.IsAny<GrepOptions>(),
                         It.Is<string>(it => it == standardInputResult)),
                     Times.Once());

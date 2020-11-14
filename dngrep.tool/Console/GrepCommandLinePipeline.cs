@@ -39,8 +39,8 @@ namespace dngrep.tool.Console
                 if (this.inputReader.IsInputRedirected())
                 {
                     string text = await this.inputReader.ReadAsStringAsync().ConfigureAwait(false);
-                    await parseResult.WithParsedAsync(
-                        (o) => this.grep.TextAsync(o, text)).ConfigureAwait(false);
+                    await parseResult.WithParsedAsync((o) => this.grep.TextAsSyntaxTree(o, text))
+                        .ConfigureAwait(false);
                 }
                 else
                 {

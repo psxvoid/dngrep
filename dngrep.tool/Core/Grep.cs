@@ -20,7 +20,7 @@ namespace dngrep.tool.Core
     public interface IProjectGrep
     {
         Task FolderAsync(GrepOptions options);
-        Task TextAsync(GrepOptions options, string code);
+        Task TextAsSyntaxTree(GrepOptions options, string code);
     }
 
     public class Grep : IProjectGrep
@@ -28,6 +28,7 @@ namespace dngrep.tool.Core
         private readonly IMSBuildWorkspaceStatic workspaceStatic;
         private readonly ISolutionAndProjectExplorer explorer;
         private readonly IWorkspaceProjectReader workspaceProjectReader;
+        private readonly ICSharpSyntaxTreeStatic syntaxTreeStatic;
         private readonly IPresenterFactory presenterFactory;
         private readonly IFileSystem fs;
 
@@ -36,13 +37,15 @@ namespace dngrep.tool.Core
             ISolutionAndProjectExplorer explorer,
             IPresenterFactory presenterFactory,
             IFileSystem fs,
-            IWorkspaceProjectReader projectReader)
+            IWorkspaceProjectReader projectReader,
+            ICSharpSyntaxTreeStatic syntaxTreeStatic)
         {
             this.workspaceStatic = workspaceStatic;
             this.explorer = explorer;
             this.presenterFactory = presenterFactory;
             this.fs = fs;
             this.workspaceProjectReader = projectReader;
+            this.syntaxTreeStatic = syntaxTreeStatic;
         }
 
         public async Task FolderAsync(GrepOptions options)
@@ -127,28 +130,12 @@ namespace dngrep.tool.Core
                     {
                         hasAnySearchableUnits = true;
 
-                        var queryDescriptor = new SyntaxTreeQueryDescriptor
-                        {
-                            Target = options.Target ?? QueryTarget.Any,
-                            Scope = options.Scope ?? QueryTargetScope.None,
-                            AccessModifier = QueryAccessModifier.Any,
-                            TargetNameContains = options.Contains ?? Enumerable.Empty<string>(),
-                            TargetNameExcludes = options.Exclude ?? Enumerable.Empty<string>(),
-                            TargetScopeContains = options.ScopeContains ?? Enumerable.Empty<string>(),
-                            TargetScopeExcludes = options.ScopeExclude ?? Enumerable.Empty<string>(),
-                            TargetPathContains = options.PathContains ?? Enumerable.Empty<string>(),
-                            TargetPathExcludes = options.PathExclude ?? Enumerable.Empty<string>(),
-                            EnableRegex = options.EnableRegexp ?? false
-                        };
+                        IReadOnlyCollection<SyntaxNode>? results = QueryNodes(options, tree);
 
-                        var query = SyntaxTreeQueryBuilder.From(queryDescriptor);
-                        var walker = new SyntaxTreeQueryWalker(query);
-                        walker.Visit(tree.GetRoot());
-
-                        if (walker.Results.Count > 0)
+                        if (results.Count > 0)
                         {
                             hasAnyResults = true;
-                            presenter.ProduceOutput(walker.Results, options);
+                            presenter.ProduceOutput(results, options);
                         }
                     }
                 }
@@ -200,9 +187,55 @@ namespace dngrep.tool.Core
             }
         }
 
-        public async Task TextAsync(GrepOptions options, string code)
+#pragma warning disable CS1998 // Async method lacks 'await' operators and will run synchronously
+        public async Task TextAsSyntaxTree(GrepOptions options, string sourceCode)
+#pragma warning restore CS1998 // Async method lacks 'await' operators and will run synchronously
         {
-            throw new NotImplementedException();
+            _ = options ?? throw new ArgumentNullException(nameof(options));
+            _ = sourceCode ?? throw new ArgumentNullException(nameof(sourceCode));
+
+            if (string.IsNullOrWhiteSpace(sourceCode))
+            {
+                throw new GrepException("Unable to run the query on the empty text.");
+            }
+
+            SyntaxTree tree = this.syntaxTreeStatic.ParseText(sourceCode);
+            ISyntaxNodePresenter presenter =
+                this.presenterFactory.GetPresenter(options.OutputType ?? PresenterKind.Search);
+
+            IReadOnlyCollection<SyntaxNode>? results = QueryNodes(options, tree);
+
+            if (results.Count > 0)
+            {
+                // hasAnyResults = true;
+                presenter.ProduceOutput(results, options);
+                presenter.Flush();
+            }
+        }
+
+        private static IReadOnlyCollection<SyntaxNode> QueryNodes(GrepOptions options, SyntaxTree tree)
+        {
+            _ = options ?? throw new ArgumentNullException(nameof(options));
+
+            var queryDescriptor = new SyntaxTreeQueryDescriptor
+            {
+                Target = options.Target ?? QueryTarget.Any,
+                Scope = options.Scope ?? QueryTargetScope.None,
+                AccessModifier = QueryAccessModifier.Any,
+                TargetNameContains = options.Contains ?? Enumerable.Empty<string>(),
+                TargetNameExcludes = options.Exclude ?? Enumerable.Empty<string>(),
+                TargetScopeContains = options.ScopeContains ?? Enumerable.Empty<string>(),
+                TargetScopeExcludes = options.ScopeExclude ?? Enumerable.Empty<string>(),
+                TargetPathContains = options.PathContains ?? Enumerable.Empty<string>(),
+                TargetPathExcludes = options.PathExclude ?? Enumerable.Empty<string>(),
+                EnableRegex = options.EnableRegexp ?? false
+            };
+
+            SyntaxTreeQuery query = SyntaxTreeQueryBuilder.From(queryDescriptor);
+            var walker = new SyntaxTreeQueryWalker(query);
+            walker.Visit(tree.GetRoot());
+
+            return walker.Results;
         }
     }
 }
