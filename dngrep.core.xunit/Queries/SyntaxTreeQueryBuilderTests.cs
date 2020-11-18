@@ -1,11 +1,14 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using AutoFixture;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
+using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
 using dngrep.core.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.Text;
 using SharpJuice.AutoFixture;
 using Xunit;
 
@@ -481,6 +484,67 @@ namespace dngrep.core.xunit.Queries
                     Scope = scope,
                     EnableRegex = enableRegex
                 };
+            }
+        }
+
+        public class FromTextSpanTests
+        {
+            [Fact]
+            public void FromTextSpan_Null_Throws()
+            {
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+                Assert.Throws<ArgumentNullException>(() => SyntaxTreeQueryBuilder.From(null));
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_SingleTargetMatcher()
+            {
+                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).TargetMatchers);
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_AndMatcher()
+            {
+                Assert.Equal(
+                    typeof(And),
+                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
+                        .TargetMatchers
+                        .First()
+                        .GetType());
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_AndContainsKnownTargetMatcher()
+            {
+                Assert.Equal(
+                    typeof(KnownTargetMatcher),
+                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
+                        .TargetMatchers
+                        .First() as And)?.Lhs.GetType()
+                        );
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_AndContainsSourceTextMatcher()
+            {
+                Assert.Equal(
+                    typeof(SourceTextPositionMatcher),
+                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
+                        .TargetMatchers
+                        .First() as And)?.Rhs.GetType());
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_AndContainsSourceTextMatcherWithCorrectSpan()
+            {
+                var span = new TextSpan(0, 1);
+
+                Assert.Equal(
+                    span,
+                    ((SyntaxTreeQueryBuilder.From(span)
+                        .TargetMatchers
+                        .First() as And)?.Rhs as SourceTextPositionMatcher)?.SpanToMatch );
             }
         }
     }

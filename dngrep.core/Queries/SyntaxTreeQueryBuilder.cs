@@ -5,8 +5,10 @@ using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
 using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace dngrep.core.Queries
 {
@@ -77,6 +79,20 @@ namespace dngrep.core.Queries
                     descriptor.TargetPathContains,
                     descriptor.TargetPathExcludes,
                     descriptor.EnableRegex));
+        }
+
+        public static SyntaxTreeQuery From(TextSpan nodeSpan)
+        {
+            return new SyntaxTreeQuery(
+                new[]
+                {
+                    new And(
+                        KnownTargetMatcher.Instance,
+                        new SourceTextPositionMatcher(nodeSpan))
+                },
+                Array.Empty<ISyntaxNodeMatcher>(),
+                Array.Empty<ISyntaxNodeMatcher>(),
+                Array.Empty<ISyntaxNodeMatcher>());
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch

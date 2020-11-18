@@ -6,18 +6,18 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers
 {
     public class SourceTextPositionMatcher : ISyntaxNodeMatcher
     {
-        private readonly TextSpan spanToMatch;
+        public TextSpan SpanToMatch { get; }
 
         public SourceTextPositionMatcher(TextSpan spanToMatch)
         {
-            this.spanToMatch = spanToMatch;
+            this.SpanToMatch = spanToMatch;
         }
 
         public bool Match(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            return node.GetLocation().SourceSpan.Contains(this.spanToMatch);
+            return node.GetLocation().SourceSpan.Contains(this.SpanToMatch);
         }
     }
 }
