@@ -5,7 +5,7 @@ namespace dngrep.core.Extensions.SourceTextExtensions
 {
     public static class SourceTextExtensions
     {
-        public static TextSpan GetLineSpanAtPosition(this SourceText source, int line, int charStart)
+        public static TextSpan GetSingleCharSpan(this SourceText source, int line, int charStart)
         {
             _ = source ?? throw new ArgumentNullException(nameof(source));
 
@@ -25,7 +25,7 @@ namespace dngrep.core.Extensions.SourceTextExtensions
                     "Specified char position is out of range from the source text.");
             }
 
-            return new TextSpan(lineSpan.Start + charStart, lineSpan.Length - charStart);
+            return new TextSpan(lineSpan.Start + charStart, 1);
         }
     }
 }
