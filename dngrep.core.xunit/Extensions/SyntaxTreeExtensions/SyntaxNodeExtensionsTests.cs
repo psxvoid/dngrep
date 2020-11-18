@@ -17,7 +17,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
                 {
                     public class Earth
                     {
-                        public string Spin()
+                        public string Spin(double velocity, int multiplier)
                         {
                             string action = ""Spinning!"";
                             return string;
@@ -135,6 +135,29 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
                 var node = this.GetNode<ClassDeclarationSyntax>();
 
                 Assert.Equal("x:/test.cs", node.TryGetFilePath());
+            }
+
+            [Fact]
+            public void GetSourceTextBounds_NullNode_ShouldThrow()
+            {
+                Assert.Throws<ArgumentNullException>(
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
+                    () => ((SyntaxNode)null).GetSourceTextBounds());
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
+            }
+
+            [Fact]
+            public void GetSourceTextBounds_ShouldGetCorrectBounds()
+            {
+                var node = this.GetNode<ParameterSyntax>();
+                var (lineStart, lineEnd, charStart, charEnd) = node.GetSourceTextBounds();
+
+                Assert.Equal(5, lineStart);
+                Assert.Equal(5, lineEnd);
+                Assert.Equal(43, charStart);
+                Assert.Equal(58, charEnd);
             }
 
             private T GetNode<T>() where T : SyntaxNode

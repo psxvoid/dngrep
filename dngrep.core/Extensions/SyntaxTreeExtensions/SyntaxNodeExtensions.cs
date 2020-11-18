@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Microsoft.CodeAnalysis.Text;
 
 namespace dngrep.core.Extensions.SyntaxTreeExtensions
 {
@@ -182,6 +183,27 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             return target.TryGetFullName()
                 ?? throw new InvalidOperationException(
                     $"The source node does not have a name. Kind: {target.Kind()} Node: {target}");
+        }
+
+        /// <summary>
+        /// Gets the bounds of the <see cref="SyntaxNode"/> in the source text.
+        /// </summary>
+        /// <param name="node">The node for which source bounds should be retrieved.</param>
+        /// <returns>The bounds of the node in the source text.</returns>
+        public static (int lineStart, int lineEnd, int charStart, int charEnd)
+            GetSourceTextBounds(this SyntaxNode node)
+        {
+            _ = node ?? throw new ArgumentNullException(nameof(node));
+
+            FileLinePositionSpan lineSpan = node.GetLocation().GetLineSpan();
+            LinePosition startPosition = lineSpan.StartLinePosition;
+            LinePosition endPosition = lineSpan.EndLinePosition;
+
+            return (
+                startPosition.Line,
+                endPosition.Line,
+                startPosition.Character,
+                endPosition.Character);
         }
 
         /// <summary>
