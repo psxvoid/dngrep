@@ -261,5 +261,33 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             return sb.ToString();
         }
+        
+        /// <summary>
+        /// Gets the first parent <see cref="SyntaxNode"/> of the specified type.
+        /// </summary>
+        /// <typeparam name="T">The type of the parent syntax node to get.</typeparam>
+        /// <param name="target">
+        /// The node for which a parent of a particular type should be found.
+        /// </param>
+        /// <returns>The first parent of the specified type or <see langword="null"/>.</returns>
+        public static T? GetFirstParentOfType<T>(this SyntaxNode target)
+            where T: SyntaxNode
+        {
+            _ = target ?? throw new ArgumentNullException(nameof(target));
+
+            SyntaxNode? parent = target.Parent;
+
+            while (parent != null && parent.GetType() != typeof(CompilationUnitSyntax))
+            {
+                if (parent.GetType() == typeof(T))
+                {
+                    return parent as T;
+                }
+                
+                parent = parent.Parent;
+            }
+
+            return null;
+        }
     }
 }

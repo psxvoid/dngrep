@@ -160,6 +160,28 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
                 Assert.Equal(58, charEnd);
             }
 
+            [Fact]
+            public void GetFirstNodeOfType_ParentNotFound_Null()
+            {
+                var node = this.GetNode<ParameterSyntax>();
+                var expected = this.GetNode<ParameterListSyntax>();
+
+                var actual = node.GetFirstParentOfType<FieldDeclarationSyntax>();
+
+                Assert.Null(actual);
+            }
+
+            [Fact]
+            public void GetFirstNodeOfType_ParentFound_Parent()
+            {
+                var node = this.GetNode<ParameterSyntax>();
+                var expected = this.GetNode<ParameterListSyntax>();
+
+                var actual = node.GetFirstParentOfType<ParameterListSyntax>();
+
+                Assert.Equal(expected, actual);
+            }
+
             private T GetNode<T>() where T : SyntaxNode
             {
                 return this.syntaxTree
