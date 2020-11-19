@@ -161,10 +161,9 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             }
 
             [Fact]
-            public void GetFirstNodeOfType_ParentNotFound_Null()
+            public void GetFirstParentOfType_ParentNotFound_Null()
             {
                 var node = this.GetNode<ParameterSyntax>();
-                var expected = this.GetNode<ParameterListSyntax>();
 
                 var actual = node.GetFirstParentOfType<FieldDeclarationSyntax>();
 
@@ -172,7 +171,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             }
 
             [Fact]
-            public void GetFirstNodeOfType_ParentFound_Parent()
+            public void GetFirstParentOfType_ParentFound_Parent()
             {
                 var node = this.GetNode<ParameterSyntax>();
                 var expected = this.GetNode<ParameterListSyntax>();
