@@ -9,7 +9,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
 {
     public abstract class SyntaxTreeQueryWalkerBase<T> : CSharpSyntaxWalker
     {
-        private readonly List<T> results = new List<T>();
+        private readonly Stack<T> results = new Stack<T>();
         private readonly SyntaxTreeQuery query;
 
         private SyntaxNode? scope;
@@ -17,6 +17,21 @@ namespace dngrep.core.Queries.SyntaxWalkers
         protected abstract T CreateResultFromNode(SyntaxNode node);
 
         public IReadOnlyCollection<T> Results => this.results;
+
+        protected T PeekResult()
+        {
+            return this.results.Peek();
+        }
+
+        protected T PopResult()
+        {
+            return this.results.Pop();
+        }
+
+        protected void PushResult(T result)
+        {
+            this.results.Push(result);
+        }
 
         public SyntaxTreeQueryWalkerBase(SyntaxTreeQuery query)
         {
@@ -46,7 +61,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
                     || this.query.AccessModifierMatchers.Any(x => x.Match(node)))
                 && (!this.query.HasPathMatchers || this.query.PathMatchers.All(x => x.Match(node))))
             {
-                this.results.Add(this.CreateResultFromNode(node));
+                this.results.Push(this.CreateResultFromNode(node));
             }
 
             base.DefaultVisit(node);
