@@ -7,16 +7,18 @@ using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.core.Queries
 {
-    public class SyntaxTreeQueryWalker : CSharpSyntaxWalker
+    public abstract class SyntaxTreeQueryWalkerBase<T> : CSharpSyntaxWalker
     {
-        private readonly List<SyntaxNode> results = new List<SyntaxNode>();
+        private readonly List<T> results = new List<T>();
         private readonly SyntaxTreeQuery query;
 
         private SyntaxNode? scope;
 
-        public IReadOnlyCollection<SyntaxNode> Results => this.results;
+        protected abstract T CreateResultFromNode(SyntaxNode node);
 
-        public SyntaxTreeQueryWalker(SyntaxTreeQuery query)
+        public IReadOnlyCollection<T> Results => this.results;
+
+        public SyntaxTreeQueryWalkerBase(SyntaxTreeQuery query)
         {
             _ = query ?? throw new ArgumentNullException(nameof(query));
 
@@ -44,7 +46,7 @@ namespace dngrep.core.Queries
                     || this.query.AccessModifierMatchers.Any(x => x.Match(node)))
                 && (!this.query.HasPathMatchers || this.query.PathMatchers.All(x => x.Match(node))))
             {
-                this.results.Add(node);
+                this.results.Add(this.CreateResultFromNode(node));
             }
 
             base.DefaultVisit(node);
