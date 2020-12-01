@@ -1,7 +1,7 @@
 ﻿using dngrep.core.VirtualNodes;
 using Microsoft.CodeAnalysis;
 
-namespace dngrep.core.Queries
+namespace dngrep.core.Queries.SyntaxWalkers
 {
     public class CombinedSyntaxTreeQueryWalker : SyntaxTreeQueryWalkerBase<CombinedSyntaxNode>
     {

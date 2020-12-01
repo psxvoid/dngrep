@@ -1,6 +1,6 @@
 ﻿using Microsoft.CodeAnalysis;
 
-namespace dngrep.core.Queries
+namespace dngrep.core.Queries.SyntaxWalkers
 {
     public class SyntaxTreeQueryWalker : SyntaxTreeQueryWalkerBase<SyntaxNode>
     {
