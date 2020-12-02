@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
 using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using dngrep.core.VirtualNodes.VirtualQueries;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -81,9 +82,10 @@ namespace dngrep.core.Queries
                     descriptor.EnableRegex));
         }
 
-        public static SyntaxTreeQuery From(TextSpan nodeSpan)
+        public static CombinedSyntaxTreeQuery From(TextSpan nodeSpan)
         {
-            return new SyntaxTreeQuery(
+            return new CombinedSyntaxTreeQuery(
+                new[] { new MethodBodyVirtualQuery() },
                 new[]
                 {
                     new And(

@@ -53,5 +53,17 @@ namespace dngrep.core.Queries
         {
             this.VirtualNodeQueries = virtualNodeQueries;
         }
+
+        internal CombinedSyntaxTreeQuery(
+            IReadOnlyCollection<IVirtualNodeQuery> virtualNodeQueries,
+            SyntaxTreeQuery query)
+            : base(
+                  query.TargetMatchers,
+                  query.ScopeMatchers,
+                  query.AccessModifierMatchers,
+                  query.PathMatchers)
+        {
+            this.VirtualNodeQueries = virtualNodeQueries;
+        }
     }
 }
