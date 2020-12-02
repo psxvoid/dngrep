@@ -14,7 +14,7 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             var method = node as MethodDeclarationSyntax;
-            return method != null && method.Body != null;
+            return method != null && (method.Body != null || method.ExpressionBody != null);
         }
 
         public IVirtualSyntaxNode Query(SyntaxNode node)
@@ -26,11 +26,14 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
             _ = methodDeclaration ?? throw new ArgumentException(
                 "This query can only handle MethodDeclarationSyntax nodes.");
 
-            _ = methodDeclaration.Body ?? throw new InvalidOperationException(
+            SyntaxNode? body = methodDeclaration.Body != null
+                ? (SyntaxNode?) methodDeclaration.Body
+                : (SyntaxNode?) methodDeclaration.ExpressionBody;
+
+            _ = body ?? throw new InvalidOperationException(
                 "This query can only handle MethodDeclarationSyntax nodes with a body.");
 
-            // TODO: How to deal with abstract methods?
-            return new MethodBodyDeclarationSyntax(methodDeclaration.Body);
+            return new MethodBodyDeclarationSyntax(body);
         }
     }
 }

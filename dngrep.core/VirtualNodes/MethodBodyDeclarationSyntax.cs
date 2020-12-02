@@ -1,15 +1,14 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.VirtualNodes
 {
     public sealed class MethodBodyDeclarationSyntax : IVirtualSyntaxNode
     {
-        public BlockSyntax BlockSyntax { get; }
+        public SyntaxNode BlockSyntax { get; }
 
-        public MethodBodyDeclarationSyntax(BlockSyntax blockSyntax)
+        public MethodBodyDeclarationSyntax(SyntaxNode methodBody)
         {
-            this.BlockSyntax = blockSyntax;
+            this.BlockSyntax = methodBody;
         }
 
         SyntaxNode IVirtualSyntaxNode.BaseNode => this.BlockSyntax;

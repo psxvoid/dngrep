@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using AutoFixture;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.VirtualNodes;
 using dngrep.core.VirtualNodes.VirtualQueries;
 using dngrep.core.xunit.TestHelpers;
@@ -54,6 +56,12 @@ namespace dngrep.core.xunit.VirtualNodes
         }
 
         [Fact]
+        public void CanQuery_SupportedTypeAndNonEmptyExpressionBody_True()
+        {
+            Assert.True(this.sut.CanQuery(CreateMethodWithExpressionBody()));
+        }
+
+        [Fact]
         public void Query_Null_Throws()
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -85,6 +93,16 @@ namespace dngrep.core.xunit.VirtualNodes
             Assert.Equal(VirtualSyntaxNodeKind.MethodBody, result.Kind);
         }
 
+        [Fact]
+        public void Query_SupportedTypeAndHasExpressionBody_MethodBodyDeclarationSyntax()
+        {
+            IVirtualSyntaxNode result = this.sut.Query(CreateMethodWithExpressionBody());
+
+            Assert.IsType<MethodBodyDeclarationSyntax>(result);
+            Assert.IsType<ArrowExpressionClauseSyntax>(result.BaseNode);
+            Assert.Equal(VirtualSyntaxNodeKind.MethodBody, result.Kind);
+        }
+
         private static MethodDeclarationSyntax CreateMethodWithoutBody()
         {
             return SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("bool"), "any");
@@ -103,6 +121,15 @@ namespace dngrep.core.xunit.VirtualNodes
                 constraintClauses: SyntaxFactory.List<TypeParameterConstraintClauseSyntax>(),
                 body: SyntaxFactory.Block(),
                 semicolonToken: new SyntaxToken());
+        }
+
+        private static MethodDeclarationSyntax CreateMethodWithExpressionBody()
+        {
+            SyntaxTree tree = CSharpSyntaxTree.ParseText("class C { int GetNum() => 5; }");
+            return tree.GetRoot()
+                .ChildNodes()
+                .GetNodesOfTypeRecursively<MethodDeclarationSyntax>()
+                .First();
         }
     }
 }
