@@ -1149,7 +1149,7 @@ namespace dngrep.core.xunit.Queries
 
         private static string?[] SelectNames(IEnumerable<SyntaxNode> nodes)
         {
-            return nodes.Select(x => x.TryGetIdentifierName()).OrderBy(x => x).ToArray();
+            return nodes.Select(x => x.TryGetIdentifierName()).ToArray();
         }
     }
 }

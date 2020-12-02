@@ -9,7 +9,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
 {
     public abstract class SyntaxTreeQueryWalkerBase<T> : CSharpSyntaxWalker
     {
-        private readonly Stack<T> results = new Stack<T>();
+        private readonly List<T> results = new List<T>();
         private readonly SyntaxTreeQuery query;
 
         private SyntaxNode? scope;
@@ -20,17 +20,31 @@ namespace dngrep.core.Queries.SyntaxWalkers
 
         protected T PeekResult()
         {
-            return this.results.Peek();
+            if (this.results.Count == 0)
+            {
+                throw new InvalidOperationException("Unable to peek from an empty list.");
+            }
+
+            return this.results[this.results.Count - 1];
         }
 
         protected T PopResult()
         {
-            return this.results.Pop();
+            if (this.results.Count == 0)
+            {
+                throw new InvalidOperationException("Unable to pop from an empty list.");
+            }
+
+            int index = this.results.Count - 1;
+
+            T last = this.results[index];
+            this.results.RemoveAt(index);
+            return last;
         }
 
         protected void PushResult(T result)
         {
-            this.results.Push(result);
+            this.results.Add(result);
         }
 
         public SyntaxTreeQueryWalkerBase(SyntaxTreeQuery query)
@@ -61,7 +75,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
                     || this.query.AccessModifierMatchers.Any(x => x.Match(node)))
                 && (!this.query.HasPathMatchers || this.query.PathMatchers.All(x => x.Match(node))))
             {
-                this.results.Push(this.CreateResultFromNode(node));
+                this.PushResult(this.CreateResultFromNode(node));
             }
 
             base.DefaultVisit(node);
