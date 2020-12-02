@@ -202,7 +202,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_AnyModifier_EmptyCollection()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Any)
                     .Create();
 
@@ -212,7 +213,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PublicModifier_PublicKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Public)
                     .Create();
 
@@ -226,7 +228,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PrivateModifier_PrivateKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Private)
                     .Create();
 
@@ -243,7 +246,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ProtectedModifier_ProtectedKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Protected)
                     .Create();
 
@@ -260,7 +264,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_InternalModifier_InternalKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Internal)
                     .Create();
 
@@ -277,7 +282,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ProtectedInternalModifier_ProtectedInternalKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.ProtectedInternal)
                     .Create();
 
@@ -295,7 +301,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PrivateProtectedModifier_PrivateProtectedKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.PrivateProtected)
                     .Create();
 
@@ -420,7 +427,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_NoneScope_Null()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.None);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.None);
 
                 Assert.Empty(SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeMatchers);
             }
@@ -428,7 +435,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ClassScope_ClassDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Class);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.Class);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -440,7 +447,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_StructScope_StructDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Struct);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.Struct);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -452,7 +459,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_NamespaceScope_NamespaceDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Namespace);
+                SyntaxTreeQueryDescriptor queryDescriptor =
+                    DescribeQuery(QueryTargetScope.Namespace);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -466,7 +474,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_InterfaceScope_InterfaceDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Interface);
+                SyntaxTreeQueryDescriptor queryDescriptor =
+                    DescribeQuery(QueryTargetScope.Interface);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 

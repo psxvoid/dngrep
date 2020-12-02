@@ -113,7 +113,7 @@ namespace dngrep.tool.Core
             ISyntaxNodePresenter presenter = this.presenterFactory.GetPresenter(
                         options.OutputType ?? PresenterKind.Search);
 
-            foreach (var proj in projects ?? Enumerable.Empty<IProject>())
+            foreach (IProject proj in projects ?? Enumerable.Empty<IProject>())
             {
                 hasAnyProjects = true;
 

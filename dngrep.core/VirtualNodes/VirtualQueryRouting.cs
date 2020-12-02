@@ -61,7 +61,7 @@ namespace dngrep.core.VirtualNodes
             bool hasSkippedOverride = false;
             bool overrideOccurred = false;
 
-            foreach (var query in queries)
+            foreach (IVirtualNodeQuery query in queries)
             {
                 IVirtualSyntaxNode queryResult = query.Query(queryTarget);
 

@@ -160,14 +160,14 @@ namespace dngrep.core.Queries
                 return matcher;
             }
 
-            var pathContains = includes == null
+            IEnumerable<ISyntaxNodeMatcher> pathContains = includes == null
             || includes.All(x => string.IsNullOrWhiteSpace(x))
             ? Array.Empty<ISyntaxNodeMatcher>()
             : includes
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(x => CreateMatcher(x));
 
-            var pathExclude = excludes == null
+            IEnumerable<ISyntaxNodeMatcher> pathExclude = excludes == null
             || excludes.All(x => string.IsNullOrWhiteSpace(x))
             ? Array.Empty<ISyntaxNodeMatcher>()
             : excludes

@@ -56,7 +56,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             var flatNodes = new List<SyntaxNode>(nodes);
 
-            foreach (var node in nodes)
+            foreach (SyntaxNode node in nodes)
             {
                 flatNodes.AddRange(node.ChildNodes().GetChildNodesRecursively());
             }
@@ -81,7 +81,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             var flatNodes = new List<T>(nodes.OfType<T>());
 
-            foreach (var node in nodes)
+            foreach (SyntaxNode node in nodes)
             {
                 flatNodes.AddRange(node.ChildNodes().GetNodesOfTypeRecursively<T>());
             }
