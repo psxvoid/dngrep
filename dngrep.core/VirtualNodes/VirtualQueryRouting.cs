@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using dngrep.core.Queries;
+using dngrep.core.Queries.SyntaxWalkers.MatchStrategies;
 using Microsoft.CodeAnalysis;
 
 namespace dngrep.core.VirtualNodes
@@ -10,6 +11,7 @@ namespace dngrep.core.VirtualNodes
         IVirtualQueryRouting<T> Create<T>(
             Action<T> push,
             Func<T> pop,
+            ISyntaxNodeMatchStrategy matchStrategy,
             Func<IVirtualSyntaxNode, T> mapResult);
     }
 
@@ -25,11 +27,13 @@ namespace dngrep.core.VirtualNodes
         public IVirtualQueryRouting<T> Create<T>(
             Action<T> push,
             Func<T> pop,
+            ISyntaxNodeMatchStrategy matchStrategy,
             Func<IVirtualSyntaxNode, T> mapResult)
         {
             return new VirtualQueryRouting<T>(
                 push,
                 pop,
+                matchStrategy,
                 mapResult);
         }
     }
@@ -38,15 +42,18 @@ namespace dngrep.core.VirtualNodes
     {
         private readonly Action<T> push;
         private readonly Func<T> pop;
+        private readonly ISyntaxNodeMatchStrategy matchStrategy;
         private readonly Func<IVirtualSyntaxNode, T> mapResult;
 
         public VirtualQueryRouting(
             Action<T> push,
             Func<T> pop,
+            ISyntaxNodeMatchStrategy matchStrategy,
             Func<IVirtualSyntaxNode, T> resultMapper)
         {
             this.push = push;
             this.pop = pop;
+            this.matchStrategy = matchStrategy;
             this.mapResult = resultMapper;
         }
 
@@ -64,6 +71,8 @@ namespace dngrep.core.VirtualNodes
             foreach (IVirtualNodeQuery query in queries)
             {
                 IVirtualSyntaxNode queryResult = query.Query(queryTarget);
+
+                if (!this.matchStrategy.Match(queryResult.BaseNode)) continue;
 
                 if (query.HasOverride)
                 {

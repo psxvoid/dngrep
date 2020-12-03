@@ -84,17 +84,26 @@ namespace dngrep.core.Queries
 
         public static CombinedSyntaxTreeQuery From(TextSpan nodeSpan)
         {
+            var positionMatcher = new SourceTextPositionMatcher(nodeSpan);
+
             return new CombinedSyntaxTreeQuery(
                 new[] { new MethodBodyVirtualQuery() },
-                new[]
-                {
-                    new And(
-                        KnownTargetMatcher.Instance,
-                        new SourceTextPositionMatcher(nodeSpan))
-                },
-                Array.Empty<ISyntaxNodeMatcher>(),
-                Array.Empty<ISyntaxNodeMatcher>(),
-                Array.Empty<ISyntaxNodeMatcher>());
+                new SyntaxTreeQuery(
+                    new[]
+                    {
+                        new And(
+                            KnownTargetMatcher.Instance,
+                            positionMatcher)
+                    },
+                    Array.Empty<ISyntaxNodeMatcher>(),
+                    Array.Empty<ISyntaxNodeMatcher>(),
+                    Array.Empty<ISyntaxNodeMatcher>()),
+                new SyntaxTreeQuery(
+                    new[] { positionMatcher },
+                    Array.Empty<ISyntaxNodeMatcher>(),
+                    Array.Empty<ISyntaxNodeMatcher>(),
+                    Array.Empty<ISyntaxNodeMatcher>()
+                    ));
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch

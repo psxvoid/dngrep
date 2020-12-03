@@ -43,27 +43,20 @@ namespace dngrep.core.Queries
     {
         public IReadOnlyCollection<IVirtualNodeQuery> VirtualNodeQueries { get; }
 
-        internal CombinedSyntaxTreeQuery(
-            IReadOnlyCollection<IVirtualNodeQuery> virtualNodeQueries,
-            IReadOnlyCollection<ISyntaxNodeMatcher> targetMatchers,
-            IReadOnlyCollection<ISyntaxNodeMatcher> scopeMatchers,
-            IReadOnlyCollection<ISyntaxNodeMatcher> accessModifierMatchers,
-            IReadOnlyCollection<ISyntaxNodeMatcher> pathMatchers)
-            : base(targetMatchers, scopeMatchers, accessModifierMatchers, pathMatchers)
-        {
-            this.VirtualNodeQueries = virtualNodeQueries;
-        }
+        public SyntaxTreeQuery VirtualNodeSubQueries { get; }
 
         internal CombinedSyntaxTreeQuery(
             IReadOnlyCollection<IVirtualNodeQuery> virtualNodeQueries,
-            SyntaxTreeQuery query)
+            SyntaxTreeQuery nodeQuery,
+            SyntaxTreeQuery virtualNodeSubQueries)
             : base(
-                  query.TargetMatchers,
-                  query.ScopeMatchers,
-                  query.AccessModifierMatchers,
-                  query.PathMatchers)
+                nodeQuery.TargetMatchers,
+                nodeQuery.ScopeMatchers,
+                nodeQuery.AccessModifierMatchers,
+                nodeQuery.TargetMatchers)
         {
             this.VirtualNodeQueries = virtualNodeQueries;
+            this.VirtualNodeSubQueries = virtualNodeSubQueries;
         }
     }
 }
