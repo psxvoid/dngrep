@@ -43,7 +43,7 @@ namespace dngrep.core.VirtualNodes
 
         public override bool Equals(object obj)
         {
-            if (obj != null && obj.GetType() == this.GetType())
+            if (obj != null && obj.GetType() == typeof(CombinedSyntaxNode))
             {
                 return this.Equals((CombinedSyntaxNode)obj);
             }
@@ -79,9 +79,7 @@ namespace dngrep.core.VirtualNodes
         {
             return other != null
                 && this.IsVirtual == other.IsVirtual
-                && this.IsVirtual
-                    ? this.VirtualNode == other.VirtualNode
-                    : this.Node == other.VirtualNode;
+                && this.BaseNode == other.BaseNode;
         }
     }
 }
