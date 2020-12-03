@@ -27,6 +27,20 @@ namespace dngrep.core.VirtualNodes
 
         public bool IsVirtual => this.VirtualNode != null;
 
+        public SyntaxNode BaseNode
+        {
+            get
+            {
+                SyntaxNode? node = this.IsVirtual
+                    ? this.VirtualNode?.BaseNode
+                    : this.Node;
+
+                _ = node ?? throw new InvalidOperationException("The base node is not defined.");
+
+                return node;
+            }
+        }
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj.GetType() == this.GetType())

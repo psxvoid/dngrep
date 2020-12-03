@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using dngrep.core.Extensions.EnumerableExtensions;
 using dngrep.core.VirtualNodes;
@@ -45,11 +44,10 @@ namespace dngrep.core.Queries.SyntaxWalkers
                 return;
             }
 
-            SyntaxNode queryTarget = this.PeekResult().Node
-                ?? throw new InvalidOperationException("Query result cannot be empty.");
+            SyntaxNode target = this.PeekResult().BaseNode;
 
             IEnumerable<IVirtualNodeQuery> queries = this.VirtualQueries.Where(
-                x => x.CanQuery(queryTarget));
+                x => x.CanQuery(target));
 
             if (queries.IsNullOrEmpty())
             {
@@ -62,7 +60,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
                     this.PopResult,
                     x => new CombinedSyntaxNode(x));
 
-            queryRouting.QueryAndUpdateResults(queries, queryTarget);
+            queryRouting.QueryAndUpdateResults(queries, target);
         }
     }
 }
