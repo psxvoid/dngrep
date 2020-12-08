@@ -1,10 +1,14 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.core.VirtualNodes
 {
     public struct CombinedSyntaxNode : ICombinedSyntaxNode, IEquatable<CombinedSyntaxNode>
     {
+        public static readonly CombinedSyntaxNode Empty =
+            new CombinedSyntaxNode(SyntaxFactory.ClassDeclaration("empty"));
+
         public CombinedSyntaxNode(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
