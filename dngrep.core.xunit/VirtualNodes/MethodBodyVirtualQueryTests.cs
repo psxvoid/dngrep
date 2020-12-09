@@ -52,7 +52,7 @@ namespace dngrep.core.xunit.VirtualNodes
         [Fact]
         public void CanQuery_SupportedTypeAndNonEmptyBody_True()
         {
-            Assert.True(this.sut.CanQuery(CreateMethdoWithBody()));
+            Assert.True(this.sut.CanQuery(CreateMethodWithBody()));
         }
 
         [Fact]
@@ -86,7 +86,7 @@ namespace dngrep.core.xunit.VirtualNodes
         [Fact]
         public void Query_SupportedTypeAndHasBody_MethodBodyDeclarationSyntax()
         {
-            IVirtualSyntaxNode result = this.sut.Query(CreateMethdoWithBody());
+            IVirtualSyntaxNode result = this.sut.Query(CreateMethodWithBody());
 
             Assert.IsType<MethodBodyDeclarationSyntax>(result);
             Assert.IsType<BlockSyntax>(result.BaseNode);
@@ -108,13 +108,15 @@ namespace dngrep.core.xunit.VirtualNodes
             return SyntaxFactory.MethodDeclaration(SyntaxFactory.ParseTypeName("bool"), "any");
         }
 
-        private static MethodDeclarationSyntax CreateMethdoWithBody()
+        private static MethodDeclarationSyntax CreateMethodWithBody()
         {
             return SyntaxFactory.MethodDeclaration(
                 attributeLists: SyntaxFactory.List<AttributeListSyntax>(),
                 modifiers: SyntaxFactory.TokenList(),
                 returnType: SyntaxFactory.ParseTypeName("bool"),
+#pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
                 explicitInterfaceSpecifier: null,
+#pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
                 identifier: SyntaxFactory.Identifier("MyMethod"),
                 typeParameterList: SyntaxFactory.TypeParameterList(),
                 parameterList: SyntaxFactory.ParameterList(),

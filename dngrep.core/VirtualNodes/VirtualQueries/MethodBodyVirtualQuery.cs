@@ -13,8 +13,8 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            var method = node as MethodDeclarationSyntax;
-            return method != null && (method.Body != null || method.ExpressionBody != null);
+            return node is MethodDeclarationSyntax method
+                && (method.Body != null || method.ExpressionBody != null);
         }
 
         public IVirtualSyntaxNode Query(SyntaxNode node)
