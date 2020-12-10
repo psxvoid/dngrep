@@ -55,6 +55,8 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="Microsoft.Win32.Registry" Version="4.7.0" />
+    <PackageReference Include="System.CodeDom" Version="4.7.0" />
     <PackageReference Include="System.IO.Abstractions" Version="12.2.7" />
   </ItemGroup>
 

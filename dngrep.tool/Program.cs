@@ -36,7 +36,7 @@ namespace dngrep.tool
                 x.AddTransient<CSharpSyntaxWalker, SyntaxTreeQueryWalker>();
             });
 
-            var pipeline = container.GetInstance<GrepCommandLinePipeline>();
+            GrepCommandLinePipeline pipeline = container.GetInstance<GrepCommandLinePipeline>();
 
             await pipeline.ParseArgsAndRun(args).ConfigureAwait(false);
         }
