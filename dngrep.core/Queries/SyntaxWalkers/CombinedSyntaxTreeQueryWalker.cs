@@ -17,8 +17,9 @@ namespace dngrep.core.Queries.SyntaxWalkers
         public CombinedSyntaxTreeQueryWalker(
             CombinedSyntaxTreeQuery query,
             IVirtualQueryRoutingFactory queryRoutingFactory,
+            ISyntaxNodeMatchStrategy? baseMatchStrategy = null,
             ISyntaxNodeMatchStrategy? matchStrategy = null
-            ) : base(query)
+            ) : base(query, baseMatchStrategy)
         {
             this.VirtualQueries = query.VirtualNodeQueries;
             this.queryRoutingFactory = queryRoutingFactory;
