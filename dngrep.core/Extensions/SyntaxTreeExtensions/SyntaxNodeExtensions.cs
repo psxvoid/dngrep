@@ -277,7 +277,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             SyntaxNode? parent = target.Parent;
 
-            while (parent != null && parent.GetType() != typeof(CompilationUnitSyntax))
+            while (parent != null)
             {
                 if (parent.GetType() == typeof(T))
                 {
