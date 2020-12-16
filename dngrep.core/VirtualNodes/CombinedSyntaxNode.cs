@@ -45,6 +45,25 @@ namespace dngrep.core.VirtualNodes
             }
         }
 
+        public object MixedNode
+        {
+            get
+            {
+                object? result = this.IsVirtual
+                    ? (object?) this.VirtualNode
+                    : (object?) this.Node;
+
+                if (result == null)
+                {
+                    throw new InvalidOperationException(
+                        "The mixed node can't be obtained " +
+                        "because the combined node isn't initialized properly.");
+                }
+
+                return result;
+            }
+        }
+
         public override bool Equals(object obj)
         {
             if (obj != null && obj.GetType() == typeof(CombinedSyntaxNode))

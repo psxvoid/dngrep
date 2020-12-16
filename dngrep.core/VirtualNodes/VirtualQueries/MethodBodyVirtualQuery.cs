@@ -1,39 +1,53 @@
 ﻿using System;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.Queries;
+using dngrep.core.Queries.SyntaxNodeMatchers.Targets;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.VirtualNodes.VirtualQueries
 {
     public class MethodBodyVirtualQuery : IVirtualNodeQuery
     {
-        public bool HasOverride => false;
+        private static readonly MethodBodyVirtualQuery InstancePrivate
+            = new MethodBodyVirtualQuery();
+
+        public static MethodBodyVirtualQuery Instance => InstancePrivate;
+
+        public bool HasOverride => true;
+
+        private MethodBodyVirtualQuery()
+        {
+        }
 
         public bool CanQuery(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            return node is MethodDeclarationSyntax method
-                && (method.Body != null || method.ExpressionBody != null);
+            return MethodBodySyntaxNodeMatcher.Instance.Match(node);
         }
 
         public IVirtualSyntaxNode Query(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            var methodDeclaration = node as MethodDeclarationSyntax;
+            SyntaxNode? parent = node.Parent;
 
-            _ = methodDeclaration ?? throw new ArgumentException(
-                "This query can only handle MethodDeclarationSyntax nodes.");
+            if (parent == null)
+            {
+                throw new ArgumentException(
+                    "The provided node does not have a parent." +
+                    "It is required to properly query the method body.",
+                    nameof(node));
+            }
 
-            SyntaxNode? body = methodDeclaration.Body != null
-                ? (SyntaxNode?) methodDeclaration.Body
-                : (SyntaxNode?) methodDeclaration.ExpressionBody;
+            if (!MethodBodyParentSyntaxNodeMatcher.Instance.Match(parent))
+            {
+                throw new InvalidOperationException(
+                    "The provided node does not have a method body.");
+            }
 
-            _ = body ?? throw new InvalidOperationException(
-                "This query can only handle MethodDeclarationSyntax nodes with a body.");
-
-            return new MethodBodyDeclarationSyntax(body);
+            
+            return new MethodBodyDeclarationSyntax(parent.GetBody());
         }
     }
 }

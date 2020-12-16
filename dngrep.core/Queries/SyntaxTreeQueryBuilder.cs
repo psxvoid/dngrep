@@ -87,7 +87,7 @@ namespace dngrep.core.Queries
             var positionMatcher = new SourceTextPositionMatcher(nodeSpan);
 
             return new CombinedSyntaxTreeQuery(
-                new[] { new MethodBodyVirtualQuery() },
+                new[] { MethodBodyVirtualQuery.Instance },
                 new SyntaxTreeQuery(
                     new[]
                     {

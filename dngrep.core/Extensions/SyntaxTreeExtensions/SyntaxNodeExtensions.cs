@@ -227,7 +227,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             _ = target ?? throw new ArgumentNullException(nameof(target));
 
             var sb = new StringBuilder();
-            bool isFirstOccurence = true;
+            bool isFirstOccurrence = true;
 
             while (target != null && target.GetType() != typeof(CompilationUnitSyntax))
             {
@@ -235,7 +235,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
                 if (targetName != null)
                 {
-                    if (!isFirstOccurence
+                    if (!isFirstOccurrence
                         && ignoreNamespaces
                         && target.GetType() == typeof(NamespaceDeclarationSyntax))
                     {
@@ -243,15 +243,15 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
                         continue;
                     }
 
-                    if (!isFirstOccurence)
+                    if (!isFirstOccurrence)
                     {
                         sb.Insert(0, '.');
                     }
 
                     sb.Insert(0, targetName);
-                    isFirstOccurence = false;
+                    isFirstOccurrence = false;
                 }
-                else if (isFirstOccurence)
+                else if (isFirstOccurrence)
                 {
                     return null;
                 }
@@ -288,6 +288,91 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             }
 
             return null;
+        }
+
+        /// <summary>
+        /// Gets the method body from the provided node. The same as
+        /// <see cref="TryGetBody(SyntaxNode)"/> but will throw an
+        /// exception when the method body isn't found in the provided
+        /// node.
+        /// </summary>
+        /// <param name="nodeWithBody">
+        /// The node that may contain a method body. This method will
+        /// to get the method body from this node. It also can be assumed
+        /// that the provided node should be a method body parent.
+        /// </param>
+        /// <returns>
+        /// The body of the provided node. Can be <see cref="BlockSyntax"/>,
+        /// <see cref="ArrowExpressionClauseSyntax"/>, or any child of
+        /// <see cref="ExpressionSyntax"/>.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <see langword="null"/> is passed as the node argument.
+        /// </exception>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the method is unable to find a method body for the
+        /// specified node argument.
+        /// </exception>
+        public static SyntaxNode GetBody(this SyntaxNode nodeWithBody)
+        {
+            _ = nodeWithBody ?? throw new ArgumentNullException(nameof(nodeWithBody));
+
+            return TryGetBody(nodeWithBody) ?? throw new InvalidOperationException(
+                "Unable to get the body for the node.");
+        }
+
+        /// <summary>
+        /// Tries to get a method body from the provided node. The same
+        /// as <see cref="GetBody(SyntaxNode)"/> but won't thrown an
+        /// exception when the body isn't found.
+        /// </summary>
+        /// <param name="nodeWithBody">
+        /// The node that may contain a method body. This method will try
+        /// to get the method body from this node. It also can be assumed
+        /// that the provided node can be a potential method body parent.
+        /// </param>
+        /// <returns>
+        /// The body of the provided node. Can be <see cref="BlockSyntax"/>,
+        /// <see cref="ArrowExpressionClauseSyntax"/>, or any child of
+        /// <see cref="ExpressionSyntax"/>. Will be <see langword="null"/>
+        /// when the body isn't found.
+        /// </returns>
+        /// <exception cref="ArgumentNullException">
+        /// Thrown when <see langword="null"/> is passed as the node argument.
+        /// </exception>
+        public static SyntaxNode? TryGetBody(this SyntaxNode nodeWithBody)
+        {
+            _ = nodeWithBody ?? throw new ArgumentNullException(nameof(nodeWithBody));
+
+            BlockSyntax? blockBody = null;
+            ArrowExpressionClauseSyntax? arrowExpressionBody = null;
+            ExpressionSyntax? expressionSyntax = null;
+
+            if (nodeWithBody is MethodDeclarationSyntax method) {
+                blockBody = method.Body;
+                arrowExpressionBody = method.ExpressionBody;
+            }
+            else if (nodeWithBody is ConstructorDeclarationSyntax ctor) {
+                blockBody = ctor.Body;
+                arrowExpressionBody = ctor.ExpressionBody;
+            }
+            else if (nodeWithBody is AccessorDeclarationSyntax accessor) {
+                blockBody = accessor.Body;
+                arrowExpressionBody = accessor.ExpressionBody;
+            }
+            else if(nodeWithBody is AnonymousFunctionExpressionSyntax anonymouseFunc)
+            {
+                blockBody = anonymouseFunc.Block;
+                expressionSyntax = anonymouseFunc.ExpressionBody;
+            }
+            else if(nodeWithBody is PropertyDeclarationSyntax prop)
+            {
+                arrowExpressionBody = prop.ExpressionBody;
+            }
+
+            return (SyntaxNode?)blockBody
+                ?? (SyntaxNode?)arrowExpressionBody
+                ?? (SyntaxNode?)expressionSyntax;
         }
     }
 }
