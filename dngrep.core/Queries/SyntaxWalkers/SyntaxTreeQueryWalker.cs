@@ -12,5 +12,11 @@ namespace dngrep.core.Queries.SyntaxWalkers
         {
             return node;
         }
+
+        public override void DefaultVisit(SyntaxNode node)
+        {
+            base.BaseVisit(node);
+            base.DefaultVisit(node);
+        }
     }
 }

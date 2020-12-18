@@ -35,17 +35,21 @@ namespace dngrep.core.Queries.SyntaxWalkers
         {
             int nodesBefore = this.Results.Count;
 
-            base.DefaultVisit(node);
-
-            if (this.VirtualQueries.IsNullOrEmpty())
-            {
-                return;
-            }
+            base.BaseVisit(node);
 
             int nodesAfter = this.Results.Count;
 
+            if (this.VirtualQueries.IsNullOrEmpty())
+            {
+                base.DefaultVisit(node);
+
+                return;
+            }
+
             if (nodesAfter == nodesBefore)
             {
+                base.DefaultVisit(node);
+
                 return;
             }
 
@@ -56,6 +60,8 @@ namespace dngrep.core.Queries.SyntaxWalkers
 
             if (queries.IsNullOrEmpty())
             {
+                base.DefaultVisit(node);
+
                 return;
             }
 
@@ -67,6 +73,8 @@ namespace dngrep.core.Queries.SyntaxWalkers
                     x => new CombinedSyntaxNode(x));
 
             queryRouting.QueryAndUpdateResults(queries, target);
+
+            base.DefaultVisit(node);
         }
     }
 }

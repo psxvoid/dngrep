@@ -199,11 +199,9 @@ namespace dngrep.core.xunit.VirtualNodes
                 ?.GetNodesOfTypeRecursively<ParenthesizedLambdaExpressionSyntax>()
                 ?.First();
 
-#pragma warning disable CS8603 // Possible null reference return.
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
             return parent.Body;
 #pragma warning restore CS8602 // Dereference of a possibly null reference.
-#pragma warning restore CS8603 // Possible null reference return.
         }
 
         private static ExpressionSyntax CreateAnonymousMethodExpressionBody()

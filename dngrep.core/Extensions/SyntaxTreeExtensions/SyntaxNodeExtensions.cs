@@ -43,7 +43,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         }
 
         /// <summary>
-        /// Flatterns and entire child node hierarchy into a single enumerable.
+        /// Flattens and entire child node hierarchy into a single enumerable.
         /// </summary>
         /// <param name="nodes"></param>
         /// <returns></returns>
@@ -65,12 +65,47 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         }
 
         /// <summary>
-        /// The difference between this method and <see cref="GetChildNodesRecursively(IEnumerable{SyntaxNode})"/>
-        /// is that this method only gets nodes of a specified type and potentially can use less memory.
+        /// Gets the first child node of a specified type in the syntax-node child chain.
+        /// Throws an exception when the node of the specified type cannot be found.
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="nodes"></param>
-        /// <returns></returns>
+        /// <typeparam name="T">The type of the child node to find.</typeparam>
+        /// <param name="node">The node, containing the target node of the specified type.</param>
+        /// <returns>The child node the provided node that has the specified type.</returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the provided node doesn't have any child or no any target nodes are found.
+        /// </exception>
+        public static T GetFirstChildOfTypeRecursively<T>(this SyntaxNode node)
+            where T : SyntaxNode
+        {
+            _ = node ?? throw new ArgumentNullException(nameof(node));
+
+            IEnumerable<SyntaxNode>? child = node.ChildNodes();
+
+            if (child == null || !child.Any())
+            {
+                throw new InvalidOperationException("The node does not contain any child nodes");
+            }
+
+            IEnumerable<T> nodes = child.GetNodesOfTypeRecursively<T>();
+
+            if (nodes == null || !nodes.Any())
+            {
+                throw new InvalidOperationException(
+                    "Unable to find any nodes of the target type.");
+            }
+
+            return nodes.First();
+        }
+
+        /// <summary>
+        /// Gets child nodes of a specified type in the syntax-node child chain.
+        /// </summary>
+        /// <typeparam name="T">The type of the child node to find.</typeparam>
+        /// <param name="node">The node, containing the target nodes of the specified type.</param>
+        /// <returns>
+        /// The child nodes of the provided node that have the specified type.
+        /// Returns an empty enumerable when no any nodes are found.
+        /// </returns>
         public static IEnumerable<T> GetNodesOfTypeRecursively<T>(this IEnumerable<SyntaxNode> nodes)
             where T : SyntaxNode
         {
@@ -261,7 +296,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             return sb.ToString();
         }
-        
+
         /// <summary>
         /// Gets the first parent <see cref="SyntaxNode"/> of the specified type.
         /// </summary>
@@ -271,7 +306,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
         /// </param>
         /// <returns>The first parent of the specified type or <see langword="null"/>.</returns>
         public static T? GetFirstParentOfType<T>(this SyntaxNode target)
-            where T: SyntaxNode
+            where T : SyntaxNode
         {
             _ = target ?? throw new ArgumentNullException(nameof(target));
 
@@ -283,7 +318,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
                 {
                     return parent as T;
                 }
-                
+
                 parent = parent.Parent;
             }
 
@@ -348,24 +383,27 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             ArrowExpressionClauseSyntax? arrowExpressionBody = null;
             ExpressionSyntax? expressionSyntax = null;
 
-            if (nodeWithBody is MethodDeclarationSyntax method) {
+            if (nodeWithBody is MethodDeclarationSyntax method)
+            {
                 blockBody = method.Body;
                 arrowExpressionBody = method.ExpressionBody;
             }
-            else if (nodeWithBody is ConstructorDeclarationSyntax ctor) {
+            else if (nodeWithBody is ConstructorDeclarationSyntax ctor)
+            {
                 blockBody = ctor.Body;
                 arrowExpressionBody = ctor.ExpressionBody;
             }
-            else if (nodeWithBody is AccessorDeclarationSyntax accessor) {
+            else if (nodeWithBody is AccessorDeclarationSyntax accessor)
+            {
                 blockBody = accessor.Body;
                 arrowExpressionBody = accessor.ExpressionBody;
             }
-            else if(nodeWithBody is AnonymousFunctionExpressionSyntax anonymouseFunc)
+            else if (nodeWithBody is AnonymousFunctionExpressionSyntax anonymouseFunc)
             {
                 blockBody = anonymouseFunc.Block;
                 expressionSyntax = anonymouseFunc.ExpressionBody;
             }
-            else if(nodeWithBody is PropertyDeclarationSyntax prop)
+            else if (nodeWithBody is PropertyDeclarationSyntax prop)
             {
                 arrowExpressionBody = prop.ExpressionBody;
             }
@@ -373,6 +411,28 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             return (SyntaxNode?)blockBody
                 ?? (SyntaxNode?)arrowExpressionBody
                 ?? (SyntaxNode?)expressionSyntax;
+        }
+
+        /// <summary>
+        /// Verifies whether a node is a container for another syntax constructs
+        /// like statements. For example, it will return true for a BlockSyntax
+        /// that may contain another code inside.
+        /// </summary>
+        /// <param name="node">
+        /// The node that should be analyzed.
+        /// </param>
+        /// <returns>
+        /// <see langword="true"/> when the node is a container for another syntax
+        /// constructs, else <see langword="false"/>.
+        /// </returns>
+        public static bool IsContainer(this SyntaxNode node)
+        {
+            _ = node ?? throw new ArgumentNullException(nameof(node));
+
+            return node is BlockSyntax
+                || node is ArrowExpressionClauseSyntax
+                || node is ExpressionSyntax
+                && !(node is TypeSyntax);
         }
     }
 }

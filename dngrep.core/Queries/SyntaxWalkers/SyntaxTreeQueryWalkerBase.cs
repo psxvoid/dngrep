@@ -55,7 +55,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
             this.matchStrategy = matchStrategy ?? new ScopedSyntaxNodeMatchStrategy(query);
         }
 
-        public override void DefaultVisit(SyntaxNode node)
+        public void BaseVisit(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
@@ -63,8 +63,6 @@ namespace dngrep.core.Queries.SyntaxWalkers
             {
                 this.PushResult(this.CreateResultFromNode(node));
             }
-
-            base.DefaultVisit(node);
         }
     }
 }

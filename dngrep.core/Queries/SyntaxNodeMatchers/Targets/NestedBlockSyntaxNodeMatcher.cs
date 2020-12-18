@@ -4,17 +4,17 @@ using Microsoft.CodeAnalysis;
 
 namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 {
-    public class MethodBodySyntaxNodeMatcher : ISyntaxNodeMatcher
+    public class NestedBlockSyntaxNodeMatcher : ISyntaxNodeMatcher
     {
-        private static readonly MethodBodySyntaxNodeMatcher instance =
-            new MethodBodySyntaxNodeMatcher();
+        private static readonly NestedBlockSyntaxNodeMatcher instance =
+            new NestedBlockSyntaxNodeMatcher();
 
         public bool Match(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             if (node.Parent != null
-                && MethodBodyParentSyntaxNodeMatcher.Instance.Match(node.Parent)
+                && NestedBlockParentSyntaxNodeMatcher.Instance.Match(node.Parent)
                 && node.IsContainer())
             {
                 return true;
@@ -23,6 +23,6 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             return false;
         }
 
-        public static MethodBodySyntaxNodeMatcher Instance => instance;
+        public static NestedBlockSyntaxNodeMatcher Instance => instance;
     }
 }
