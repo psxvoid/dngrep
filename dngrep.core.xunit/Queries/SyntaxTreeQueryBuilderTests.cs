@@ -513,35 +513,13 @@ namespace dngrep.core.xunit.Queries
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_AndMatcher()
-            {
-                Assert.Equal(
-                    typeof(And),
-                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First()
-                        .GetType());
-            }
-
-            [Fact]
-            public void FromTextSpan_NotNull_AndContainsKnownTargetMatcher()
-            {
-                Assert.Equal(
-                    typeof(KnownTargetMatcher),
-                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First() as And)?.Lhs.GetType()
-                        );
-            }
-
-            [Fact]
             public void FromTextSpan_NotNull_AndContainsSourceTextMatcher()
             {
                 Assert.Equal(
                     typeof(SourceTextPositionMatcher),
                     (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
                         .TargetMatchers
-                        .First() as And)?.Rhs.GetType());
+                        .First()).GetType());
             }
 
             [Fact]
@@ -551,9 +529,8 @@ namespace dngrep.core.xunit.Queries
 
                 Assert.Equal(
                     span,
-                    ((SyntaxTreeQueryBuilder.From(span)
-                        .TargetMatchers
-                        .First() as And)?.Rhs as SourceTextPositionMatcher)?.SpanToMatch );
+                    (SyntaxTreeQueryBuilder.From(span)
+                        .TargetMatchers.First() as SourceTextPositionMatcher)?.SpanToMatch);
             }
         }
     }
