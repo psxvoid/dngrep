@@ -19,7 +19,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(ForStatementSyntax),
             typeof(ForEachStatementSyntax),
             typeof(WhileStatementSyntax),
-            typeof(BlockSyntax)
+            typeof(BlockSyntax),
+            typeof(ArrowExpressionClauseSyntax),
         };
 
         private readonly static Type[] VirtualBodyMemberSiblings = new[]

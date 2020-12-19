@@ -47,7 +47,7 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
             }
 
             
-            return new MethodBodyDeclarationSyntax(parent.GetBody());
+            return new MethodBodyDeclarationSyntax(node);
         }
     }
 }
