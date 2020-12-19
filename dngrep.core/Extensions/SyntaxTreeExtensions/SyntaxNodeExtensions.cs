@@ -407,6 +407,11 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
             {
                 arrowExpressionBody = prop.ExpressionBody;
             }
+            else if (nodeWithBody is LocalFunctionStatementSyntax localFunc)
+            {
+                blockBody = localFunc.Body;
+                arrowExpressionBody = localFunc.ExpressionBody;
+            }
 
             return (SyntaxNode?)blockBody
                 ?? (SyntaxNode?)arrowExpressionBody

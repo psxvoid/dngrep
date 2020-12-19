@@ -135,28 +135,28 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_LocalFunctionBody_True()
+        public void Match_LocalFunctionBody_False()
         {
             const string target =
                 "public class C { public int M() { int X() { return 5; }; return X(); } }";
 
             AssertMatch<LocalFunctionStatementSyntax>(
                 target,
-                true,
+                false,
 #pragma warning disable CS8603 // Possible null reference return.
                 x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
         [Fact]
-        public void Match_LocalFunctionExpressionBody_True()
+        public void Match_LocalFunctionExpressionBody_False()
         {
             const string target =
                 "public class C { public int M() { int X() => 5; return X(); } }";
 
             AssertMatch<LocalFunctionStatementSyntax>(
                 target,
-                true,
+                false,
 #pragma warning disable CS8603 // Possible null reference return.
                 x => x.ExpressionBody);
 #pragma warning restore CS8603 // Possible null reference return.

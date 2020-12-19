@@ -15,7 +15,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
             if (node.Parent != null
                 && NestedBlockParentSyntaxNodeMatcher.Instance.Match(node.Parent)
-                && node.IsContainer())
+                && node.IsContainer()
+                && !MethodBodySyntaxNodeMatcher.Instance.Match(node))
             {
                 return true;
             }

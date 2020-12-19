@@ -15,6 +15,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(MethodDeclarationSyntax),
             typeof(ConstructorDeclarationSyntax),
             typeof(DestructorDeclarationSyntax),
+            typeof(LocalFunctionStatementSyntax),
             typeof(ParenthesizedLambdaExpressionSyntax)
         };
 
@@ -53,6 +54,12 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
             if (node is ParenthesizedLambdaExpressionSyntax lambda
                 && (lambda.Body != null || lambda.ExpressionBody != null))
+            {
+                return true;
+            }
+            
+            if (node is LocalFunctionStatementSyntax localFunc
+                && (localFunc.Body != null || localFunc.ExpressionBody != null))
             {
                 return true;
             }

@@ -17,7 +17,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             return MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
-                && !MethodMemberSyntaxNodeMatcher.Instance.Match(node);
+                && !MethodMemberSyntaxNodeMatcher.Instance.Match(node)
+                && !MethodBodySyntaxNodeMatcher.Instance.Match(node);
         }
 
         public static NestedBlockParentSyntaxNodeMatcher Instance => instance;

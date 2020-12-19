@@ -15,6 +15,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             typeof(IfStatementSyntax),
             typeof(LocalDeclarationStatementSyntax),
+            typeof(LocalFunctionStatementSyntax),
             typeof(ReturnStatementSyntax),
             typeof(ForStatementSyntax),
             typeof(ForEachStatementSyntax),
