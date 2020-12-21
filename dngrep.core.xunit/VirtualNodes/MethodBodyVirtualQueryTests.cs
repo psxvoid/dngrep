@@ -3,6 +3,7 @@ using System.Linq;
 using AutoFixture;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.VirtualNodes;
+using dngrep.core.VirtualNodes.Syntax;
 using dngrep.core.VirtualNodes.VirtualQueries;
 using dngrep.core.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;

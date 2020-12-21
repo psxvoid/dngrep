@@ -3,20 +3,20 @@ using dngrep.core.Queries.SyntaxNodeMatchers.Targets;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 
-namespace dngrep.core.VirtualNodes
+namespace dngrep.core.VirtualNodes.Syntax
 {
-    public class NestedBlockSyntax : IVirtualSyntaxNode
+    public sealed class MethodBodyDeclarationSyntax : IVirtualSyntaxNode
     {
-        public enum BlockType
+        public enum BodyType
         {
             BlockBody,
             ArrowExpressionBody,
             ExpressionBody
         }
 
-        private readonly BlockType bodyType;
+        private readonly BodyType bodyType;
 
-        public BlockType ActiveBodyType => this.bodyType;
+        public BodyType ActiveBodyType => this.bodyType;
 
         public BlockSyntax? BlockBody { get; }
 
@@ -24,11 +24,11 @@ namespace dngrep.core.VirtualNodes
 
         public ExpressionSyntax? ExpressionBody { get; }
 
-        public NestedBlockSyntax(SyntaxNode methodBody)
+        public MethodBodyDeclarationSyntax(SyntaxNode methodBody)
         {
             _ = methodBody ?? throw new ArgumentNullException(nameof(methodBody));
 
-            if (!NestedBlockSyntaxNodeMatcher.Instance.Match(methodBody))
+            if (!MethodBodySyntaxNodeMatcher.Instance.Match(methodBody))
             {
                 throw new ArgumentException("The provided node isn't a method body.");
             }
@@ -36,17 +36,17 @@ namespace dngrep.core.VirtualNodes
             if (methodBody is BlockSyntax blockBody)
             {
                 this.BlockBody = blockBody;
-                this.bodyType = BlockType.BlockBody;
+                this.bodyType = BodyType.BlockBody;
             }
             else if (methodBody is ArrowExpressionClauseSyntax arrowExpressionBody)
             {
                 this.ArrowExpressionBody = arrowExpressionBody;
-                this.bodyType = BlockType.ArrowExpressionBody;
+                this.bodyType = BodyType.ArrowExpressionBody;
             }
             else if (methodBody is ExpressionSyntax expressionBody)
             {
                 this.ExpressionBody = expressionBody;
-                this.bodyType = BlockType.ExpressionBody;
+                this.bodyType = BodyType.ExpressionBody;
             }
             else
             {

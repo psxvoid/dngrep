@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using dngrep.core.VirtualNodes;
+using dngrep.core.VirtualNodes.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 

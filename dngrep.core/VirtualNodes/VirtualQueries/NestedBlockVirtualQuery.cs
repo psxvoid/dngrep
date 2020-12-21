@@ -1,6 +1,7 @@
 ﻿using System;
 using dngrep.core.Queries;
 using dngrep.core.Queries.SyntaxNodeMatchers.Targets;
+using dngrep.core.VirtualNodes.Syntax;
 using Microsoft.CodeAnalysis;
 
 namespace dngrep.core.VirtualNodes.VirtualQueries
