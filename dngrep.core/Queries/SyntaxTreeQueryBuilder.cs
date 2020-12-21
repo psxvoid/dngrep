@@ -89,7 +89,9 @@ namespace dngrep.core.Queries
             return new CombinedSyntaxTreeQuery(
                 new IVirtualNodeQuery[] {
                     MethodBodyVirtualQuery.Instance,
-                    NestedBlockVirtualQuery.Instance
+                    NestedBlockVirtualQuery.Instance,
+                    AutoPropertyVirtualQuery.Instance,
+                    ReadOnlyPropertyVirtualQuery.Instance,
                 },
                 new SyntaxTreeQuery(
                     new[]
