@@ -3,6 +3,7 @@
     public enum VirtualSyntaxNodeKind
     {
         MethodBody,
-        NestedBlockSyntax
+        NestedBlockSyntax,
+        AutoProperty,
     }
 }
