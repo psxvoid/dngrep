@@ -5,5 +5,6 @@
         MethodBody,
         NestedBlockSyntax,
         AutoProperty,
+        ReadOnlyProperty,
     }
 }
