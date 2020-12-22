@@ -18,6 +18,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(LocalFunctionStatementSyntax),
             typeof(ParenthesizedLambdaExpressionSyntax),
             typeof(PropertyDeclarationSyntax),
+            typeof(AccessorDeclarationSyntax),
         };
 
         private MethodBodyParentSyntaxNodeMatcher()
@@ -67,6 +68,12 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
             if (node is PropertyDeclarationSyntax prop
                 && (prop.AccessorList == null && prop.ExpressionBody != null))
+            {
+                return true;
+            }
+
+            if (node is AccessorDeclarationSyntax accessor
+                && (accessor.Body != null || accessor.ExpressionBody != null))
             {
                 return true;
             }
