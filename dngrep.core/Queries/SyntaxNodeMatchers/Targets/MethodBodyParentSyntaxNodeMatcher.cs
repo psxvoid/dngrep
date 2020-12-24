@@ -19,6 +19,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(ParenthesizedLambdaExpressionSyntax),
             typeof(PropertyDeclarationSyntax),
             typeof(AccessorDeclarationSyntax),
+            typeof(IfStatementSyntax),
         };
 
         private MethodBodyParentSyntaxNodeMatcher()
@@ -74,6 +75,11 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
             if (node is AccessorDeclarationSyntax accessor
                 && (accessor.Body != null || accessor.ExpressionBody != null))
+            {
+                return true;
+            }
+
+            if (node is IfStatementSyntax)
             {
                 return true;
             }

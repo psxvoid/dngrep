@@ -25,6 +25,14 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(ArrowExpressionClauseSyntax),
         };
 
+        private readonly static Type[] BlockSyntaxParentExcludes = new[]
+        {
+            typeof(IfStatementSyntax),
+            typeof(WhileStatementSyntax),
+            typeof(ForStatementSyntax),
+            typeof(ForEachStatementSyntax),
+        };
+
         private readonly static Type[] VirtualBodyMemberSiblings = new[]
         {
             typeof(NestedBlockSyntax)
@@ -41,7 +49,19 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            return NonVirtualBodyMemberSiblings.Contains(node.GetType());
+            if (!NonVirtualBodyMemberSiblings.Contains(node.GetType()))
+            {
+                return false;
+            }
+
+            if (node is BlockSyntax block
+                && block.Parent != null
+                && BlockSyntaxParentExcludes.Contains(block.Parent.GetType()))
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public bool Match(CombinedSyntaxNode node)

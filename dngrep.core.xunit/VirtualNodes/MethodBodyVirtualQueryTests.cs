@@ -75,6 +75,18 @@ namespace dngrep.core.xunit.VirtualNodes
         }
 
         [Fact]
+        public void CanQuery_IfStatementSyntaxCondition_True()
+        {
+            Assert.True(this.sut.CanQuery(CreateIfCondition()));
+        }
+
+        [Fact]
+        public void CanQuery_IfStatementSyntaxStatement_True()
+        {
+            Assert.True(this.sut.CanQuery(CreateIfStatementSyntaxStatement()));
+        }
+
+        [Fact]
         public void Query_Null_Throws()
         {
 #pragma warning disable CS8625 // Cannot convert null literal to non-nullable reference type.
@@ -135,6 +147,28 @@ namespace dngrep.core.xunit.VirtualNodes
             Assert.IsType<InvocationExpressionSyntax>(result.BaseNode);
             Assert.Equal(VirtualSyntaxNodeKind.MethodBody, result.Kind);
         }
+        
+        [Fact]
+        public void Query_IfStatementSyntaxCondition_IfConditionAsBody()
+        {
+            ExpressionSyntax condition = CreateIfCondition();
+
+            IVirtualSyntaxNode body = this.sut.Query(condition);
+
+            Assert.IsType<MethodBodyDeclarationSyntax>(body);
+            Assert.Equal(condition, body.BaseNode);
+        }
+
+        [Fact]
+        public void Query_IfStatementSyntaxStatement_IfStatementAsBody()
+        {
+            StatementSyntax statement = CreateIfStatementSyntaxStatement();
+
+            IVirtualSyntaxNode body = this.sut.Query(statement);
+
+            Assert.IsType<MethodBodyDeclarationSyntax>(body);
+            Assert.Equal(statement, body.BaseNode);
+        }
 
         private static BlockSyntax CreateMethodWithoutBody()
         {
@@ -144,6 +178,22 @@ namespace dngrep.core.xunit.VirtualNodes
 #pragma warning disable CS8603 // Possible null reference return.
             return blockParent.ChildNodes().First() as BlockSyntax;
 #pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        private static ExpressionSyntax CreateIfCondition()
+        {
+            const string sourceText = "class C { void M() { if (true) {} }}";
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
+
+            return tree.GetRoot().GetFirstChildOfTypeRecursively<IfStatementSyntax>().Condition;
+        }
+
+        private static StatementSyntax CreateIfStatementSyntaxStatement()
+        {
+            const string sourceText = "class C { void M() { if (true) {} }}";
+            SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
+
+            return tree.GetRoot().GetFirstChildOfTypeRecursively<IfStatementSyntax>().Statement;
         }
 
         private static BlockSyntax CreateMethodBody()

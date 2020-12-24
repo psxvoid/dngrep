@@ -109,14 +109,14 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_IfBlockStatement_True()
+        public void Match_IfBlockStatement_False()
         {
             const string target =
                 "public class C { public int M() { if (true) { return 5; } } }";
 
             AssertMatch<IfStatementSyntax>(
                 target,
-                true,
+                false,
                 x => x.Statement);
         }
 
@@ -163,26 +163,26 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_ForStatement_True()
+        public void Match_ForStatement_False()
         {
             const string target =
                 "public class C { public int M() { for(int i=0; i<2; i++) { } } }";
 
             AssertMatch<ForStatementSyntax>(
                 target,
-                true,
+                false,
                 x => x.Statement);
         }
 
         [Fact]
-        public void Match_WhileStatement_True()
+        public void Match_WhileStatement_False()
         {
             const string target =
                 "public class C { public int M() { while(true) { } } }";
 
             AssertMatch<WhileStatementSyntax>(
                 target,
-                true,
+                false,
                 x => x.Statement);
         }
 

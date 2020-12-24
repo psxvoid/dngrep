@@ -41,14 +41,12 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            Type nodeType = node.GetType();
-
-            if (NonVirtualMemberTypes.Contains(nodeType))
+            if (NonVirtualMemberTypes.Contains(node.GetType()))
             {
                 return true;
             }
 
-            bool isPotentialMethodBody = VirtualMemberTypes.Contains(nodeType);
+            bool isPotentialMethodBody = VirtualMemberTypes.Any(x => x.IsInstanceOfType(node));
 
             if (isPotentialMethodBody)
             {
