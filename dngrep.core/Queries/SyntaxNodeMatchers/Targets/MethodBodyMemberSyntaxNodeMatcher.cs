@@ -23,6 +23,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(WhileStatementSyntax),
             typeof(BlockSyntax),
             typeof(ArrowExpressionClauseSyntax),
+            typeof(ExpressionStatementSyntax),
         };
 
         private readonly static Type[] BlockSyntaxParentExcludes = new[]

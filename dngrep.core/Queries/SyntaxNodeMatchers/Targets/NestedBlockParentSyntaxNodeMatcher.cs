@@ -1,5 +1,6 @@
 ﻿using System;
 using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 {
@@ -16,7 +17,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            return MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
+            return !(node is ExpressionStatementSyntax)
+                && MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
                 && !MethodMemberSyntaxNodeMatcher.Instance.Match(node)
                 && !MethodBodySyntaxNodeMatcher.Instance.Match(node);
         }
