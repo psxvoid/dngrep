@@ -9,6 +9,13 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
 {
     public class TryBodyVirtualQuery : IVirtualNodeQuery, ICanOverride<MethodBodyVirtualQuery>
     {
+        private static readonly TryBodyVirtualQuery InstancePrivate
+            = new TryBodyVirtualQuery();
+
+        private TryBodyVirtualQuery()
+        {
+        }
+
         public bool HasOverride => true;
 
         public bool CanQuery(SyntaxNode node)
@@ -29,5 +36,7 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
 
             return new TryBodySyntax(block);
         }
+
+        public static TryBodyVirtualQuery Instance => InstancePrivate;
     }
 }
