@@ -6,5 +6,6 @@
         NestedBlockSyntax,
         AutoProperty,
         ReadOnlyProperty,
+        TryBody,
     }
 }
