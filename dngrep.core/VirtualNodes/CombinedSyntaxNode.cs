@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 
 namespace dngrep.core.VirtualNodes
 {
+    [DebuggerDisplay(
+        "{(IsVirtual ? \"[Virtual] \" + MixedNode.GetType().Name + \" \": \"\") + " +
+        "\"[Native] \" + BaseNode.GetType().Name}")]
     public struct CombinedSyntaxNode : ICombinedSyntaxNode, IEquatable<CombinedSyntaxNode>
     {
         public static readonly CombinedSyntaxNode Empty =
