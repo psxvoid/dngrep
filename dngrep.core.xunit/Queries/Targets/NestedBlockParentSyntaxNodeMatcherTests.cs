@@ -1,22 +1,23 @@
-﻿using System;
-using dngrep.core.Extensions.SyntaxTreeExtensions;
+﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
+using dngrep.core.Queries;
 using dngrep.core.Queries.SyntaxNodeMatchers.Targets;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
+using dngrep.core.xunit.Queries.Targets.BaseTests;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Xunit;
 
 namespace dngrep.core.xunit.Queries.Targets
 {
-    public class NestedBlockParentSyntaxNodeMatcherTests
+    public class NestedBlockParentSyntaxNodeMatcherTests : SyntaxNodeMatcherTestBase
     {
+        protected override ISyntaxNodeMatcher Sut => NestedBlockParentSyntaxNodeMatcher.Instance;
+
         [Fact]
         public void Match_ClassBlock_False()
         {
             const string target =
                 "public class C { public int M() { }";
 
-            AssertMatch<ClassDeclarationSyntax>(
+            this.AssertMatch<ClassDeclarationSyntax>(
                 target,
                 false,
                 x => x.GetFirstChildOfTypeRecursively<BlockSyntax>());
@@ -29,7 +30,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 "public class C { C() { } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -40,7 +41,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 "using System; public class C { C() => Console.WriteLine(5); }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
+            this.AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -51,7 +52,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 "public class C { ~C() { } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -62,7 +63,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 "using System; public class C { ~C() => Console.WriteLine(5); }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
+            this.AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -73,7 +74,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 "public class C { public int M() { try { return 5; } finally {} } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<MethodDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<MethodDeclarationSyntax>(target, false, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -84,37 +85,48 @@ namespace dngrep.core.xunit.Queries.Targets
                 "using System; public class C { public int M() => Console.WriteLine(5); }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            AssertMatch<MethodDeclarationSyntax>(target, false, x => x.ExpressionBody);
+            this.AssertMatch<MethodDeclarationSyntax>(target, false, x => x.ExpressionBody);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
         [Fact]
-        public void Match_TryBlock_True()
+        public void Match_TryStatement_True()
         {
             const string target =
                 "public class C { public int M() { try { return 5; } finally {} } }";
 
-            AssertMatch<TryStatementSyntax>(target, true, x => x.Block);
+            this.AssertMatch<TryStatementSyntax>(target, true, x => x);
         }
 
         [Fact]
-        public void Match_FinallyBlock_True()
+        public void Match_FinallyStatement_True()
         {
             const string target =
                 "public class C { public int M() { try { return 5; } finally {} } }";
 
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-            AssertMatch<TryStatementSyntax>(target, true, x => x.Finally.Block);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
+            this.AssertMatch<TryStatementSyntax>(target, true, x => x.Finally);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         [Fact]
-        public void Match_IfBlockStatement_False()
+        public void Match_CatchStatement_True()
+        {
+            const string target =
+                "public class C { public int M() { try { return 5; } catch(e) {} } }";
+
+#pragma warning disable CS8603 // Possible null reference return.
+            this.AssertMatch<TryStatementSyntax>(target, true, x => x.Catches.FirstOrDefault());
+#pragma warning restore CS8603 // Possible null reference return.
+        }
+
+        [Fact]
+        public void Match_IfBlockStatement_True()
         {
             const string target =
                 "public class C { public int M() { if (true) { return 5; } } }";
 
-            AssertMatch<IfStatementSyntax>(
+            this.AssertMatch<IfStatementSyntax>(
                 target,
                 false,
                 x => x.Statement);
@@ -126,12 +138,12 @@ namespace dngrep.core.xunit.Queries.Targets
             const string target =
                 "public class C { public int M() { if (true) { return 5; } else { return 3; } } }";
 
-            AssertMatch<IfStatementSyntax>(
+            this.AssertMatch<IfStatementSyntax>(
                 target,
                 true,
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-                x => x.Else.Statement);
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8603 // Possible null reference return.
+                x => x.Else);
+#pragma warning restore CS8603 // Possible null reference return.
         }
 
         [Fact]
@@ -140,7 +152,7 @@ namespace dngrep.core.xunit.Queries.Targets
             const string target =
                 "public class C { public int M() { int X() { return 5; }; return X(); } }";
 
-            AssertMatch<LocalFunctionStatementSyntax>(
+            this.AssertMatch<LocalFunctionStatementSyntax>(
                 target,
                 false,
 #pragma warning disable CS8603 // Possible null reference return.
@@ -154,7 +166,7 @@ namespace dngrep.core.xunit.Queries.Targets
             const string target =
                 "public class C { public int M() { int X() => 5; return X(); } }";
 
-            AssertMatch<LocalFunctionStatementSyntax>(
+            this.AssertMatch<LocalFunctionStatementSyntax>(
                 target,
                 false,
 #pragma warning disable CS8603 // Possible null reference return.
@@ -163,27 +175,21 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_ForStatement_False()
+        public void Match_ForStatement_True()
         {
             const string target =
                 "public class C { public int M() { for(int i=0; i<2; i++) { } } }";
 
-            AssertMatch<ForStatementSyntax>(
-                target,
-                false,
-                x => x.Statement);
+            this.AssertMatch<ForStatementSyntax>(target, true);
         }
 
         [Fact]
-        public void Match_WhileStatement_False()
+        public void Match_WhileStatement_True()
         {
             const string target =
                 "public class C { public int M() { while(true) { } } }";
 
-            AssertMatch<WhileStatementSyntax>(
-                target,
-                false,
-                x => x.Statement);
+            this.AssertMatch<WhileStatementSyntax>(target, true);
         }
 
         [Fact]
@@ -192,7 +198,7 @@ namespace dngrep.core.xunit.Queries.Targets
             const string target =
                 "public class C { public int M(int x) { switch(x) {   }; return x; } }";
 
-            AssertMatch<SwitchStatementSyntax>(target, false, x => x);
+            this.AssertMatch<SwitchStatementSyntax>(target, false);
         }
 
         [Fact]
@@ -207,25 +213,10 @@ namespace dngrep.core.xunit.Queries.Targets
                 }
             }";
 
-            AssertMatch<SwitchStatementSyntax>(
+            this.AssertMatch<SwitchStatementSyntax>(
                 target,
                 false,
                 x => x.Sections.First());
-        }
-
-        private static void AssertMatch<TNode>(
-            string targetCode,
-            bool expected,
-            Func<TNode, SyntaxNode> selectNode)
-            where TNode : SyntaxNode
-        {
-            SyntaxTree? tree = CSharpSyntaxTree.ParseText(targetCode);
-
-            TNode root = tree.GetRoot().GetFirstChildOfTypeRecursively<TNode>();
-
-            SyntaxNode target = selectNode(root);
-
-            Assert.Equal(expected, NestedBlockParentSyntaxNodeMatcher.Instance.Match(target));
         }
     }
 }

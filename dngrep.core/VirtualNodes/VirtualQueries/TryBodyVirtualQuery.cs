@@ -7,7 +7,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.VirtualNodes.VirtualQueries
 {
-    public class TryBodyVirtualQuery : IVirtualNodeQuery, ICanOverride<MethodBodyVirtualQuery>
+    public class TryBodyVirtualQuery :
+        IVirtualNodeQuery,
+        ICanOverride<MethodBodyVirtualQuery>,
+        ICanOverride<NestedBlockVirtualQuery>
     {
         private static readonly TryBodyVirtualQuery InstancePrivate
             = new TryBodyVirtualQuery();

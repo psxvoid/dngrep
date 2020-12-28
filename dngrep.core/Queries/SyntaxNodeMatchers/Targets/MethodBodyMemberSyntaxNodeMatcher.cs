@@ -24,14 +24,21 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(BlockSyntax),
             typeof(ArrowExpressionClauseSyntax),
             typeof(ExpressionStatementSyntax),
+            typeof(TryStatementSyntax),
         };
 
         private readonly static Type[] BlockSyntaxParentExcludes = new[]
         {
+            typeof(MethodDeclarationSyntax),
             typeof(IfStatementSyntax),
+            typeof(ElseClauseSyntax),
             typeof(WhileStatementSyntax),
             typeof(ForStatementSyntax),
             typeof(ForEachStatementSyntax),
+            typeof(TryStatementSyntax),
+            typeof(FinallyClauseSyntax),
+            typeof(CatchClauseSyntax),
+            typeof(LocalFunctionStatementSyntax),
         };
 
         private readonly static Type[] VirtualBodyMemberSiblings = new[]

@@ -106,6 +106,7 @@ namespace dngrep.core.VirtualNodes
         {
             return other != null
                 && this.IsVirtual == other.IsVirtual
+                && this.MixedNode == other.MixedNode
                 && this.BaseNode == other.BaseNode;
         }
     }

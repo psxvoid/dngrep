@@ -18,7 +18,11 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             return !(node is ExpressionStatementSyntax)
-                && MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
+                && (MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
+                    || node is TryStatementSyntax
+                    || node is FinallyClauseSyntax
+                    || node is CatchClauseSyntax
+                    || node is ElseClauseSyntax)
                 && !MethodMemberSyntaxNodeMatcher.Instance.Match(node)
                 && !MethodBodySyntaxNodeMatcher.Instance.Match(node);
         }
