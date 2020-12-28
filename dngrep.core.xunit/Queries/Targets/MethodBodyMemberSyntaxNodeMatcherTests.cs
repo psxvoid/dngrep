@@ -77,6 +77,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
+        public void Match_ThrowStatement_True()
+        {
+            const string sourceText =
+                "class C { int M() { throw new Exception(); } }";
+
+            this.AssertMatch<ThrowStatementSyntax>(sourceText, true);
+        }
+
+        [Fact]
         public void Match_ExpressionStatement_True()
         {
             const string sourceText =
