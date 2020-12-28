@@ -5,17 +5,33 @@ using dngrep.core.Queries;
 
 namespace dngrep.core.VirtualNodes.Routings.ConflictResolution
 {
-    public static class VirtualQueryOverrideRouting
+    public interface IVirtualQueryOverrideRouting
     {
+        IVirtualNodeQuery GetSingleOverride(IEnumerable<IVirtualNodeQuery> queries);
+    }
+
+    public static class VirtualQueryOverrideRoutingExtensions
+    {
+        private static readonly IVirtualQueryOverrideRouting DefaultRouting
+            = new VirtualQueryOverrideRouting();
+
         public static IVirtualNodeQuery GetSingleOverride(
-            this IReadOnlyCollection<IVirtualNodeQuery> queries)
+            this IEnumerable<IVirtualNodeQuery> queries)
+        {
+            return DefaultRouting.GetSingleOverride(queries);
+        }
+    }
+
+    public class VirtualQueryOverrideRouting : IVirtualQueryOverrideRouting
+    {
+        public IVirtualNodeQuery GetSingleOverride(IEnumerable<IVirtualNodeQuery> queries)
         {
             _ = queries ?? throw new ArgumentNullException(nameof(queries));
 
-            if (queries.Count < 2)
+            if (queries.Count() < 2)
             {
                 throw new ArgumentException(
-                    "Overrides should only be applied for only more than one queries.",
+                    "Overrides should only be applied for two or more queries.",
                     nameof(queries));
             }
 

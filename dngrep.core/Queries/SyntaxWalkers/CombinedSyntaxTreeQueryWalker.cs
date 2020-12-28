@@ -3,6 +3,7 @@ using System.Linq;
 using dngrep.core.Extensions.EnumerableExtensions;
 using dngrep.core.Queries.SyntaxWalkers.MatchStrategies;
 using dngrep.core.VirtualNodes;
+using dngrep.core.VirtualNodes.Routings.ConflictResolution;
 using Microsoft.CodeAnalysis;
 
 namespace dngrep.core.Queries.SyntaxWalkers
@@ -11,12 +12,14 @@ namespace dngrep.core.Queries.SyntaxWalkers
     {
         private readonly IVirtualQueryRoutingFactory queryRoutingFactory;
         private readonly ISyntaxNodeMatchStrategy matchStrategy;
+        private readonly VirtualQueryOverrideRouting overrideRouting;
 
         public IReadOnlyCollection<IVirtualNodeQuery> VirtualQueries { get; }
 
         public CombinedSyntaxTreeQueryWalker(
             CombinedSyntaxTreeQuery query,
             IVirtualQueryRoutingFactory queryRoutingFactory,
+            VirtualQueryOverrideRouting overrideRouting,
             ISyntaxNodeMatchStrategy? baseMatchStrategy = null,
             ISyntaxNodeMatchStrategy? matchStrategy = null
             ) : base(query, baseMatchStrategy)
@@ -24,6 +27,7 @@ namespace dngrep.core.Queries.SyntaxWalkers
             this.VirtualQueries = query.VirtualNodeQueries;
             this.queryRoutingFactory = queryRoutingFactory;
             this.matchStrategy = matchStrategy ?? base.BaseStrategy;
+            this.overrideRouting = overrideRouting;
         }
 
         protected override CombinedSyntaxNode CreateResultFromNode(SyntaxNode node)
@@ -70,7 +74,8 @@ namespace dngrep.core.Queries.SyntaxWalkers
                     this.PushResult,
                     this.PopResult,
                     this.matchStrategy,
-                    x => new CombinedSyntaxNode(x));
+                    x => new CombinedSyntaxNode(x),
+                    this.overrideRouting);
 
             queryRouting.QueryAndUpdateResults(queries, target);
 

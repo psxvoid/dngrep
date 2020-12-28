@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using dngrep.core.Queries;
+using dngrep.core.VirtualNodes.Routings.ConflictResolution;
 using Microsoft.CodeAnalysis;
 
 namespace dngrep.core.VirtualNodes.VirtualQueries.Extensions
@@ -28,14 +29,25 @@ namespace dngrep.core.VirtualNodes.VirtualQueries.Extensions
                     "Only queries that override the target are supported.");
             }
 
-            IVirtualNodeQuery? query = queries.SingleOrDefault(q => q.CanQuery(node));
+            IEnumerable<IVirtualNodeQuery> supported = queries.Where(q => q.CanQuery(node));
+
+            IVirtualNodeQuery? query = null;
+
+            if (supported.Count() > 1)
+            {
+                query = supported.GetSingleOverride();
+            }
+            else if (supported.Count() == 1)
+            {
+                query = supported.Single();
+            }
 
             return query == null
                 ? new CombinedSyntaxNode(node)
                 : new CombinedSyntaxNode(query.Query(node));
         }
 
-        public static IEnumerable<CombinedSyntaxNode> QueryVirtualAndCombine(
+        public static CombinedSyntaxNode[] QueryVirtualAndCombine(
             this IEnumerable<SyntaxNode> nodes,
             params IVirtualNodeQuery[] queries)
         {
@@ -57,12 +69,23 @@ namespace dngrep.core.VirtualNodes.VirtualQueries.Extensions
 
             return nodes.Select(x =>
             {
-                IVirtualNodeQuery? query = queries.SingleOrDefault(q => q.CanQuery(x));
+                IEnumerable<IVirtualNodeQuery> supported = queries.Where(q => q.CanQuery(x));
+
+                IVirtualNodeQuery? query = null;
+
+                if (supported.Count() > 1)
+                {
+                    query = supported.GetSingleOverride();
+                }
+                else if (supported.Count() == 1)
+                {
+                    query = supported.Single();
+                }
 
                 return query == null
                     ? new CombinedSyntaxNode(x)
                     : new CombinedSyntaxNode(query.Query(x));
-            });
+            }).ToArray();
         }
     }
 }

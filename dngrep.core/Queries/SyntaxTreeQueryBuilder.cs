@@ -92,6 +92,7 @@ namespace dngrep.core.Queries
                     NestedBlockVirtualQuery.Instance,
                     AutoPropertyVirtualQuery.Instance,
                     ReadOnlyPropertyVirtualQuery.Instance,
+                    TryBodyVirtualQuery.Instance,
                 },
                 new SyntaxTreeQuery(
                     new[]
