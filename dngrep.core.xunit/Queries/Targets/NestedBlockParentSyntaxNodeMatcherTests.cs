@@ -12,25 +12,35 @@ namespace dngrep.core.xunit.Queries.Targets
         protected override ISyntaxNodeMatcher Sut => NestedBlockParentSyntaxNodeMatcher.Instance;
 
         [Fact]
-        public void Match_ClassBlock_False()
+        public void Match_BlockInsideBlock_True()
         {
-            const string target =
-                "public class C { public int M() { }";
+            const string target = "public class C { void M() { { { } } } }";
 
-            this.AssertMatch<ClassDeclarationSyntax>(
+            this.AssertMatch<MethodDeclarationSyntax>(
                 target,
-                false,
-                x => x.GetFirstChildOfTypeRecursively<BlockSyntax>());
+                true,
+#pragma warning disable CS8604 // Possible null reference argument.
+                x => x.Body
+#pragma warning restore CS8604 // Possible null reference argument.
+                    .GetFirstChildOfTypeRecursively<BlockSyntax>()
+                    .GetFirstChildOfTypeRecursively<BlockSyntax>());
         }
 
         [Fact]
-        public void Match_ConstructorBody_False()
+        public void Match_ClassDeclaration_False()
         {
-            const string target =
-                "public class C { C() { } }";
+            const string target = "public class C { }";
+
+            this.AssertMatch<ClassDeclarationSyntax>(target, false);
+        }
+
+        [Fact]
+        public void Match_ConstructorBody_True()
+        {
+            const string target = "public class C { C() { } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<ConstructorDeclarationSyntax>(target, true, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -46,13 +56,13 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_DestructorBody_False()
+        public void Match_DestructorBody_True()
         {
             const string target =
                 "public class C { ~C() { } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<DestructorDeclarationSyntax>(target, true, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -68,13 +78,13 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_MethodBody_False()
+        public void Match_MethodBody_True()
         {
             const string target =
                 "public class C { public int M() { try { return 5; } finally {} } }";
 
 #pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<MethodDeclarationSyntax>(target, false, x => x.Body);
+            this.AssertMatch<MethodDeclarationSyntax>(target, true, x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.
         }
 
@@ -128,7 +138,7 @@ namespace dngrep.core.xunit.Queries.Targets
 
             this.AssertMatch<IfStatementSyntax>(
                 target,
-                false,
+                true,
                 x => x.Statement);
         }
 
@@ -147,14 +157,24 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_LocalFunctionBody_False()
+        public void Match_LocalFunction_False()
+        {
+            const string target =
+                "public class C { public int M() { int X() { return 5; }; return X(); } }";
+
+            // should be MethodBody, not nested block
+            this.AssertMatch<LocalFunctionStatementSyntax>(target, false);
+        }
+
+        [Fact]
+        public void Match_LocalFunctionBody_True()
         {
             const string target =
                 "public class C { public int M() { int X() { return 5; }; return X(); } }";
 
             this.AssertMatch<LocalFunctionStatementSyntax>(
                 target,
-                false,
+                true,
 #pragma warning disable CS8603 // Possible null reference return.
                 x => x.Body);
 #pragma warning restore CS8603 // Possible null reference return.

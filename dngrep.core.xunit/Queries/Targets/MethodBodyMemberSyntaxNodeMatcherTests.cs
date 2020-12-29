@@ -12,6 +12,22 @@ namespace dngrep.core.xunit.Queries.Targets
         protected override ISyntaxNodeMatcher Sut => MethodBodyMemberSyntaxNodeMatcher.Instance;
 
         [Fact]
+        public void Match_ClassDeclaration_False()
+        {
+            const string sourceText = "class C { }";
+
+            this.AssertMatch<ClassDeclarationSyntax>(sourceText, false);
+        }
+
+        [Fact]
+        public void Match_StructDeclaration_False()
+        {
+            const string sourceText = "struct S { }";
+
+            this.AssertMatch<StructDeclarationSyntax>(sourceText, false);
+        }
+
+        [Fact]
         public void Match_IfStatement_True()
         {
             const string sourceText =

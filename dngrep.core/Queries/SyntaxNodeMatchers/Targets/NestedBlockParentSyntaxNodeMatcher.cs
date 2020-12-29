@@ -17,14 +17,15 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
+            // ExpressionStatement and ArrowExpressionClause cannot contain nested blocks
             return !(node is ExpressionStatementSyntax)
+                && !(node is ArrowExpressionClauseSyntax)
                 && (MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
-                    || node is TryStatementSyntax
-                    || node is FinallyClauseSyntax
-                    || node is CatchClauseSyntax
-                    || node is ElseClauseSyntax)
-                && !MethodMemberSyntaxNodeMatcher.Instance.Match(node)
-                && !MethodBodySyntaxNodeMatcher.Instance.Match(node);
+                    || MethodBodySyntaxNodeMatcher.Instance.Match(node)
+                    || node.GetType() == typeof(FinallyClauseSyntax)
+                    || node.GetType() == typeof(CatchClauseSyntax)
+                    || node.GetType() == typeof(ElseClauseSyntax))
+                && node.GetType() != typeof(LocalFunctionStatementSyntax);
         }
 
         public static NestedBlockParentSyntaxNodeMatcher Instance => instance;
