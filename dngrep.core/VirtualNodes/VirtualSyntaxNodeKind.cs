@@ -7,5 +7,6 @@
         AutoProperty,
         ReadOnlyProperty,
         TryBody,
+        IfCondition,
     }
 }

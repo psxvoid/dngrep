@@ -12,15 +12,15 @@ using Xunit;
 
 namespace dngrep.core.xunit.VirtualNodes.VirtualQueries
 {
-    public class TryBodyVirtualQueryTests
+    public class IfConditionVirtualQueryTests
     {
         private readonly IFixture fixture;
-        private readonly TryBodyVirtualQuery sut;
+        private readonly IfConditionVirtualQuery sut;
 
-        public TryBodyVirtualQueryTests()
+        public IfConditionVirtualQueryTests()
         {
             this.fixture = AutoFixtureFactory.Default();
-            this.sut = this.fixture.Create<TryBodyVirtualQuery>();
+            this.sut = this.fixture.Create<IfConditionVirtualQuery>();
         }
 
         [Fact]
@@ -36,21 +36,15 @@ namespace dngrep.core.xunit.VirtualNodes.VirtualQueries
         }
 
         [Fact]
-        public void CanOverride_NestedBlockVirtualQuery_True()
+        public void CanQuery_IfCondition_True()
         {
-            Assert.True(typeof(ICanOverride<NestedBlockVirtualQuery>).IsInstanceOfType(this.sut));
+            Assert.True(this.sut.CanQuery(CreateIfConditionExpression()));
         }
 
         [Fact]
-        public void CanQuery_TryBody_True()
+        public void CanQuery_NotIfCondition_False()
         {
-            Assert.True(this.sut.CanQuery(CreateEmptyTryBody()));
-        }
-
-        [Fact]
-        public void CanQuery_NotTryBody_False()
-        {
-            Assert.False(this.sut.CanQuery(CreateNonTryBody()));
+            Assert.False(this.sut.CanQuery(CreateNotIfExpression()));
         }
 
         [Fact]
@@ -63,17 +57,17 @@ namespace dngrep.core.xunit.VirtualNodes.VirtualQueries
         }
 
         [Fact]
-        public void Query_TryBody_VirtualNode()
+        public void Query_IfCondition_VirtualNode()
         {
-            Assert.IsType<TryBodySyntax>(
-                this.sut.Query(CreateEmptyTryBody()));
+            Assert.IsType<IfConditionSyntax>(
+                this.sut.Query(CreateIfConditionExpression()));
         }
 
         [Fact]
-        public void Query_NotTryBody_Throws()
+        public void Query_NotIfCondition_Throws()
         {
             Assert.Throws<ArgumentException>(
-                () => this.sut.Query(CreateNonTryBody()));
+                () => this.sut.Query(CreateNotIfExpression()));
         }
 
         [Fact]
@@ -85,24 +79,23 @@ namespace dngrep.core.xunit.VirtualNodes.VirtualQueries
 #pragma warning restore CS8625 // Cannot convert null literal to non-nullable reference type.
         }
 
-        private static SyntaxNode CreateEmptyTryBody()
+        private static ExpressionSyntax CreateIfConditionExpression()
         {
             const string sourceText =
-                "public class C1 { void Method() { try { } finally { } } }";
+                "public class C1 { void Method() { if (x == 3) {} } }";
             SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
 
-            return tree.GetRoot().GetFirstChildOfTypeRecursively<TryStatementSyntax>().Block;
+            return tree.GetRoot().GetFirstChildOfTypeRecursively<IfStatementSyntax>().Condition;
         }
 
-        private static SyntaxNode CreateNonTryBody()
+        private static ExpressionSyntax CreateNotIfExpression()
         {
             const string sourceText =
-                "public class C1 { void Method() { { } } }";
+                "public class C1 { void Method(int x) { x++; } }";
             SyntaxTree tree = CSharpSyntaxTree.ParseText(sourceText);
 
-            return tree.GetRoot()
-                .GetFirstChildOfTypeRecursively<BlockSyntax>()
-                .GetFirstChildOfTypeRecursively<BlockSyntax>();
+            return tree.GetRoot().GetFirstChildOfTypeRecursively<ExpressionStatementSyntax>()
+                .Expression;
         }
     }
 }
