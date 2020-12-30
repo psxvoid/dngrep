@@ -93,6 +93,8 @@ namespace dngrep.core.Queries
                     AutoPropertyVirtualQuery.Instance,
                     ReadOnlyPropertyVirtualQuery.Instance,
                     TryBodyVirtualQuery.Instance,
+                    IfConditionVirtualQuery.Instance,
+                    IfBodyVirtualQuery.Instance,
                 },
                 new SyntaxTreeQuery(
                     new[]

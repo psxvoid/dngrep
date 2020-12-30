@@ -8,5 +8,6 @@
         ReadOnlyProperty,
         TryBody,
         IfCondition,
+        IfBody,
     }
 }
