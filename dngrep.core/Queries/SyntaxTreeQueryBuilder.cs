@@ -95,6 +95,7 @@ namespace dngrep.core.Queries
                     TryBodyVirtualQuery.Instance,
                     IfConditionVirtualQuery.Instance,
                     IfBodyVirtualQuery.Instance,
+                    ElseBodyVirtualQuery.Instance,
                 },
                 new SyntaxTreeQuery(
                     new[]
