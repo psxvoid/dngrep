@@ -75,7 +75,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
         public bool Match(CombinedSyntaxNode node)
         {
-            return CombinedMethodBodyMembers.Contains(node.MixedNode.GetType());
+            return CombinedMethodBodyMembers.Contains(node.MixedNode.GetType())
+                || (node.BaseNode is ExpressionSyntax && !(node.BaseNode is PredefinedTypeSyntax));
         }
 
         public static MethodBodyMemberSyntaxNodeMatcher Instance => instance;

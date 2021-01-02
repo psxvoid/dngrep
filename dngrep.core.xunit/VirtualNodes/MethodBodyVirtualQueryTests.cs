@@ -75,15 +75,15 @@ namespace dngrep.core.xunit.VirtualNodes
         }
 
         [Fact]
-        public void CanQuery_IfStatementSyntaxCondition_True()
+        public void CanQuery_IfStatementSyntaxCondition_False()
         {
-            Assert.True(this.sut.CanQuery(CreateIfCondition()));
+            Assert.False(this.sut.CanQuery(CreateIfCondition()));
         }
 
         [Fact]
-        public void CanQuery_IfStatementSyntaxStatement_True()
+        public void CanQuery_IfStatementSyntaxStatement_False()
         {
-            Assert.True(this.sut.CanQuery(CreateIfStatementSyntaxStatement()));
+            Assert.False(this.sut.CanQuery(CreateIfStatementSyntaxStatement()));
         }
 
         [Fact]
@@ -146,28 +146,6 @@ namespace dngrep.core.xunit.VirtualNodes
             Assert.IsType<MethodBodyDeclarationSyntax>(result);
             Assert.IsType<InvocationExpressionSyntax>(result.BaseNode);
             Assert.Equal(VirtualSyntaxNodeKind.MethodBody, result.Kind);
-        }
-        
-        [Fact]
-        public void Query_IfStatementSyntaxCondition_IfConditionAsBody()
-        {
-            ExpressionSyntax condition = CreateIfCondition();
-
-            IVirtualSyntaxNode body = this.sut.Query(condition);
-
-            Assert.IsType<MethodBodyDeclarationSyntax>(body);
-            Assert.Equal(condition, body.BaseNode);
-        }
-
-        [Fact]
-        public void Query_IfStatementSyntaxStatement_IfStatementAsBody()
-        {
-            StatementSyntax statement = CreateIfStatementSyntaxStatement();
-
-            IVirtualSyntaxNode body = this.sut.Query(statement);
-
-            Assert.IsType<MethodBodyDeclarationSyntax>(body);
-            Assert.Equal(statement, body.BaseNode);
         }
 
         private static BlockSyntax CreateMethodWithoutBody()

@@ -5,6 +5,10 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.VirtualNodes.Syntax
 {
+    /// <summary>
+    /// Represents any container syntax nodes (except <see cref="MethodBodyDeclarationSyntax"/>
+    /// that can have a nested method body members.
+    /// </summary>
     public class NestedBlockSyntax : IVirtualSyntaxNode
     {
         public enum BlockType

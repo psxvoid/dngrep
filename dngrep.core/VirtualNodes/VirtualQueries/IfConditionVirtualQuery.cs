@@ -9,7 +9,8 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
 {
     public class IfConditionVirtualQuery :
         IVirtualNodeQuery,
-        ICanOverride<MethodBodyVirtualQuery>
+        ICanOverride<MethodBodyVirtualQuery>,
+        ICanOverride<NestedBlockVirtualQuery>
     {
         private static readonly IfConditionVirtualQuery InstancePrivate
             = new IfConditionVirtualQuery();

@@ -17,9 +17,11 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
             typeof(DestructorDeclarationSyntax),
             typeof(LocalFunctionStatementSyntax),
             typeof(ParenthesizedLambdaExpressionSyntax),
-            typeof(PropertyDeclarationSyntax),
-            typeof(AccessorDeclarationSyntax),
-            typeof(IfStatementSyntax),
+            //typeof(PropertyDeclarationSyntax),
+            //typeof(AccessorDeclarationSyntax),
+
+            // the expression statement contains nested expressions
+            typeof(ExpressionStatementSyntax),
         };
 
         private MethodBodyParentSyntaxNodeMatcher()
@@ -75,6 +77,11 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
 
             if (node is AccessorDeclarationSyntax accessor
                 && (accessor.Body != null || accessor.ExpressionBody != null))
+            {
+                return true;
+            }
+            
+            if (node is BlockSyntax)
             {
                 return true;
             }

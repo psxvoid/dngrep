@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
 using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using dngrep.core.VirtualNodes.SyntaxNodeMatchers;
 using dngrep.core.VirtualNodes.VirtualQueries;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -82,11 +83,17 @@ namespace dngrep.core.Queries
                     descriptor.EnableRegex));
         }
 
-        public static CombinedSyntaxTreeQuery From(TextSpan nodeSpan)
+        public static BasicSyntaxTreeQuery From(TextSpan nodeSpan)
         {
-            var positionMatcher = new SourceTextPositionMatcher(nodeSpan);
-
-            return new CombinedSyntaxTreeQuery(
+            return new BasicSyntaxTreeQuery(
+                new ISyntaxNodeMatcher[]
+                {
+                    new SourceTextPositionMatcher(nodeSpan),
+                },
+                new IVirtualSyntaxNodeMatcher[]
+                {
+                    new SourceTextPositionVirtualNodeMatcher(nodeSpan)
+                },
                 new IVirtualNodeQuery[] {
                     MethodBodyVirtualQuery.Instance,
                     NestedBlockVirtualQuery.Instance,
@@ -96,21 +103,7 @@ namespace dngrep.core.Queries
                     IfConditionVirtualQuery.Instance,
                     IfBodyVirtualQuery.Instance,
                     ElseBodyVirtualQuery.Instance,
-                },
-                new SyntaxTreeQuery(
-                    new[]
-                    {
-                        positionMatcher
-                    },
-                    Array.Empty<ISyntaxNodeMatcher>(),
-                    Array.Empty<ISyntaxNodeMatcher>(),
-                    Array.Empty<ISyntaxNodeMatcher>()),
-                new SyntaxTreeQuery(
-                    new[] { positionMatcher },
-                    Array.Empty<ISyntaxNodeMatcher>(),
-                    Array.Empty<ISyntaxNodeMatcher>(),
-                    Array.Empty<ISyntaxNodeMatcher>()
-                    ));
+                });
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch

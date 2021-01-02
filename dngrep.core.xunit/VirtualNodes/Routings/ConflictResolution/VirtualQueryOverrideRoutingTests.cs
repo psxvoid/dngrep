@@ -13,7 +13,8 @@ namespace dngrep.core.xunit.VirtualNodes.Routings.ConflictResolution
 
         private abstract class BaseQuery : IVirtualNodeQuery
         {
-            public bool HasOverride => throw new System.NotImplementedException();
+            public bool HasOverride => throw new NotImplementedException();
+            public bool HasSpanOverride => throw new NotImplementedException();
 
             public bool CanQuery(SyntaxNode node)
             {

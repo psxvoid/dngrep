@@ -4,7 +4,7 @@ using AutoFixture;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
-using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using dngrep.core.VirtualNodes.SyntaxNodeMatchers;
 using dngrep.core.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -507,30 +507,51 @@ namespace dngrep.core.xunit.Queries
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_SingleTargetMatcher()
+            public void FromTextSpan_NotNull_SingleNonVirtualMatcher()
             {
-                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).TargetMatchers);
+                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).Matchers);
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_AndContainsSourceTextMatcher()
+            public void FromTextSpan_NotNull_ContainsSourceTextMatcher()
             {
-                Assert.Equal(
-                    typeof(SourceTextPositionMatcher),
-                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First()).GetType());
+                Assert.IsType<SourceTextPositionMatcher>(
+                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).Matchers.First());
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_AndContainsSourceTextMatcherWithCorrectSpan()
+            public void FromTextSpan_NotNull_ContainsSourceTextMatcherWithCorrectSpan()
             {
                 var span = new TextSpan(0, 1);
 
                 Assert.Equal(
                     span,
-                    (SyntaxTreeQueryBuilder.From(span)
-                        .TargetMatchers.First() as SourceTextPositionMatcher)?.SpanToMatch);
+                    ((SourceTextPositionMatcher)SyntaxTreeQueryBuilder.From(span)
+                        .Matchers.First()).SpanToMatch);
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_SingleVirtualMatcher()
+            {
+                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).VirtualMatchers);
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_ContainsSourceTextVirtualNodeMatcher()
+            {
+                Assert.IsType<SourceTextPositionVirtualNodeMatcher>(
+                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).VirtualMatchers.First());
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_ContainsSourceTextVirtualNodeMatcherWithCorrectSpan()
+            {
+                var span = new TextSpan(0, 1);
+
+                Assert.Equal(
+                    span,
+                    ((SourceTextPositionVirtualNodeMatcher)SyntaxTreeQueryBuilder.From(span)
+                        .VirtualMatchers.First()).SpanToMatch);
             }
         }
     }

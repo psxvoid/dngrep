@@ -5,6 +5,13 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace dngrep.core.VirtualNodes.Syntax
 {
+    /// <summary>
+    /// Method body is anything that can have:
+    /// (1) a parameter list (even an empty one as a destructor has)
+    /// AND (2) a body container.
+    /// Anything else with a body (e.g. <see cref="BlockSyntax"/>) should be considered
+    /// as <see cref="NestedBlockSyntax"/>.
+    /// </summary>
     public sealed class MethodBodyDeclarationSyntax : IVirtualSyntaxNode
     {
         public enum BodyType

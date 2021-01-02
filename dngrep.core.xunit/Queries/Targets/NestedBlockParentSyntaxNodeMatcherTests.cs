@@ -1,4 +1,5 @@
-﻿using dngrep.core.Extensions.SyntaxTreeExtensions;
+﻿using dngrep.core.Extensions.Nullable;
+using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.Queries;
 using dngrep.core.Queries.SyntaxNodeMatchers.Targets;
 using dngrep.core.xunit.Queries.Targets.BaseTests;
@@ -45,14 +46,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_ConstructorExpressionBody_False()
+        public void Match_ConstructorExpressionBody_True()
         {
             const string target =
                 "using System; public class C { C() => Console.WriteLine(5); }";
 
-#pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<ConstructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
-#pragma warning restore CS8603 // Possible null reference return.
+            this.AssertMatch<ConstructorDeclarationSyntax>(
+                target,
+                true,
+                x => x.ExpressionBody.NotNull());
         }
 
         [Fact]
@@ -67,14 +69,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_DestructorExpressionBody_False()
+        public void Match_DestructorExpressionBody_True()
         {
             const string target =
                 "using System; public class C { ~C() => Console.WriteLine(5); }";
 
-#pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<DestructorDeclarationSyntax>(target, false, x => x.ExpressionBody);
-#pragma warning restore CS8603 // Possible null reference return.
+            this.AssertMatch<DestructorDeclarationSyntax>(
+                target,
+                true,
+                x => x.ExpressionBody.NotNull());
         }
 
         [Fact]
@@ -89,14 +92,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_MethodExpressionBody_False()
+        public void Match_MethodExpressionBody_True()
         {
             const string target =
                 "using System; public class C { public int M() => Console.WriteLine(5); }";
 
-#pragma warning disable CS8603 // Possible null reference return.
-            this.AssertMatch<MethodDeclarationSyntax>(target, false, x => x.ExpressionBody);
-#pragma warning restore CS8603 // Possible null reference return.
+            this.AssertMatch<MethodDeclarationSyntax>(
+                target,
+                true,
+                x => x.ExpressionBody.NotNull());
         }
 
         [Fact]
@@ -131,7 +135,16 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_IfBlockStatement_True()
+        public void Match_IfStatement_True()
+        {
+            const string target =
+                "public class C { public int M() { if (true) { return 5; } } }";
+
+            this.AssertMatch<IfStatementSyntax>(target, true);
+        }
+
+        [Fact]
+        public void Match_IfStatementBlockBody_True()
         {
             const string target =
                 "public class C { public int M() { if (true) { return 5; } } }";
@@ -139,7 +152,19 @@ namespace dngrep.core.xunit.Queries.Targets
             this.AssertMatch<IfStatementSyntax>(
                 target,
                 true,
-                x => x.Statement);
+                x => x.Statement.As<BlockSyntax>());
+        }
+        
+        [Fact]
+        public void Match_IfStatementCondition_True()
+        {
+            const string target =
+                "public class C { public int M() { if (true) { return 5; } } }";
+
+            this.AssertMatch<IfStatementSyntax>(
+                target,
+                true,
+                x => x.Condition);
         }
 
         [Fact]
@@ -181,17 +206,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_LocalFunctionExpressionBody_False()
+        public void Match_LocalFunctionExpressionBody_True()
         {
             const string target =
                 "public class C { public int M() { int X() => 5; return X(); } }";
 
             this.AssertMatch<LocalFunctionStatementSyntax>(
                 target,
-                false,
-#pragma warning disable CS8603 // Possible null reference return.
-                x => x.ExpressionBody);
-#pragma warning restore CS8603 // Possible null reference return.
+                true,
+                x => x.ExpressionBody.NotNull());
         }
 
         [Fact]

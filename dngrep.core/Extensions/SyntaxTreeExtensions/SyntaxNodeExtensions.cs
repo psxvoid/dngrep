@@ -439,5 +439,30 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
                 || node is ExpressionSyntax
                 && !(node is TypeSyntax);
         }
+
+        /// <summary>
+        /// Casts a syntax node to another syntax node type.
+        /// Throws exception on unsuccessful cast.
+        /// </summary>
+        /// <param name="node">
+        /// The node to be casted to the specified type.
+        /// </param>
+        /// <typeparam name="T">
+        /// The target type to which the node should be casted.
+        /// </typeparam>
+        /// <returns>
+        /// The input node casted to the specified type.
+        /// </returns>
+        /// <exception cref="InvalidCastException">
+        /// Thrown when the target node cannot be casted to
+        /// the specified type.
+        /// </exception>
+        public static T As<T>(this SyntaxNode node)
+            where T: SyntaxNode
+        {
+            _ = node ?? throw new ArgumentNullException(nameof(node));
+
+            return (T)node;
+        }
     }
 }
