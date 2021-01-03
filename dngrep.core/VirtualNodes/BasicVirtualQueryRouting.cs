@@ -22,38 +22,43 @@ namespace dngrep.core.VirtualNodes
             this.queries = queries;
         }
 
-        public (InsertOrderType?, IVirtualSyntaxNode) Query(SyntaxNode node)
+        public (InsertOrderType?, IVirtualSyntaxNode)[] Query(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
+            var results = new List<(InsertOrderType?, IVirtualSyntaxNode)>();
+
             IEnumerable<IVirtualNodeQuery> overridableQueries = this.queries
-                .Where(x => x.CanQuery(node));
+                .Where(x => !(x is INonOverridableVirtualNodeQuery) && x.CanQuery(node));
 
-            IVirtualNodeQuery query;
+            IEnumerable<INonOverridableVirtualNodeQuery> nonOverridableQueries = this.queries
+                .Where(x => x is INonOverridableVirtualNodeQuery && x.CanQuery(node))
+                .Cast<INonOverridableVirtualNodeQuery>();
 
-            int queryCount = overridableQueries.Count();
-
-            if (queryCount > 1)
+            foreach(INonOverridableVirtualNodeQuery query in nonOverridableQueries)
             {
-                query = this.overrideRouting.GetSingleOverride(overridableQueries);
-            }
-            else if (queryCount == 1)
-            {
-                query = overridableQueries.Single();
-            }
-            else
-            {
-                return (null, VirtualSyntaxNode.Empty);
+                 results.Add((query.InsertOrder, query.Query(node)));
             }
 
-            InsertOrderType? insertOrderType = null;
+            IVirtualNodeQuery? overridableQuery = null;
 
-            if (query is INonOverridableVirtualNodeQuery nonOverridableQuery)
+            int overridableQueryCount = overridableQueries.Count();
+
+            if (overridableQueryCount > 1)
             {
-                 insertOrderType = nonOverridableQuery.InsertOrder;
+                overridableQuery = this.overrideRouting.GetSingleOverride(overridableQueries);
+            }
+            else if (overridableQueryCount == 1)
+            {
+                overridableQuery = overridableQueries.Single();
             }
 
-            return (insertOrderType, query.Query(node));
+            if (overridableQuery != null)
+            {
+                results.Add((null, overridableQuery.Query(node)));
+            }
+
+            return results.ToArray();
         }
     }
 }

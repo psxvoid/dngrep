@@ -5,6 +5,6 @@ namespace dngrep.core.VirtualNodes.Routings
 {
     public interface IVirtualQueryRouting
     {
-        (InsertOrderType?, IVirtualSyntaxNode) Query(SyntaxNode node);
+        (InsertOrderType?, IVirtualSyntaxNode)[] Query(SyntaxNode node);
     }
 }
