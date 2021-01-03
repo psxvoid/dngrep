@@ -11,4 +11,15 @@ namespace dngrep.core.Queries
 
         bool HasOverride { get; }
     }
+
+    public interface INonOverridableVirtualNodeQuery : IVirtualNodeQuery
+    {
+        public enum InsertOrderType
+        {
+            Before,
+            After,
+        }
+
+        InsertOrderType InsertOrder { get; }
+    }
 }

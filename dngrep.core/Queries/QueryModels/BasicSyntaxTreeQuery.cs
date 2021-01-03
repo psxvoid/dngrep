@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace dngrep.core.Queries
 {
@@ -14,13 +13,6 @@ namespace dngrep.core.Queries
             this.Matchers = matchers ?? Array.Empty<ISyntaxNodeMatcher>();
             this.VirtualMatchers = virtualMatchers ?? Array.Empty<IVirtualSyntaxNodeMatcher>();
             this.VirtualQueries = virtualQueries ?? Array.Empty<IVirtualNodeQuery>();
-
-            if (virtualQueries.Any(x => !x.HasOverride))
-            {
-                throw new ArgumentException(
-                    $"The {nameof(BasicSyntaxTreeQuery)} only supports overridable queries.",
-                    nameof(virtualQueries));
-            }
         }
 
         public IReadOnlyCollection<ISyntaxNodeMatcher> Matchers { get; }

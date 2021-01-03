@@ -4,11 +4,12 @@ using dngrep.core.VirtualNodes.Routings.ConflictResolution;
 using dngrep.core.VirtualNodes.Syntax;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using static dngrep.core.Queries.INonOverridableVirtualNodeQuery;
 
 namespace dngrep.core.VirtualNodes.VirtualQueries
 {
     public class IfConditionVirtualQuery :
-        IVirtualNodeQuery,
+        INonOverridableVirtualNodeQuery,
         ICanOverride<MethodBodyVirtualQuery>,
         ICanOverride<NestedBlockVirtualQuery>
     {
@@ -41,5 +42,7 @@ namespace dngrep.core.VirtualNodes.VirtualQueries
         }
 
         public static IfConditionVirtualQuery Instance => InstancePrivate;
+
+        public InsertOrderType InsertOrder => InsertOrderType.Before;
     }
 }

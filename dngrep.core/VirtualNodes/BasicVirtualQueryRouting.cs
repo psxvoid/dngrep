@@ -5,6 +5,7 @@ using dngrep.core.Queries;
 using dngrep.core.VirtualNodes.Routings;
 using dngrep.core.VirtualNodes.Routings.ConflictResolution;
 using Microsoft.CodeAnalysis;
+using static dngrep.core.Queries.INonOverridableVirtualNodeQuery;
 
 namespace dngrep.core.VirtualNodes
 {
@@ -21,12 +22,12 @@ namespace dngrep.core.VirtualNodes
             this.queries = queries;
         }
 
-        public IVirtualSyntaxNode Query(SyntaxNode node)
+        public (InsertOrderType?, IVirtualSyntaxNode) Query(SyntaxNode node)
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
             IEnumerable<IVirtualNodeQuery> overridableQueries = this.queries
-                .Where(x => x.HasOverride && x.CanQuery(node));
+                .Where(x => x.CanQuery(node));
 
             IVirtualNodeQuery query;
 
@@ -42,10 +43,17 @@ namespace dngrep.core.VirtualNodes
             }
             else
             {
-                return VirtualSyntaxNode.Empty;
+                return (null, VirtualSyntaxNode.Empty);
             }
 
-            return query.Query(node);
+            InsertOrderType? insertOrderType = null;
+
+            if (query is INonOverridableVirtualNodeQuery nonOverridableQuery)
+            {
+                 insertOrderType = nonOverridableQuery.InsertOrder;
+            }
+
+            return (insertOrderType, query.Query(node));
         }
     }
 }
