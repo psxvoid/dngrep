@@ -26,6 +26,7 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
                     || node.GetType() == typeof(CatchClauseSyntax)
                     || node.GetType() == typeof(ElseClauseSyntax)
                     || node is ExpressionSyntax
+                    || node is StatementSyntax
                     || node is BlockSyntax)
                 && node.GetType() != typeof(LocalFunctionStatementSyntax);
         }

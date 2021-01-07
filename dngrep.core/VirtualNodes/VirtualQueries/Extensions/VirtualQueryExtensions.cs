@@ -9,6 +9,21 @@ namespace dngrep.core.VirtualNodes.VirtualQueries.Extensions
 {
     public static class VirtualQueryExtensions
     {
+        private static readonly IVirtualNodeQuery[] SupportedQueries = new[]
+        {
+            (IVirtualNodeQuery)
+            MethodBodyVirtualQuery.Instance,
+            NestedBlockVirtualQuery.Instance,
+            AutoPropertyVirtualQuery.Instance,
+            ReadOnlyPropertyVirtualQuery.Instance,
+            TryBodyVirtualQuery.Instance,
+            IfConditionVirtualQuery.Instance,
+            IfBodyVirtualQuery.Instance,
+            ElseBodyVirtualQuery.Instance,
+        };
+
+        public static IVirtualNodeQuery[] GetAllSupportedQueries() => SupportedQueries;
+
         public static CombinedSyntaxNode QueryVirtualAndCombine(
             this SyntaxNode node,
             params IVirtualNodeQuery[] queries)

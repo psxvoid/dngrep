@@ -12,6 +12,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         private static readonly MethodBodyMemberSyntaxNodeMatcher instance =
             new MethodBodyMemberSyntaxNodeMatcher();
 
+        public static MethodBodyMemberSyntaxNodeMatcher Instance => instance;
+
         private readonly static Type[] NonVirtualBodyMemberSiblings = new[]
         {
             typeof(IfStatementSyntax),
@@ -70,15 +72,25 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
                 return false;
             }
 
-            return true;
+            return IsNotTrivialStatement(node);
         }
 
         public bool Match(CombinedSyntaxNode node)
         {
             return CombinedMethodBodyMembers.Contains(node.MixedNode.GetType())
-                || (node.BaseNode is ExpressionSyntax && !(node.BaseNode is PredefinedTypeSyntax));
+                || (node.BaseNode is ExpressionSyntax && !(node.BaseNode is PredefinedTypeSyntax))
+                || IsNotTrivialStatement(node.BaseNode);
         }
 
-        public static MethodBodyMemberSyntaxNodeMatcher Instance => instance;
+        private static bool IsNotTrivialStatement(SyntaxNode? node)
+        {
+            if (node == null)
+            {
+                return false;
+            }
+
+            return node is StatementSyntax
+                && node.GetType() != typeof(EmptyStatementSyntax);
+        }
     }
 }

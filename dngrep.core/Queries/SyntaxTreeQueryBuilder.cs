@@ -6,7 +6,7 @@ using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
 using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
 using dngrep.core.VirtualNodes.SyntaxNodeMatchers;
-using dngrep.core.VirtualNodes.VirtualQueries;
+using dngrep.core.VirtualNodes.VirtualQueries.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -94,16 +94,7 @@ namespace dngrep.core.Queries
                 {
                     new SourceTextPositionVirtualNodeMatcher(nodeSpan)
                 },
-                new IVirtualNodeQuery[] {
-                    MethodBodyVirtualQuery.Instance,
-                    NestedBlockVirtualQuery.Instance,
-                    AutoPropertyVirtualQuery.Instance,
-                    ReadOnlyPropertyVirtualQuery.Instance,
-                    TryBodyVirtualQuery.Instance,
-                    IfConditionVirtualQuery.Instance,
-                    IfBodyVirtualQuery.Instance,
-                    ElseBodyVirtualQuery.Instance,
-                });
+                VirtualQueryExtensions.GetAllSupportedQueries());
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch

@@ -154,7 +154,7 @@ namespace dngrep.core.xunit.Queries.Targets
                 true,
                 x => x.Statement.As<BlockSyntax>());
         }
-        
+
         [Fact]
         public void Match_IfStatementCondition_True()
         {
@@ -236,12 +236,21 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
-        public void Match_SwitchStatementEmptySections_False()
+        public void Match_SwitchStatementEmptySections_True()
         {
             const string target =
                 "public class C { public int M(int x) { switch(x) {   }; return x; } }";
 
-            this.AssertMatch<SwitchStatementSyntax>(target, false);
+            this.AssertMatch<SwitchStatementSyntax>(target, true);
+        }
+
+        [Fact]
+        public void Match_AnyStatement_True()
+        {
+            const string target =
+                "public class C { public int M(int x) { lock(this) {   }; return x; } }";
+
+            this.AssertMatch<LockStatementSyntax>(target, true);
         }
 
         [Fact]
