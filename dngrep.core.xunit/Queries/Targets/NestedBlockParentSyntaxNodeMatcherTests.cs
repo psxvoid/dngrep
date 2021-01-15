@@ -254,6 +254,15 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
+        public void Match_PropertyAccessor_True()
+        {
+            const string target =
+                "public class C { int a; int A { get { return a; } set { a = value; } }";
+
+            this.AssertMatch<AccessorDeclarationSyntax>(target, true);
+        }
+
+        [Fact]
         public void Match_SwitchStatementSingleSection_False()
         {
             const string target =
