@@ -263,6 +263,24 @@ namespace dngrep.core.xunit.Queries.Targets
         }
 
         [Fact]
+        public void Match_PropertyWithExpressionBody_True()
+        {
+            const string target =
+                "public class C { int a; int A => this.a; }";
+
+            this.AssertMatch<PropertyDeclarationSyntax>(target, true);
+        }
+
+        [Fact]
+        public void Match_PropertyWithoutExpressionBody_False()
+        {
+            const string target =
+                "public class C { int a; int A { get { return a; } set { a = value; } }";
+
+            this.AssertMatch<PropertyDeclarationSyntax>(target, false);
+        }
+
+        [Fact]
         public void Match_SwitchStatementSingleSection_False()
         {
             const string target =
