@@ -17,9 +17,8 @@ namespace dngrep.core.Queries.SyntaxNodeMatchers.Targets
         {
             _ = node ?? throw new ArgumentNullException(nameof(node));
 
-            // ExpressionStatement and ArrowExpressionClause cannot contain nested blocks
-            return // !(node is ExpressionStatementSyntax)
-                // && !(node is ArrowExpressionClauseSyntax)
+            return node.GetType() == typeof(ExpressionStatementSyntax) ||
+                node.GetType() == typeof(ArrowExpressionClauseSyntax) ||
                 (MethodBodyMemberSyntaxNodeMatcher.Instance.Match(node)
                     || MethodBodySyntaxNodeMatcher.Instance.Match(node)
                     || node.GetType() == typeof(FinallyClauseSyntax)

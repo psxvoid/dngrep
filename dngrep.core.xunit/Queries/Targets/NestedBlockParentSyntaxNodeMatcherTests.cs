@@ -297,5 +297,23 @@ namespace dngrep.core.xunit.Queries.Targets
                 false,
                 x => x.Sections.First());
         }
+
+        [Fact]
+        public void Match_ArrowExpressionClause_True()
+        {
+            const string target =
+                "public class C { int a; int A => a + 5; }";
+
+            this.AssertMatch<ArrowExpressionClauseSyntax>(target, true);
+        }
+        
+        [Fact]
+        public void Match_ExpressionStatement_True()
+        {
+            const string target =
+                "public class C { int a; int M() { this.a =+ 5; }";
+
+            this.AssertMatch<ExpressionStatementSyntax>(target, true);
+        }
     }
 }
