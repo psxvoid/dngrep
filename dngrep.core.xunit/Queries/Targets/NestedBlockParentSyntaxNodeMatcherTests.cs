@@ -306,14 +306,38 @@ namespace dngrep.core.xunit.Queries.Targets
 
             this.AssertMatch<ArrowExpressionClauseSyntax>(target, true);
         }
-        
+
         [Fact]
         public void Match_ExpressionStatement_True()
         {
             const string target =
-                "public class C { int a; int M() { this.a =+ 5; }";
+                "public class C { int a; void M() { this.a =+ 5; } }";
 
             this.AssertMatch<ExpressionStatementSyntax>(target, true);
+        }
+
+        [Fact]
+        public void Match_BinaryExpression_True()
+        {
+            const string target =
+                "public class C { int a; void M() { System.WriteLine(x == 5); } }";
+
+            this.AssertMatch<BinaryExpressionSyntax>(
+                target,
+                true,
+                x => x.ToString() == "x == 5");
+        }
+        
+        [Fact]
+        public void Match_TypeSyntax_True()
+        {
+            const string target =
+                "public class C { int a; int M() { return 5; } }";
+
+            this.AssertMatch<TypeSyntax>(
+                target,
+                true,
+                x => x.Parent is MethodDeclarationSyntax && x.ToString() == "int");
         }
     }
 }

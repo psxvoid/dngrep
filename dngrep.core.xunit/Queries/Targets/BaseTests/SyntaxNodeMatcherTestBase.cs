@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.Queries;
 using Microsoft.CodeAnalysis;
@@ -24,6 +25,22 @@ namespace dngrep.core.xunit.Queries.Targets.BaseTests
             SyntaxNode target = selectNode != null
                 ? selectNode(root)
                 : root;
+
+            Assert.Equal(expected, this.Sut.Match(target));
+        }
+
+        protected void AssertMatch<TNode>(
+            string targetCode,
+            bool expected,
+            Func<TNode, bool> predicate)
+            where TNode : SyntaxNode
+        {
+            SyntaxTree? tree = CSharpSyntaxTree.ParseText(targetCode);
+
+            TNode target = tree.GetRoot()
+                .ChildNodes()
+                .GetNodesOfTypeRecursively<TNode>()
+                .Single(predicate);
 
             Assert.Equal(expected, this.Sut.Match(target));
         }

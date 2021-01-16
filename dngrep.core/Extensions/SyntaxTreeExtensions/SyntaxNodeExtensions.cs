@@ -436,8 +436,7 @@ namespace dngrep.core.Extensions.SyntaxTreeExtensions
 
             return node is BlockSyntax
                 || node is ArrowExpressionClauseSyntax
-                || node is ExpressionSyntax
-                && !(node is TypeSyntax);
+                || node is ExpressionSyntax;
         }
 
         /// <summary>
