@@ -4,7 +4,7 @@ using AutoFixture;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
-using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using dngrep.core.VirtualNodes.SyntaxNodeMatchers;
 using dngrep.core.xunit.TestHelpers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -202,7 +202,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_AnyModifier_EmptyCollection()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Any)
                     .Create();
 
@@ -212,7 +213,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PublicModifier_PublicKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Public)
                     .Create();
 
@@ -226,7 +228,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PrivateModifier_PrivateKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Private)
                     .Create();
 
@@ -243,7 +246,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ProtectedModifier_ProtectedKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Protected)
                     .Create();
 
@@ -260,7 +264,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_InternalModifier_InternalKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.Internal)
                     .Create();
 
@@ -277,7 +282,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ProtectedInternalModifier_ProtectedInternalKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.ProtectedInternal)
                     .Create();
 
@@ -295,7 +301,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_PrivateProtectedModifier_PrivateProtectedKind()
             {
-                var queryDescriptor = this.fixture.Build<SyntaxTreeQueryDescriptor>()
+                SyntaxTreeQueryDescriptor queryDescriptor = this.fixture
+                    .Build<SyntaxTreeQueryDescriptor>()
                     .With(x => x.AccessModifier, QueryAccessModifier.PrivateProtected)
                     .Create();
 
@@ -420,7 +427,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_NoneScope_Null()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.None);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.None);
 
                 Assert.Empty(SyntaxTreeQueryBuilder.From(queryDescriptor).ScopeMatchers);
             }
@@ -428,7 +435,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_ClassScope_ClassDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Class);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.Class);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -440,7 +447,7 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_StructScope_StructDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Struct);
+                SyntaxTreeQueryDescriptor queryDescriptor = DescribeQuery(QueryTargetScope.Struct);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -452,7 +459,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_NamespaceScope_NamespaceDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Namespace);
+                SyntaxTreeQueryDescriptor queryDescriptor =
+                    DescribeQuery(QueryTargetScope.Namespace);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -466,7 +474,8 @@ namespace dngrep.core.xunit.Queries
             [Fact]
             public void FromDescriptor_InterfaceScope_InterfaceDeclarationSyntax()
             {
-                var queryDescriptor = DescribeQuery(QueryTargetScope.Interface);
+                SyntaxTreeQueryDescriptor queryDescriptor =
+                    DescribeQuery(QueryTargetScope.Interface);
 
                 SyntaxTreeQuery result = SyntaxTreeQueryBuilder.From(queryDescriptor);
 
@@ -498,53 +507,51 @@ namespace dngrep.core.xunit.Queries
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_SingleTargetMatcher()
+            public void FromTextSpan_NotNull_SingleNonVirtualMatcher()
             {
-                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).TargetMatchers);
+                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).Matchers);
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_AndMatcher()
+            public void FromTextSpan_NotNull_ContainsSourceTextMatcher()
             {
-                Assert.Equal(
-                    typeof(And),
-                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First()
-                        .GetType());
+                Assert.IsType<SourceTextPositionMatcher>(
+                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).Matchers.First());
             }
 
             [Fact]
-            public void FromTextSpan_NotNull_AndContainsKnownTargetMatcher()
-            {
-                Assert.Equal(
-                    typeof(KnownTargetMatcher),
-                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First() as And)?.Lhs.GetType()
-                        );
-            }
-
-            [Fact]
-            public void FromTextSpan_NotNull_AndContainsSourceTextMatcher()
-            {
-                Assert.Equal(
-                    typeof(SourceTextPositionMatcher),
-                    (SyntaxTreeQueryBuilder.From(new TextSpan(0, 1))
-                        .TargetMatchers
-                        .First() as And)?.Rhs.GetType());
-            }
-
-            [Fact]
-            public void FromTextSpan_NotNull_AndContainsSourceTextMatcherWithCorrectSpan()
+            public void FromTextSpan_NotNull_ContainsSourceTextMatcherWithCorrectSpan()
             {
                 var span = new TextSpan(0, 1);
 
                 Assert.Equal(
                     span,
-                    ((SyntaxTreeQueryBuilder.From(span)
-                        .TargetMatchers
-                        .First() as And)?.Rhs as SourceTextPositionMatcher)?.SpanToMatch );
+                    ((SourceTextPositionMatcher)SyntaxTreeQueryBuilder.From(span)
+                        .Matchers.First()).SpanToMatch);
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_SingleVirtualMatcher()
+            {
+                Assert.Single(SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).VirtualMatchers);
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_ContainsSourceTextVirtualNodeMatcher()
+            {
+                Assert.IsType<SourceTextPositionVirtualNodeMatcher>(
+                    SyntaxTreeQueryBuilder.From(new TextSpan(0, 1)).VirtualMatchers.First());
+            }
+
+            [Fact]
+            public void FromTextSpan_NotNull_ContainsSourceTextVirtualNodeMatcherWithCorrectSpan()
+            {
+                var span = new TextSpan(0, 1);
+
+                Assert.Equal(
+                    span,
+                    ((SourceTextPositionVirtualNodeMatcher)SyntaxTreeQueryBuilder.From(span)
+                        .VirtualMatchers.First()).SpanToMatch);
             }
         }
     }

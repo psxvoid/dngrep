@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using dngrep.core.Extensions.CompilationExtensions;
+using dngrep.core.xunit.TestHelpers;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
 

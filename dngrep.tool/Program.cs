@@ -1,6 +1,7 @@
 ﻿using System.IO.Abstractions;
 using System.Threading.Tasks;
 using dngrep.core.Queries;
+using dngrep.core.Queries.SyntaxWalkers;
 using dngrep.tool.Abstractions.CommandLine;
 using dngrep.tool.Abstractions.System;
 using dngrep.tool.Console;
@@ -35,7 +36,7 @@ namespace dngrep.tool
                 x.AddTransient<CSharpSyntaxWalker, SyntaxTreeQueryWalker>();
             });
 
-            var pipeline = container.GetInstance<GrepCommandLinePipeline>();
+            GrepCommandLinePipeline pipeline = container.GetInstance<GrepCommandLinePipeline>();
 
             await pipeline.ParseArgsAndRun(args).ConfigureAwait(false);
         }

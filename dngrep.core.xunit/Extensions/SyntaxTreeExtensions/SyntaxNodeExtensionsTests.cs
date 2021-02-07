@@ -10,6 +10,127 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
 {
     public static class SyntaxNodeExtensionsTests
     {
+        public class TryGetBody
+        {
+            [Fact]
+            public void TryGetBody_MethodDeclarationBody_BlockSyntax()
+            {
+                const string target = "class C { int GetAge() { return 5; } }";
+
+                AssertHasBody<MethodDeclarationSyntax, BlockSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_MethodDeclarationExpression_ExpressionSyntax()
+            {
+                const string target = "class C { int GetAge() => 5; }";
+
+                AssertHasBody<MethodDeclarationSyntax, ArrowExpressionClauseSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_ConstructorDeclarationBody_BlockSyntax()
+            {
+                const string target = "using System; class C { C() { Console.WriteLine(5); } }";
+
+                AssertHasBody<ConstructorDeclarationSyntax, BlockSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_ConstructorDeclarationExpression_ExpressionSyntax()
+            {
+                const string target = "using System; class C { C() => Console.WriteLine(5); }";
+
+                AssertHasBody<ConstructorDeclarationSyntax, ArrowExpressionClauseSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_AnonimouseFunctionBody_BlockSyntax()
+            {
+                const string target = "using System; delegate(string s) { Console.WriteLine(s); };";
+
+                AssertHasBody<AnonymousFunctionExpressionSyntax, BlockSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_AnonimouseFunctionExpression_ExpressionSyntax()
+            {
+                const string target = "using System; (string s) => Console.WriteLine(s);";
+
+                AssertHasBody<AnonymousFunctionExpressionSyntax, InvocationExpressionSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_GetterBody_BlockSyntax()
+            {
+                const string target = "class C { int X { get { return 0; } } }";
+
+                AssertHasBody<AccessorDeclarationSyntax, BlockSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_GetterExpression_ExpressionSyntax()
+            {
+                const string target = "class C { int X { get => 0; }";
+
+                AssertHasBody<AccessorDeclarationSyntax, ArrowExpressionClauseSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_SetterBody_BlockSyntax()
+            {
+                const string target = "class C { int x; int X { set { x = value; } } }";
+
+                AssertHasBody<AccessorDeclarationSyntax, BlockSyntax>(target);
+            }
+
+            [Fact]
+            public void TryGetBody_SetterExpression_ExpressionSyntax()
+            {
+                const string target = "class C { int x; int X { set => x = value; } }";
+
+                SyntaxNode node =
+                    AssertHasBody<AccessorDeclarationSyntax, ArrowExpressionClauseSyntax>(target);
+
+                // those ones are just to demonstrate that
+                // when PropertyDeclarationSyntax's has getter or setter
+                // then ExpressionBody property will be always set to null
+                Assert.IsType<AccessorListSyntax>(node.Parent);
+                Assert.IsType<PropertyDeclarationSyntax>(node?.Parent?.Parent);
+                Assert.Null(((PropertyDeclarationSyntax?)(node?.Parent?.Parent))?.ExpressionBody);
+            }
+
+            [Fact]
+            public void TryGetBody_ReadOnlyPropertyExpression_ExpressionSyntax()
+            {
+                const string target = "class C { int X => 0; }";
+
+                SyntaxNode node =
+                    AssertHasBody<PropertyDeclarationSyntax, ArrowExpressionClauseSyntax>(target);
+
+                // those ones are just to demonstrate that
+                // when PropertyDeclarationSyntax's has no getter and setter (read-only)
+                // then AccessorList property will be always set to null
+                Assert.IsType<PropertyDeclarationSyntax>(node);
+                Assert.Null(((PropertyDeclarationSyntax?)node)?.AccessorList);
+            }
+
+            private static SyntaxNode AssertHasBody<TNode, TResult>(string targetCode)
+                where TNode : SyntaxNode
+                where TResult : SyntaxNode
+            {
+                SyntaxTree? tree = CSharpSyntaxTree.ParseText(targetCode);
+
+                TNode nodeWithBody = tree.GetRoot().ChildNodes()
+                    .GetNodesOfTypeRecursively<TNode>()
+                    .First();
+
+                Assert.IsType<TResult>(nodeWithBody.TryGetBody());
+
+                return nodeWithBody;
+            }
+        }
+
         public class NamespaceClassMethodVariable
         {
             private const string SourceCode = @"
@@ -36,7 +157,8 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFullName_Variable_VariableFullName()
             {
-                var node = this.GetNode<LocalDeclarationStatementSyntax>();
+                LocalDeclarationStatementSyntax node =
+                    this.GetNode<LocalDeclarationStatementSyntax>();
 
                 string result = node.GetFullName();
 
@@ -46,7 +168,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFullName_Method_MethodFullName()
             {
-                var node = this.GetNode<MethodDeclarationSyntax>();
+                MethodDeclarationSyntax? node = this.GetNode<MethodDeclarationSyntax>();
 
                 string result = node.GetFullName();
 
@@ -56,7 +178,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFullName_Class_ClassFullName()
             {
-                var node = this.GetNode<ClassDeclarationSyntax>();
+                ClassDeclarationSyntax? node = this.GetNode<ClassDeclarationSyntax>();
 
                 string result = node.GetFullName();
 
@@ -66,7 +188,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFullName_Namespace_NamespaceName()
             {
-                var node = this.GetNode<NamespaceDeclarationSyntax>();
+                NamespaceDeclarationSyntax node = this.GetNode<NamespaceDeclarationSyntax>();
 
                 string result = node.GetFullName();
 
@@ -76,7 +198,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFullName_SyntaxBlock_ShouldThrow()
             {
-                var node = this.GetNode<BlockSyntax>();
+                BlockSyntax node = this.GetNode<BlockSyntax>();
 
                 Assert.Throws<InvalidOperationException>(() => node.GetFullName());
             }
@@ -84,7 +206,8 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFullName_Variable_VariableFullName()
             {
-                var node = this.GetNode<LocalDeclarationStatementSyntax>();
+                LocalDeclarationStatementSyntax node =
+                    this.GetNode<LocalDeclarationStatementSyntax>();
 
                 string? result = node.GetFullName();
 
@@ -94,7 +217,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFullName_Method_MethodFullName()
             {
-                var node = this.GetNode<MethodDeclarationSyntax>();
+                MethodDeclarationSyntax node = this.GetNode<MethodDeclarationSyntax>();
 
                 string? result = node.TryGetFullName();
 
@@ -104,7 +227,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFullName_Class_ClassFullName()
             {
-                var node = this.GetNode<ClassDeclarationSyntax>();
+                ClassDeclarationSyntax node = this.GetNode<ClassDeclarationSyntax>();
 
                 string? result = node.TryGetFullName();
 
@@ -114,7 +237,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFullName_Namespace_NamespaceName()
             {
-                var node = this.GetNode<NamespaceDeclarationSyntax>();
+                NamespaceDeclarationSyntax node = this.GetNode<NamespaceDeclarationSyntax>();
 
                 string? result = node.TryGetFullName();
 
@@ -124,7 +247,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFullName_SyntaxBlock_ShouldReturnNull()
             {
-                var node = this.GetNode<BlockSyntax>();
+                BlockSyntax node = this.GetNode<BlockSyntax>();
 
                 Assert.Null(node.TryGetFullName());
             }
@@ -132,7 +255,7 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void TryGetFilePath_AnyBlock_ShouldReturnFilePath()
             {
-                var node = this.GetNode<ClassDeclarationSyntax>();
+                ClassDeclarationSyntax node = this.GetNode<ClassDeclarationSyntax>();
 
                 Assert.Equal("x:/test.cs", node.TryGetFilePath());
             }
@@ -151,8 +274,9 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetSourceTextBounds_ShouldGetCorrectBounds()
             {
-                var node = this.GetNode<ParameterSyntax>();
-                var (lineStart, lineEnd, charStart, charEnd) = node.GetSourceTextBounds();
+                ParameterSyntax node = this.GetNode<ParameterSyntax>();
+                (int lineStart, int lineEnd, int charStart, int charEnd) =
+                    node.GetSourceTextBounds();
 
                 Assert.Equal(5, lineStart);
                 Assert.Equal(5, lineEnd);
@@ -163,9 +287,10 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFirstParentOfType_ParentNotFound_Null()
             {
-                var node = this.GetNode<ParameterSyntax>();
+                ParameterSyntax node = this.GetNode<ParameterSyntax>();
 
-                var actual = node.GetFirstParentOfType<FieldDeclarationSyntax>();
+                FieldDeclarationSyntax? actual =
+                    node.GetFirstParentOfType<FieldDeclarationSyntax>();
 
                 Assert.Null(actual);
             }
@@ -173,10 +298,10 @@ namespace dngrep.core.xunit.Extensions.SyntaxTreeExtensions
             [Fact]
             public void GetFirstParentOfType_ParentFound_Parent()
             {
-                var node = this.GetNode<ParameterSyntax>();
-                var expected = this.GetNode<ParameterListSyntax>();
+                ParameterSyntax node = this.GetNode<ParameterSyntax>();
+                ParameterListSyntax expected = this.GetNode<ParameterListSyntax>();
 
-                var actual = node.GetFirstParentOfType<ParameterListSyntax>();
+                ParameterListSyntax? actual = node.GetFirstParentOfType<ParameterListSyntax>();
 
                 Assert.Equal(expected, actual);
             }
