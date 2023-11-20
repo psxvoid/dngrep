@@ -3,6 +3,7 @@ using System.Linq;
 using dngrep.core.Extensions.SyntaxTreeExtensions;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
+using dngrep.core.Queries.SyntaxWalkers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Xunit;
@@ -178,7 +179,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodNamesFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate2", names);
                     Assert.Contains("Read2", names);
                 }
@@ -213,7 +214,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodNames()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate1", names);
                     Assert.Contains("Read1", names);
                     Assert.Contains("Annotate2", names);
@@ -277,7 +278,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate2", names);
                     Assert.Contains("Read2", names);
                 }
@@ -312,7 +313,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate1", names);
                     Assert.Contains("Read1", names);
                 }
@@ -348,7 +349,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate2", names);
                     Assert.Contains("Read2", names);
                 }
@@ -384,7 +385,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Annotate1", names);
                     Assert.Contains("Read1", names);
                 }
@@ -521,7 +522,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetPrivateMethodsFromClasses()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("UseCloak", names);
                     Assert.Contains("Walk2", names);
                     Assert.Contains("Jump2", names);
@@ -559,8 +560,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("UseCloak", names);
+                    Assert.Contains("UseCloak", SelectNames(this.results));
                 }
             }
 
@@ -595,7 +595,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetMethodsFromMatchingClass()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
+                    IEnumerable<string?> names = SelectNames(this.results);
                     Assert.Contains("Walk1", names);
                     Assert.Contains("Jump1", names);
                 }
@@ -647,8 +647,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetPublicClassName()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("Warrior", names);
+                    Assert.Contains("Warrior", SelectNames(this.results));
                 }
             }
 
@@ -681,8 +680,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetProtectedInternalClassName()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("Spy", names);
+                    Assert.Contains("Spy", SelectNames(this.results));
                 }
             }
 
@@ -715,8 +713,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetProtectedInternalClassName()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("Spy", names);
+                    Assert.Contains("Spy", SelectNames(this.results));
                 }
             }
 
@@ -749,15 +746,13 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetInternalClassName()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("PoliceMan", names);
+                    Assert.Contains("PoliceMan", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetProtectedInternalClassName()
                 {
-                    IEnumerable<string>? names = this.results.Select(x => x.GetIdentifierName());
-                    Assert.Contains("Spy", names);
+                    Assert.Contains("Spy", SelectNames(this.results));
                 }
             }
         }
@@ -821,68 +816,67 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetNamespace()
                 {
-                    Assert.Contains("Zoo", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("Zoo", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetClass()
                 {
-                    Assert.Contains("Cat", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("Cat", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetStruct()
                 {
-                    Assert.Contains("Sun", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("Sun", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetEnum()
                 {
-                    Assert.Contains("WeatherState", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("WeatherState", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetInterface()
                 {
-                    Assert.Contains("IAnimal", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("IAnimal", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetField()
                 {
-                    Assert.Contains("lives", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("lives", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetProperty()
                 {
-                    Assert.Contains("RemainingLives", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("RemainingLives", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetEvent()
                 {
-                    Assert.Contains("OnWakeUp", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("OnWakeUp", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetMethod()
                 {
-                    Assert.Contains("GetPurrText", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("GetPurrText", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetVariable()
                 {
-                    Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("catName", SelectNames(this.results));
                 }
+
                 [Fact]
                 public void ShouldGetMethodParameter()
                 {
-                    Assert.Contains(
-                        "purrStrength",
-                        this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("purrStrength", SelectNames(this.results));
                 }
 
                 [Fact]
@@ -890,7 +884,7 @@ namespace dngrep.core.xunit.Queries
                 {
                     Assert.Contains(
                         "$\"Log: {catName} starts purring.\"",
-                        this.results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(this.results));
                 }
             }
 
@@ -922,61 +916,61 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldNotGetNamespace()
                 {
-                    Assert.DoesNotContain("Zoo", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.DoesNotContain("Zoo", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetClass()
                 {
-                    Assert.Contains("Cat", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("Cat", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetStruct()
                 {
-                    Assert.Contains("Sun", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("Sun", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetEnum()
                 {
-                    Assert.Contains("WeatherState", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("WeatherState", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetInterface()
                 {
-                    Assert.Contains("IAnimal", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("IAnimal", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldNotGetField()
                 {
-                    Assert.DoesNotContain("lives", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.DoesNotContain("lives", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetProperty()
                 {
-                    Assert.Contains("RemainingLives", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("RemainingLives", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetEvent()
                 {
-                    Assert.Contains("OnWakeUp", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("OnWakeUp", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldGetMethod()
                 {
-                    Assert.Contains("GetPurrText", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("GetPurrText", SelectNames(this.results));
                 }
 
                 [Fact]
                 public void ShouldNotGetVariable()
                 {
-                    Assert.DoesNotContain("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.DoesNotContain("catName", SelectNames(this.results));
                 }
             }
 
@@ -1008,7 +1002,7 @@ namespace dngrep.core.xunit.Queries
                 [Fact]
                 public void ShouldGetVariable()
                 {
-                    Assert.Contains("catName", this.results.Select(x => x.TryGetIdentifierName()));
+                    Assert.Contains("catName", SelectNames(this.results));
                 }
             }
         }
@@ -1065,7 +1059,7 @@ namespace dngrep.core.xunit.Queries
 
                     Assert.Equal(
                         new[] { "Spin", "SpinFaster", "SpinSlower" },
-                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(walker.Results));
                 }
 
                 [Fact]
@@ -1079,7 +1073,7 @@ namespace dngrep.core.xunit.Queries
 
                     Assert.Equal(
                         new[] { "SpinFaster", "SpinSlower" },
-                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(walker.Results));
                 }
 
                 [Fact]
@@ -1094,7 +1088,7 @@ namespace dngrep.core.xunit.Queries
 
                     Assert.Equal(
                         new[] { "Spin" },
-                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(walker.Results));
                 }
 
                 [Fact]
@@ -1109,7 +1103,7 @@ namespace dngrep.core.xunit.Queries
 
                     Assert.Equal(
                         new[] { "Earth", "Mars" },
-                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(walker.Results));
                 }
 
                 [Fact]
@@ -1125,7 +1119,7 @@ namespace dngrep.core.xunit.Queries
 
                     Assert.Equal(
                         new[] { "Earth" },
-                        walker.Results.Select(x => x.TryGetIdentifierName()));
+                        SelectNames(walker.Results));
                 }
 
                 private static SyntaxTreeQueryWalker Init(
@@ -1149,7 +1143,13 @@ namespace dngrep.core.xunit.Queries
 
                     return new SyntaxTreeQueryWalker(query);
                 }
+
             }
+        }
+
+        private static string?[] SelectNames(IEnumerable<SyntaxNode> nodes)
+        {
+            return nodes.Select(x => x.TryGetIdentifierName()).ToArray();
         }
     }
 }
