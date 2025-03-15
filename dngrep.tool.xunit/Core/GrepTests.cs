@@ -44,7 +44,7 @@ namespace dngrep.tool.xunit.Core
                 this.fixture = AutoFixtureFactory.Default();
 
                 this.directoryMock = this.fixture.Freeze<Mock<IDirectory>>();
-                var fsMock = this.fixture.Freeze<Mock<IFileSystem>>();
+                Mock<IFileSystem> fsMock = this.fixture.Freeze<Mock<IFileSystem>>();
                 fsMock
                     .SetupGet(x => x.Directory)
                     .Returns(this.directoryMock.Object);
@@ -164,7 +164,7 @@ namespace dngrep.tool.xunit.Core
                     .WithAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -183,7 +183,7 @@ namespace dngrep.tool.xunit.Core
                     .WithAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -197,7 +197,7 @@ namespace dngrep.tool.xunit.Core
             public async Task NonEmptyDirNonCSharpProject_ShouldThrow()
             {
                 this.WithCurrentDirectory("x:/test.sln");
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult(this.fixture.Create<ICompilation?>()));
                 this.WithProjects(new[] { projectMock.Object });
@@ -205,7 +205,7 @@ namespace dngrep.tool.xunit.Core
                     .WithAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -218,7 +218,7 @@ namespace dngrep.tool.xunit.Core
             {
                 this.WithCurrentDirectory("x:/test.sln");
                 ICompilation? compilationWrapper = CreateCompilation(null);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -226,7 +226,7 @@ namespace dngrep.tool.xunit.Core
                     .WithAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -240,7 +240,7 @@ namespace dngrep.tool.xunit.Core
                 this.WithCurrentDirectory("x:/test.sln");
 
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(null);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -248,7 +248,7 @@ namespace dngrep.tool.xunit.Core
                     .WithAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -264,7 +264,7 @@ namespace dngrep.tool.xunit.Core
                     TestCompiler.Compile(@"using System;");
 
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -272,7 +272,7 @@ namespace dngrep.tool.xunit.Core
                     .OmitAutoProperties()
                     .Create();
 
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.FolderAsync(options)).ConfigureAwait(false);
 
                 Assert.Equal(
@@ -287,7 +287,7 @@ namespace dngrep.tool.xunit.Core
                 Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
                     TestCompiler.Compile(@"using System; class Test {};");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -309,7 +309,7 @@ namespace dngrep.tool.xunit.Core
                 Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
                     TestCompiler.Compile(@"using System; class Test {};");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -332,7 +332,7 @@ namespace dngrep.tool.xunit.Core
                 Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
                     TestCompiler.Compile(@"using System; class Test {};");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -353,7 +353,7 @@ namespace dngrep.tool.xunit.Core
                 Microsoft.CodeAnalysis.CSharp.CSharpCompilation? compilation =
                     TestCompiler.Compile(@"using System; class Test {};");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -379,7 +379,7 @@ namespace dngrep.tool.xunit.Core
                     class Test2 { void MyMethodY() {} }
                     ");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -408,7 +408,7 @@ namespace dngrep.tool.xunit.Core
                     class Test2 { void MyMethodY() {} }
                     ");
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -443,7 +443,7 @@ namespace dngrep.tool.xunit.Core
                     CSharpSyntaxTree.ParseText(
                         "class Test1 { void MyMethodZ() {} }", path: "x:/test.cs"));
                 ICSharpCompilation? compilationWrapper = CreateCSharpCompilation(compilation);
-                var projectMock = this.fixture.Create<Mock<IProject>>();
+                Mock<IProject> projectMock = this.fixture.Create<Mock<IProject>>();
                 projectMock.Setup(x => x.GetCompilationAsync())
                     .Returns(Task.FromResult<ICompilation?>(compilationWrapper));
                 this.WithProjects(new[] { projectMock.Object });
@@ -565,7 +565,7 @@ namespace dngrep.tool.xunit.Core
             [Fact]
             public async Task EmptyOrWhitespaceText_ShouldThrow()
             {
-                var exception = await Assert.ThrowsAsync<GrepException>(
+                GrepException exception = await Assert.ThrowsAsync<GrepException>(
                     () => this.sut.TextAsSyntaxTree(new GrepOptions(), "  \t \n")
                 ).ConfigureAwait(false);
 

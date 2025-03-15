@@ -38,4 +38,25 @@ namespace dngrep.core.Queries
             this.PathMatchers = pathMatchers;
         }
     }
+
+    public class CombinedSyntaxTreeQuery : SyntaxTreeQuery
+    {
+        public IReadOnlyCollection<IVirtualNodeQuery> VirtualNodeQueries { get; }
+
+        public SyntaxTreeQuery VirtualNodeSubQueries { get; }
+
+        internal CombinedSyntaxTreeQuery(
+            IReadOnlyCollection<IVirtualNodeQuery> virtualNodeQueries,
+            SyntaxTreeQuery nodeQuery,
+            SyntaxTreeQuery virtualNodeSubQueries)
+            : base(
+                nodeQuery.TargetMatchers,
+                nodeQuery.ScopeMatchers,
+                nodeQuery.AccessModifierMatchers,
+                nodeQuery.TargetMatchers)
+        {
+            this.VirtualNodeQueries = virtualNodeQueries;
+            this.VirtualNodeSubQueries = virtualNodeSubQueries;
+        }
+    }
 }

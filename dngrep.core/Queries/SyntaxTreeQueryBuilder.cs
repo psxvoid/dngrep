@@ -5,6 +5,8 @@ using System.Text.RegularExpressions;
 using dngrep.core.Queries.Specifiers;
 using dngrep.core.Queries.SyntaxNodeMatchers;
 using dngrep.core.Queries.SyntaxNodeMatchers.Boolean;
+using dngrep.core.VirtualNodes.SyntaxNodeMatchers;
+using dngrep.core.VirtualNodes.VirtualQueries.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -81,18 +83,18 @@ namespace dngrep.core.Queries
                     descriptor.EnableRegex));
         }
 
-        public static SyntaxTreeQuery From(TextSpan nodeSpan)
+        public static BasicSyntaxTreeQuery From(TextSpan nodeSpan)
         {
-            return new SyntaxTreeQuery(
-                new[]
+            return new BasicSyntaxTreeQuery(
+                new ISyntaxNodeMatcher[]
                 {
-                    new And(
-                        KnownTargetMatcher.Instance,
-                        new SourceTextPositionMatcher(nodeSpan))
+                    new SourceTextPositionMatcher(nodeSpan),
                 },
-                Array.Empty<ISyntaxNodeMatcher>(),
-                Array.Empty<ISyntaxNodeMatcher>(),
-                Array.Empty<ISyntaxNodeMatcher>());
+                new IVirtualSyntaxNodeMatcher[]
+                {
+                    new SourceTextPositionVirtualNodeMatcher(nodeSpan)
+                },
+                VirtualQueryExtensions.GetAllSupportedQueries());
         }
 
         private static Type? GetTargetSyntaxNodeType(QueryTarget target) => target switch
@@ -158,14 +160,14 @@ namespace dngrep.core.Queries
                 return matcher;
             }
 
-            var pathContains = includes == null
+            IEnumerable<ISyntaxNodeMatcher> pathContains = includes == null
             || includes.All(x => string.IsNullOrWhiteSpace(x))
             ? Array.Empty<ISyntaxNodeMatcher>()
             : includes
                 .Where(x => !string.IsNullOrWhiteSpace(x))
                 .Select(x => CreateMatcher(x));
 
-            var pathExclude = excludes == null
+            IEnumerable<ISyntaxNodeMatcher> pathExclude = excludes == null
             || excludes.All(x => string.IsNullOrWhiteSpace(x))
             ? Array.Empty<ISyntaxNodeMatcher>()
             : excludes

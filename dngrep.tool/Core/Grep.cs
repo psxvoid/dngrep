@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using dngrep.core.Queries;
 using dngrep.core.Queries.Specifiers;
+using dngrep.core.Queries.SyntaxWalkers;
 using dngrep.tool.Abstractions.CodeAnalysis;
 using dngrep.tool.Abstractions.CodeAnalysis.CSharp;
 using dngrep.tool.Abstractions.CodeAnalysis.MSBuild;
@@ -112,7 +113,7 @@ namespace dngrep.tool.Core
             ISyntaxNodePresenter presenter = this.presenterFactory.GetPresenter(
                         options.OutputType ?? PresenterKind.Search);
 
-            foreach (var proj in projects ?? Enumerable.Empty<IProject>())
+            foreach (IProject proj in projects ?? Enumerable.Empty<IProject>())
             {
                 hasAnyProjects = true;
 
